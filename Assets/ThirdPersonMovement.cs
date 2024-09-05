@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class ThirdPersonMovement : MonoBehaviour
@@ -11,6 +12,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
     public float speed = 6;
     public float moveAcceleration;
+
+    [Header("New Movement")]
+    public float currentSpeed = 0;
+    public float accelerationSpeed = .2f;
+    public float deccelerationSpeed = .8f;
+    public float maxSpeed = 6;
 
     private Vector3 direction;
     public float turnSmoothTime = 0.1f;
@@ -28,7 +35,7 @@ public class ThirdPersonMovement : MonoBehaviour
         Vector2 raw;
         raw = context.ReadValue<Vector2>();
         direction = new Vector3(raw.x, 0, raw.y).normalized;
-        Debug.Log(direction);
+        //Debug.Log(direction);
     }
 
     private void Update()
@@ -39,12 +46,37 @@ public class ThirdPersonMovement : MonoBehaviour
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0, angle, 0);
-
-            moveAcceleration = speed + 0.5f * Time.deltaTime;
             Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-            controller.Move(moveDir.normalized * speed * Time.deltaTime);
+
+            if(currentSpeed > maxSpeed)
+            {
+                currentSpeed = maxSpeed;
+            }
+
+            currentSpeed += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
+
+            Debug.Log(direction.magnitude);
+            controller.Move(moveDir.normalized * currentSpeed * Time.deltaTime);
+        }
+        else
+        {
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            //transform.rotation = Quaternion.Euler(0, angle, 0);
+            //Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+            Vector3 moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
+
+            currentSpeed -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+            if(currentSpeed <= 0.05f)
+            {
+                currentSpeed = 0;
+            }
+            controller.Move(moveDir.normalized * currentSpeed * Time.deltaTime);
+            //currentSpeed = 0;
         }
        
         //velocity = rigidbody.velocity.magnitude;
     }
+
+
 }
