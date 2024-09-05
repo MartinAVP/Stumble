@@ -314,7 +314,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 23489145}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.035758134, y: -0.000000007511024, z: 2.6875205e-10, w: 0.9993605}
+  m_LocalRotation: {x: 0.03575813, y: 0.000000007511024, z: -2.6875202e-10, w: 0.9993605}
   m_LocalPosition: {x: 0, y: 2.3, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -803,7 +803,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 771071547}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.035758127, y: -0.000000006523452, z: 2.3341568e-10, w: 0.9993605}
+  m_LocalRotation: {x: 0.035758123, y: 9.875714e-10, z: -3.5336283e-11, w: 0.9993605}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1592,6 +1592,7 @@ GameObject:
   - component: {fileID: 1864337854}
   - component: {fileID: 1864337856}
   - component: {fileID: 1864337855}
+  - component: {fileID: 1864337857}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1630,6 +1631,7 @@ MonoBehaviour:
   controller: {fileID: 1864337856}
   cam: {fileID: 23489148}
   speed: 2
+  moveAcceleration: 0
   turnSmoothTime: 0.1
   turnSmoothVelocity: 3
 --- !u!143 &1864337856
@@ -1658,6 +1660,33 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1864337857
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864337853}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
