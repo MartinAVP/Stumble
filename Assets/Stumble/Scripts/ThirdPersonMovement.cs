@@ -27,12 +27,21 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public float turnSmoothTime = 0.1f;
     private float turnSmoothVelocity;
 
+    // Gravity Variables
+    private float _gravity = -9.81f;
+    [SerializeField] private float gravityMultiplier = 3.0f;
+    private float _velocity;
+
+    [SerializeField] private float jumpPower = 10;
+
     // New input system
 
     private void Start()
     {
         rigidbody = this.GetComponent<Rigidbody>();
     }
+
+    private bool IsGrounded() => controller.isGrounded;
 
     public void Move(InputAction.CallbackContext context)
     {
@@ -41,11 +50,23 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         rawDirection = new Vector3(raw.x, 0, raw.y).normalized;
         //Debug.Log(direction);
     }
+    public void Jump(InputAction.CallbackContext context)
+    {
+        // Check when key is down
+        if (!context.started) return;
+        Debug.Log("Jump1");
+/*        if(!IsGrounded()) return;
+        Debug.Log("Jump");*/
+
+        _velocity += jumpPower / 3;
+    }
 
     private void Update()
     {
+        Jumping();
+        ApplyGravity();
         Movement();
-        //Bumping();
+        Bumping();
     }
 
     // IBumper Interface Implementation
@@ -105,12 +126,36 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (currentBumpSpeed > maxBumpSpeed)
         {
             currentBumpSpeed = maxSpeed;
-            controller.Move(bumpDir.normalized * currentBumpSpeed * Time.deltaTime);
         }
 
         if (currentBumpSpeed <= 0.05f)
         {
             currentBumpSpeed = 0;
         }
+        controller.Move((bumpDir.normalized) * currentBumpSpeed * Time.deltaTime);
+    }
+
+    private void ApplyGravity()
+    {
+        if (IsGrounded())
+        {
+            if (_velocity < 0.0f)
+            {
+                _velocity = 0.0f;  // Prevents the character from sinking into the ground
+            }
+        }
+        else
+        {
+            _velocity += _gravity * gravityMultiplier * Time.deltaTime;
+        }
+
+        Vector3 gravityMovement = new Vector3(0, _velocity, 0);
+        controller.Move(gravityMovement * Time.deltaTime);
+    }
+
+    private void Jumping()
+    {
+        Vector3 jumpMovement = new Vector3(0, _velocity, 0);
+        controller.Move(jumpMovement * Time.deltaTime);
     }
 }
