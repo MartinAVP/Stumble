@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using Cinemachine;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonMovement : MonoBehaviour, IBumper
@@ -45,10 +46,35 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     #region Vertical Movement
     // Gravity Variables
+    [Space]
     [SerializeField] private float gravityMultiplier = 3.0f;
     private float _gravity = -9.81f;
     private float _verticalVelocity = 0;
     #endregion
+
+    #region Camera Controls
+    [Header("Camera Controls")]
+    // Note: These values will only update when starting the game, not while the scene is playing.
+    [Tooltip("Default: 5")]
+    [SerializeField] private float baseVerticalViewSensitivity = 5.0f;
+    [SerializeField] private bool baseInvertVerticalInput = false;
+    [Space]
+    [Tooltip("Default: 300")]
+    [SerializeField] private float baseHorizontalViewSensitivity = 300.0f;
+    [SerializeField] private bool baseInvertHorizontalInput = false;
+    private CinemachineFreeLook freelookcam;
+    #endregion
+
+    private void Awake()
+    {
+        freelookcam = cam.gameObject.GetComponent<CinemachineFreeLook>();
+    }
+
+    private void Start()
+    {
+        // Update the Values
+        updateSensitivity(baseVerticalViewSensitivity, baseInvertVerticalInput, baseHorizontalViewSensitivity, baseInvertHorizontalInput);
+    }
 
     private void Update()
     {
@@ -180,6 +206,15 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         // Check if the character is grounded using a raycast
         return Physics.Raycast(transform.position, Vector3.down, out _, minJumpDistance, jumpableLayers);
+    }
+
+    private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
+    {
+        freelookcam.m_YAxis.m_MaxSpeed = vertical;
+        freelookcam.m_XAxis.m_MaxSpeed = horizontal;
+
+        freelookcam.m_YAxis.m_InvertInput = invertVertical;
+        freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
     }
     #endregion
 
