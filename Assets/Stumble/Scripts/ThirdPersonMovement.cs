@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -81,7 +82,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         Debug.Log("PushBumper Triggered!");
     }
-
     private void Movement()
     {
         float targetAngle = Mathf.Atan2(rawDirection.x, rawDirection.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
@@ -134,7 +134,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         controller.Move((bumpDir.normalized) * currentBumpSpeed * Time.deltaTime);
     }
-
     private void ApplyGravity()
     {
         if (IsGrounded())
@@ -158,4 +157,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Vector3 jumpMovement = new Vector3(0, _velocity, 0);
         controller.Move(jumpMovement * Time.deltaTime);
     }
+
+/*    private void Func()
+    {
+        Vector3 collide = Vector3.one; // (1, 1, 1);
+        Transform potato;
+        potato.position = new Vector3(x, y, z);
+        float math = collide.x + collide.y;
+
+        List<Vector3> corners = new List<Vector3>();
+
+
+    }*/
+
 }
