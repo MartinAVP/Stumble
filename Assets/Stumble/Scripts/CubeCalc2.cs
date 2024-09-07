@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
 public class CubeCalc2 : MonoBehaviour
 {
     public Vector3[] Corners = new Vector3[8];
@@ -76,11 +77,6 @@ public class CubeCalc2 : MonoBehaviour
                 contact.transform.position = hit.point;
             }
 
-            Debug.Log("Player Collision");
-            // Closest points 1 and 2
-            //Debug.Log(-GetNormal(newPoint1, newPoint4, other.transform.position));
-            //contact.transform.position = -GetNormal(newPoint1, newPoint4, other.transform.position);
-
             // Get the center position from 4 corners
             Vector3[] _tempSorted = SortVectorsByDistance(contact.transform.position);
             Vector3 centerSurfacePoint;
@@ -92,28 +88,10 @@ public class CubeCalc2 : MonoBehaviour
             Debug.DrawLine(centerSurfacePoint, _tempSorted[3], Color.blue, Mathf.Infinity);
             contact.transform.position = centerSurfacePoint;
             contact.transform.rotation = this.transform.rotation;
-            //perpendicular.transform.position = this.transform.position - GetNormal(_tempSorted[0], _tempSorted[1], centerSurfacePoint);
             // perpendicular a point from origin to center
             perpendicular.transform.rotation = this.transform.rotation;
             perpendicular.transform.position = (contact.position + (this.transform.position - GetNormal(_tempSorted[0], _tempSorted[1], centerSurfacePoint))).normalized * 2;
             Debug.DrawLine(this.transform.position, contact.transform.position * 5, Color.red, Mathf.Infinity);
-
-
-
-/*            RaycastHit hit;
-            if (Physics.Raycast(this.transform.position, other.transform.position - this.transform.position, out hit, Mathf.Infinity))
-            {
-                Debug.DrawRay(this.transform.position, this.transform.TransformDirection(other.transform.position) * hit.distance, Color.yellow);
-                Debug.Log(hit.point);
-                contact.transform.position = hit.point;
-                //perpendicular.transform.position = -GetNormal(newPoint1, newPoint2, hit.point);
-            }*/
-
-            //other.transform.position;
-
-            // Know where the player hit
-            // Draw a line between player and center
-            // Find the surface.
         }
     }
 

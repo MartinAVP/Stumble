@@ -5,45 +5,63 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(CharacterController))]
 public class ThirdPersonMovement : MonoBehaviour, IBumper
 {
+    // Requierements
     public CharacterController controller;
     public Transform cam;
-    private Rigidbody rigidbody;
 
+    #region Horizontal Movement
     [Header("Movement")]
     public float accelerationSpeed = .2f;
     public float deccelerationSpeed = .8f;
     public float maxSpeed = 6;
     private Vector3 rawDirection;
-    [SerializeField] float currentSpeed = 0;
+    private float currentSpeed = 0;
+    #endregion
 
+    #region Bumping
     [Header("Bumping")]
     public float maxBumpSpeed = 8;
     public float bumpDrag = 5f;
     private Vector3 bumpDir;
-    [SerializeField] private float currentBumpSpeed = 0;
+    private float currentBumpSpeed = 0;
+    #endregion
 
+    #region Rotating
     [Header("Rotation")]
     public float turnSmoothTime = 0.1f;
     private float turnSmoothVelocity;
+    #endregion
 
-    // Gravity Variables
-    private float _gravity = -9.81f;
-    [SerializeField] private float gravityMultiplier = 3.0f;
-    private float _velocity;
-
+    #region Jumping
+    [Header("Jump & Gravity")]
     [SerializeField] private float jumpPower = 10;
+    [SerializeField] private LayerMask jumpableLayers;
+    [Tooltip("It has to be more half the height of the character. Recommended [0.2] more than half the height. [0.2] Allows jumping on a 45 degree surface")]
+    [SerializeField] private float minJumpDistance = .2f;
+    #endregion
 
-    // New input system
+    #region Vertical Movement
+    // Gravity Variables
+    [SerializeField] private float gravityMultiplier = 3.0f;
+    private float _gravity = -9.81f;
+    private float _verticalVelocity = 0;
+    #endregion
 
-    private void Start()
+    private void Update()
     {
-        rigidbody = this.GetComponent<Rigidbody>();
+        ApplyGravity();
+        Movement();
+        //Bumping();
+        ApplyVerticalMovement();
+
     }
 
-    private bool IsGrounded() => controller.isGrounded;
-
+    // Input Actions Callback Functions
+    // ===========================================================================================
+    #region Callback Context Functions
     public void Move(InputAction.CallbackContext context)
     {
         Vector2 raw;
@@ -53,35 +71,23 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     }
     public void Jump(InputAction.CallbackContext context)
     {
-        // Check when key is down
+        // Check when key is pressed once
         if (!context.started) return;
-        Debug.Log("Jump1");
-/*        if(!IsGrounded()) return;
-        Debug.Log("Jump");*/
 
-        _velocity += jumpPower / 3;
+        // Check if player is on the air
+        if(!isGrounded()) return;
+
+        // Add to the Vertical Velocity Value
+        _verticalVelocity += jumpPower;
     }
+    #endregion
 
-    private void Update()
-    {
-        Jumping();
-        ApplyGravity();
-        Movement();
-        Bumping();
-    }
-
-    // IBumper Interface Implementation
-    public void Bump(Vector3 direction, float magnitude)
-    {
-        currentBumpSpeed = magnitude;
-        bumpDir = direction.normalized * magnitude;
-
-        float targetAngle = Mathf.Atan2(bumpDir.x, bumpDir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        bumpDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
-
-        Debug.Log("PushBumper Triggered!");
-    }
+    // Updating Functions
+    // ===========================================================================================
+    #region Constantly Updating Functions
+    /// <summary>
+    /// Applies movement to the player horizontally in relation to the camera orientation.
+    /// </summary>
     private void Movement()
     {
         float targetAngle = Mathf.Atan2(rawDirection.x, rawDirection.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
@@ -117,6 +123,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             //currentSpeed = 0;
         }
     }
+    
+    /// <summary>
+    /// W.I.P
+    /// </summary>
     private void Bumping()
     {
 
@@ -134,40 +144,61 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         controller.Move((bumpDir.normalized) * currentBumpSpeed * Time.deltaTime);
     }
+
+    /// <summary>
+    /// Applies Gravity over time to the player, does not run the calculation if the player is grounded
+    /// </summary>
     private void ApplyGravity()
     {
-        if (IsGrounded())
+        if (isGrounded() && _verticalVelocity < 0f)
         {
-            if (_velocity < 0.0f)
-            {
-                _velocity = 0.0f;  // Prevents the character from sinking into the ground
-            }
+            _verticalVelocity = 0.0f;  // Prevents the character from sinking into the ground
         }
         else
         {
-            _velocity += _gravity * gravityMultiplier * Time.deltaTime;
+            _verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
         }
-
-        Vector3 gravityMovement = new Vector3(0, _velocity, 0);
-        controller.Move(gravityMovement * Time.deltaTime);
     }
 
-    private void Jumping()
+    /// <summary>
+    /// Uses the verticalVelocity value and applies movement to the character vertically
+    /// </summary>
+    private void ApplyVerticalMovement()
     {
-        Vector3 jumpMovement = new Vector3(0, _velocity, 0);
-        controller.Move(jumpMovement * Time.deltaTime);
+        Vector3 fallVector = new Vector3(0, _verticalVelocity, 0);
+        controller.Move(fallVector * Time.deltaTime);
     }
+    #endregion
 
-/*    private void Func()
+    // Internal Functions
+    // ===========================================================================================
+    #region Internal Functions
+    /// <summary>
+    /// Checks if the player is Grounded depending on the minimum jump distance.
+    /// </summary>
+    private bool isGrounded()
     {
-        Vector3 collide = Vector3.one; // (1, 1, 1);
-        Transform potato;
-        potato.position = new Vector3(x, y, z);
-        float math = collide.x + collide.y;
+        // Check if the character is grounded using a raycast
+        return Physics.Raycast(transform.position, Vector3.down, out _, minJumpDistance, jumpableLayers);
+    }
+    #endregion
 
-        List<Vector3> corners = new List<Vector3>();
+    // Interfaces
+    // ===========================================================================================
+    #region Interfaces
+    /// <summary>
+    /// W.I.P
+    /// </summary>
+    public void Bump(Vector3 direction, float magnitude)
+    {
+        currentBumpSpeed = magnitude;
+        bumpDir = direction.normalized * magnitude;
 
+        float targetAngle = Mathf.Atan2(bumpDir.x, bumpDir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+        bumpDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
-    }*/
-
+        Debug.Log("PushBumper Triggered!");
+    }
+    #endregion
 }
