@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonMovement : MonoBehaviour, IBumper
@@ -19,7 +20,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public float deccelerationSpeed = .8f;
     public float maxSpeed = 6;
     private Vector3 rawDirection;
-    private float currentSpeed = 0;
+    private float _horizontalVelocity = 0;
     #endregion
 
     #region Bumping
@@ -65,6 +66,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private CinemachineFreeLook freelookcam;
     #endregion
 
+    #region Diving
+    [Header("Diving")]
+    public float diveForce = 1;
+    public float diveDragMultiplier = 1;
+    [HideInInspector]public bool isProne = false;
+    private float playerHeight = 2;
+    public bool rotateModelonDive = true;
+    #endregion
+
+
     private void Awake()
     {
         freelookcam = cam.gameObject.GetComponent<CinemachineFreeLook>();
@@ -72,11 +83,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Start()
     {
-        // Update the Values
+        // Update Sensitivity
         updateSensitivity(baseVerticalViewSensitivity, baseInvertVerticalInput, baseHorizontalViewSensitivity, baseInvertHorizontalInput);
+
+        // Set the player Height
+        controller.height = playerHeight;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         ApplyGravity();
         Movement();
@@ -100,11 +114,27 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Check when key is pressed once
         if (!context.started) return;
 
+        // Check if player is prone, unprone if proned;
+        if (isProne) { toggleProne(false); return; }
+
         // Check if player is on the air
-        if(!isGrounded()) return;
+        if (!isGrounded()) return;
 
         // Add to the Vertical Velocity Value
+        _verticalVelocity = 0;
         _verticalVelocity += jumpPower;
+    }
+
+    public void Dive(InputAction.CallbackContext context)
+    {
+        //Debug.Log("Dive");
+        // Change Model
+        if (context.started)
+        {
+            // Prevent Proning when already in prone
+            if (isProne) { return; }
+            toggleProne(true);
+        }
     }
     #endregion
 
@@ -116,40 +146,59 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void Movement()
     {
+        // Direction Vector
+        Vector3 moveDir;
+
+        // Check for proning state, prevents horizontal movement and character rotation
+        if (isProne)
+        {
+            moveDir = transform.forward.normalized;
+            Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized, Color.yellow);
+
+            _horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
+            if (_horizontalVelocity <= 0.05f)
+            {
+                _horizontalVelocity = 0;
+            }
+
+            controller.Move(moveDir.normalized * _horizontalVelocity * Time.deltaTime);
+            return;
+        }
+
+        // Camera Angle Logic Calculation
         float targetAngle = Mathf.Atan2(rawDirection.x, rawDirection.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
         float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        // Minimum Input for detection
+
         if (rawDirection.magnitude >= 0.1f)
         {
-            Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-
+            moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             transform.rotation = Quaternion.Euler(0, angle, 0);
 
-            if (currentSpeed > maxSpeed)
+            if (_horizontalVelocity > maxSpeed)
             {
-                currentSpeed = maxSpeed;
+                _horizontalVelocity = maxSpeed;
             }
 
-            currentSpeed += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
+            _horizontalVelocity += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
 
-            //Debug.Log(direction.magnitude);
-            controller.Move(moveDir.normalized * currentSpeed * Time.deltaTime);
+            controller.Move(moveDir.normalized * _horizontalVelocity * Time.deltaTime);
         }
+
+        // No player input
+        // Decellerate the player based on multiplier
         else
         {
-            Vector3 moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
-            //transform.rotation = Quaternion.Euler(0, targetAngle, 0);
+            moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
-            currentSpeed -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
-            if (currentSpeed <= 0.05f)
+            _horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+            if (_horizontalVelocity <= 0.05f)
             {
-                currentSpeed = 0;
+                _horizontalVelocity = 0;
             }
-            controller.Move(moveDir.normalized * currentSpeed * Time.deltaTime);
-            //currentSpeed = 0;
+            controller.Move(moveDir.normalized * _horizontalVelocity * Time.deltaTime);
         }
     }
-    
+
     /// <summary>
     /// W.I.P
     /// </summary>
@@ -176,9 +225,20 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void ApplyGravity()
     {
-        if (isGrounded() && _verticalVelocity < 0f)
+        // Prone Logic
+        if (isProne)
         {
-            _verticalVelocity = 0.0f;  // Prevents the character from sinking into the ground
+            if (!isGrounded())
+            {
+                _verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
+            }
+
+            return;
+        }
+
+        if (isGrounded() && _verticalVelocity < -8f)
+        {
+            _verticalVelocity = -8.0f;  // Prevents the character from sinking into the ground
         }
         else
         {
@@ -205,7 +265,18 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private bool isGrounded()
     {
         // Check if the character is grounded using a raycast
-        return Physics.Raycast(transform.position, Vector3.down, out _, minJumpDistance, jumpableLayers);
+        // Is grounded Raycast changes the origin based on proning state
+        if (!isProne)
+        {
+            //Debug.DrawRay(transform.position - new Vector3(0, playerHeight, 0), Vector3.down * 10, Color.white);
+            return Physics.Raycast(transform.position, Vector3.down, out _, (playerHeight / 2) + .2f, jumpableLayers);
+        }
+        else
+        {
+            //Debug.DrawRay(transform.position - new Vector3(0, playerHeight, 0), Vector3.down * 10, Color.green);
+            return Physics.Raycast(transform.position - new Vector3(0, playerHeight, 0), Vector3.down, out _, (playerHeight / 2) + .2f, jumpableLayers);
+        }
+
     }
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
@@ -215,6 +286,52 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         freelookcam.m_YAxis.m_InvertInput = invertVertical;
         freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
+    }
+
+    private void toggleProne(bool activate)
+    {
+        if (activate)
+        {
+            _horizontalVelocity += diveForce;
+            if(_horizontalVelocity > maxSpeed + diveForce)
+            {
+                _horizontalVelocity = maxSpeed + diveForce;
+            }
+
+            isProne = true;
+            if (rotateModelonDive)
+            {
+                this.transform.GetChild(0).transform.Rotate(90, 0, 0);
+                this.transform.GetChild(0).transform.position += new Vector3(0, -0.5f, 0);
+            }
+            this.GetComponent<CapsuleCollider>().center = new Vector3(0, -0.5f, 0);
+            // Capsule Collider Direction Horizontal
+            this.GetComponent<CapsuleCollider>().direction = 2;
+
+            // Make Character controller to a ball
+            controller.height = 1;
+            controller.center = new Vector3(0, -0.5f, 0);
+            //controller.height = 1;
+
+            playerHeight = controller.height;
+        }
+        else
+        {
+            isProne = false;
+            if (rotateModelonDive)
+            {
+                this.transform.GetChild(0).transform.Rotate(-90, 0, 0);
+                this.transform.GetChild(0).transform.position += new Vector3(0, 0.5f, 0);
+            }
+            this.GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
+            // Capsule Collider Vertical
+            this.GetComponent<CapsuleCollider>().direction = 1;
+            // Make Character controller to a ball
+            controller.height = 2;
+            controller.center = new Vector3(0, 0, 0);
+
+            playerHeight = controller.height;
+        }
     }
     #endregion
 
