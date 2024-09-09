@@ -16,24 +16,27 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     #region Horizontal Movement
     [Header("Movement")]
-    public float accelerationSpeed = .2f;
-    public float deccelerationSpeed = .8f;
-    public float maxSpeed = 6;
+    [SerializeField] private float accelerationSpeed = 10f;
+    [SerializeField] private float deccelerationSpeed = 4f;
+    [SerializeField] private float maxSpeed = 10;
     private Vector3 rawDirection;
     private float _horizontalVelocity = 0;
     #endregion
 
     #region Bumping
     [Header("Bumping")]
-    public float maxBumpSpeed = 8;
-    public float bumpDrag = 5f;
-    private Vector3 bumpDir;
+    [SerializeField] private float maxBumpSpeed = 2;
+    [SerializeField] private float bumpDrag = .2f;
+    [Space]
+    [SerializeField] private float bumpForce = 20f;
+    [Range(0f, 5f)][SerializeField] private float bumpUpwardForce = .2f;
+    private Vector3 bumpDir = Vector3.zero;
     private float currentBumpSpeed = 0;
     #endregion
 
     #region Rotating
     [Header("Rotation")]
-    public float turnSmoothTime = 0.1f;
+    [SerializeField] private float turnSmoothTime = 0.1f;
     private float turnSmoothVelocity;
     #endregion
 
@@ -68,13 +71,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     #region Diving
     [Header("Diving")]
-    public float diveForce = 1;
-    public float diveDragMultiplier = 1;
+    [SerializeField] private float diveForce = 2;
+    [SerializeField] private float diveDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
-    public bool rotateModelonDive = true;
+    [SerializeField] private bool rotateModelonDive = true;
     #endregion
 
+    [Header("Debug")]
+    // Lock Movement is made for testing bumping
+    // If left unchecked, 2 characters will move with the same input
+    public bool lockMovement = false;
 
     private void Awake()
     {
@@ -90,27 +97,32 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         controller.height = playerHeight;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         ApplyGravity();
-        Movement();
-        //Bumping();
         ApplyVerticalMovement();
-
+        Movement();
+        Bumping();
     }
 
     // Input Actions Callback Functions
     // ===========================================================================================
-    #region Callback Context Functions
+    #region Player Input Functions
     public void Move(InputAction.CallbackContext context)
     {
         Vector2 raw;
         raw = context.ReadValue<Vector2>();
         rawDirection = new Vector3(raw.x, 0, raw.y).normalized;
         //Debug.Log(direction);
+        if (lockMovement)
+        {
+            rawDirection = Vector3.zero;
+        }
     }
     public void Jump(InputAction.CallbackContext context)
     {
+        if (lockMovement) return;
+
         // Check when key is pressed once
         if (!context.started) return;
 
@@ -127,6 +139,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     public void Dive(InputAction.CallbackContext context)
     {
+        if(lockMovement) return;
+
         //Debug.Log("Dive");
         // Change Model
         if (context.started)
@@ -200,24 +214,23 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     }
 
     /// <summary>
-    /// W.I.P
+    /// Apply Bumping to the player, not affected by player movement
     /// </summary>
     private void Bumping()
     {
+        if(currentBumpSpeed <= 0) { return; }
+        currentBumpSpeed -= bumpDrag * bumpDir.magnitude * Time.deltaTime;
 
-        //transform.rotation = Quaternion.Euler(0, angle, 0);
-        currentBumpSpeed -= (bumpDrag * 2) * bumpDir.magnitude * Time.deltaTime;
-
-        if (currentBumpSpeed > maxBumpSpeed)
+        if (currentBumpSpeed > maxBumpSpeed + 0.1f)
         {
-            currentBumpSpeed = maxSpeed;
+            currentBumpSpeed = maxBumpSpeed;
         }
 
         if (currentBumpSpeed <= 0.05f)
         {
             currentBumpSpeed = 0;
         }
-        controller.Move((bumpDir.normalized) * currentBumpSpeed * Time.deltaTime);
+        controller.Move(bumpDir * currentBumpSpeed * Time.deltaTime);
     }
 
     /// <summary>
@@ -236,9 +249,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             return;
         }
 
-        if (isGrounded() && _verticalVelocity < -8f)
+        if (isGrounded() && _verticalVelocity < -5f)
         {
-            _verticalVelocity = -8.0f;  // Prevents the character from sinking into the ground
+            _verticalVelocity = -5.0f;  // Prevents the character from sinking into the ground
         }
         else
         {
@@ -339,18 +352,41 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     // ===========================================================================================
     #region Interfaces
     /// <summary>
-    /// W.I.P
+    /// Will update the values of the bumping
+    /// Note: Bumping is a seperate player movement vector than speed. This is made so that the player can
+    /// counter a bumper with their own speed.
+    /// Note: Current player speed does not affect the magnitude of the bump 
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
         currentBumpSpeed = magnitude;
         bumpDir = direction.normalized * magnitude;
-
-        float targetAngle = Mathf.Atan2(bumpDir.x, bumpDir.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-        bumpDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
-
-        Debug.Log("PushBumper Triggered!");
     }
     #endregion
+
+    // Collisions
+    // ===========================================================================================
+    #region Collisions
+    /// <summary>
+    /// Check for the collision of the CharacterController with another one.
+    /// </summary>
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.transform.tag == "Player") {
+            if (isProne)
+            {
+                Debug.Log("Bump!");
+                IBumper targetBumper = hit.gameObject.GetComponent<IBumper>();
+                if (targetBumper != null)
+                {
+                    Vector3 bumpDirection = transform.forward.normalized + new Vector3(0, bumpUpwardForce, 0);
+                    float bumpMagnitude = bumpForce;
+
+                    targetBumper.Bump(bumpDirection, bumpMagnitude);
+                }
+            }
+        }
+    }
+    #endregion
+
 }
