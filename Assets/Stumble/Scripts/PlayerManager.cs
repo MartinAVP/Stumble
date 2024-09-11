@@ -13,6 +13,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private List<LayerMask> playerLayers;
 
+    [Header("Cosmetic")]
+    public Transform players3FillScreen;
+
     private PlayerInputManager playerInputManager;
 
     private void Awake()
@@ -48,5 +51,22 @@ public class PlayerManager : MonoBehaviour
 
         // set the action in the custom cinemachine Input handler
         playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
+
+        //Check for player Count
+        Debug.Log(players.Count);
+        Player3ScreenToggle(players.Count);
+        
+    }
+
+    private void Player3ScreenToggle(int count)
+    {
+        if(count == 3)
+        {
+            players3FillScreen.transform.gameObject.SetActive(true);
+        }
+        else
+        {
+            players3FillScreen.transform.gameObject.SetActive(false);
+        }
     }
 }
