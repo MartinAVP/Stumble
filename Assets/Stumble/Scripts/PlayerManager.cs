@@ -50,7 +50,7 @@ public class PlayerManager : MonoBehaviour
         playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
 
         //Check for player Count
-        Debug.Log(players.Count);
+        //Debug.Log(players.Count);
         Player3ScreenToggle(players.Count);
         
     }
