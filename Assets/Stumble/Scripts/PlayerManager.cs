@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Cinemachine;
 public class PlayerManager : MonoBehaviour
 {
     private List<PlayerInput> players = new List<PlayerInput>();
-    [SerializeField]
-    private List<Transform> spawnPoints;
-    [SerializeField]
-    private List<LayerMask> playerLayers;
+    [SerializeField] private List<Transform> spawnPoints;
+    [SerializeField] private List<LayerMask> playerLayers;
 
     [Header("Cosmetic")]
     public Transform players3FillScreen;
