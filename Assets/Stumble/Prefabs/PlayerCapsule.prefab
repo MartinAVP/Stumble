@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 8757524300631457683}
   - component: {fileID: 1926180098186385498}
   - component: {fileID: 3722998539949186867}
-  m_Layer: 0
+  - component: {fileID: 6561320664309271954}
+  m_Layer: 7
   m_Name: Third Person Cam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +214,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -303,6 +304,22 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &6561320664309271954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105448737197914705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7194dc27b9df64c8beca7482ee8e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerIndex: -1
+  AutoEnableInputs: 1
+  XYAxis: {fileID: -5630151704836100654, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  ZAxis: {fileID: 0}
 --- !u!1 &632361992657090793
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +332,7 @@ GameObject:
   - component: {fileID: 2274431364837120941}
   - component: {fileID: 6987372947963619866}
   - component: {fileID: 8123731328452294099}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -440,7 +457,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6116771345490689801}
   - component: {fileID: 8586026076864141696}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TopRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -455,7 +472,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2545684285354167078}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.03632497, y: 0.000000017129986, z: 0.0000000016196102, w: 0.9993401}
+  m_LocalRotation: {x: 0.036324944, y: -0.000000017129986, z: -0.0000000016196107, w: 0.9993401}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -521,7 +538,7 @@ GameObject:
   - component: {fileID: 8221736220021267285}
   - component: {fileID: 2188887429686288971}
   - component: {fileID: 1884768000487044257}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -646,7 +663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8243964063568919539}
   - component: {fileID: 6995712669790634521}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MiddleRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -725,7 +742,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1858047193115213844}
   - component: {fileID: 6714136225881289421}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BottomRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -805,7 +822,7 @@ GameObject:
   - component: {fileID: 4118569603110568923}
   - component: {fileID: 2426003929271822534}
   - component: {fileID: 2516038030183150239}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -892,7 +909,7 @@ GameObject:
   - component: {fileID: 5094673052031781958}
   - component: {fileID: 5462818263820291379}
   - component: {fileID: 775753262886507609}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PlayerCapsule
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1069,7 +1086,11 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 8e4b037d-8192-450c-8025-52a28304fa2f
     m_ActionName: menu/Pause[/Keyboard/escape]
-  m_NeverAutoSwitchControlSchemes: 0
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3aff67fd-3609-465f-a0f3-dedaf932e206
+    m_ActionName: Player/Look[/XInputControllerWindows/rightStick,/Mouse/delta]
+  m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Controller
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
@@ -1123,7 +1144,7 @@ GameObject:
   - component: {fileID: 5607090483413275803}
   - component: {fileID: 8386270852953539146}
   - component: {fileID: 4792964835210394200}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1249,7 +1270,7 @@ GameObject:
   - component: {fileID: 5223408986066972950}
   - component: {fileID: 3703383625702409349}
   - component: {fileID: 7391781313534639733}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FrontShow
   m_TagString: Untagged
   m_Icon: {fileID: 0}

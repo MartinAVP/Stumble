@@ -2612,6 +2612,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1775534738}
+  - component: {fileID: 1775534737}
   - component: {fileID: 1775534739}
   - component: {fileID: 1775534740}
   - component: {fileID: 1775534741}
@@ -2622,6 +2623,35 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1775534737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775534736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4683868bc822b714fbca31520ae2d985, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerLobbyPrefab: {fileID: 5696014391653118029, guid: e8c6915cebfc46348ad2d5e27311cc31, type: 3}
+  playerCardPrefab: {fileID: 7827064838341630852, guid: 096d049522f96814ea461f454a163bf7, type: 3}
+  playerCardTopPrefab: {fileID: 3266564644477665313, guid: 584c6cb0c946b714980edae4f1b38f33, type: 3}
+  m_playerQuantityText: {fileID: 575180254}
+  m_addOnePlayer: {fileID: 1142471020}
+  m_removeOnePlayer: {fileID: 1179406151}
+  m_startSelection: {fileID: 281702920}
+  m_repickPlayers: {fileID: 1942384698}
+  playerSelectionPanel: {fileID: 215826498}
+  playerCardsPanel: {fileID: 393583803}
+  playerAssignPanel: {fileID: 1367791265}
+  playerSpawnViewRange: 12.15
+  playerSpawns: []
+  playerCards: []
+  playerCardsTop: []
+  scrollBottomView: {fileID: 1630655722}
+  scrollTopView: {fileID: 1505612369}
 --- !u!4 &1775534738
 Transform:
   m_ObjectHideFlags: 0
@@ -2712,7 +2742,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1775534736}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dff30515296faed4eaefc8349f2a75f4, type: 3}
   m_Name: 
@@ -2916,7 +2946,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -172.9, y: -43.4}
+  m_AnchoredPosition: {x: -213, y: -70}
   m_SizeDelta: {x: 320, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1942384698

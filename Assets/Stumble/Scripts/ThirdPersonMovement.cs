@@ -359,6 +359,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
+        _verticalVelocity = 0;
+        _horizontalVelocity = 0;
         currentBumpSpeed = magnitude;
         bumpDir = direction.normalized * magnitude;
     }
