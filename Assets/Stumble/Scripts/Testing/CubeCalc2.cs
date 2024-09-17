@@ -72,7 +72,7 @@ public class CubeCalc2 : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(this.transform.position, other.transform.position - this.transform.position, out hit, Mathf.Infinity))
             {
-                Debug.DrawRay(this.transform.position, this.transform.TransformDirection(other.transform.position) * hit.distance, Color.yellow);
+                Debug.DrawRay(this.transform.position, this.transform.TransformDirection(other.transform.position) * hit.distance, Color.yellow, 1);
                 Debug.Log(hit.point);
                 contact.transform.position = hit.point;
             }
@@ -91,7 +91,7 @@ public class CubeCalc2 : MonoBehaviour
             // perpendicular a point from origin to center
             perpendicular.transform.rotation = this.transform.rotation;
             perpendicular.transform.position = (contact.position + (this.transform.position - GetNormal(_tempSorted[0], _tempSorted[1], centerSurfacePoint))).normalized * 2;
-            Debug.DrawLine(this.transform.position, contact.transform.position * 5, Color.red, Mathf.Infinity);
+            Debug.DrawRay(this.transform.position, contact.transform.position * 5, Color.red, 2f);
         }
     }
 
