@@ -9,7 +9,7 @@ public class BoxBumper : MonoBehaviour
     {
         if(other.GetComponent<IBumper>() != null)
         {
-            Debug.Log("Collided");
+            //Debug.Log("Collided");
 
             RaycastHit hit;
             Vector3 direction = other.transform.position - transform.position;

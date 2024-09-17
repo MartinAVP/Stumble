@@ -30,10 +30,13 @@ public class UIManagerSelection : MonoBehaviour
 
     private void Start()
     {
+        // Initialize Canvas
         _playerSelectionPanel.gameObject.SetActive(true);
         _playerCardsPanel.gameObject.SetActive(false);
         _playerAssignPanel.gameObject.SetActive(false);
     }
+
+
 
 
 }

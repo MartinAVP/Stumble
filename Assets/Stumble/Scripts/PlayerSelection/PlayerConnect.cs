@@ -18,6 +18,7 @@ public class PlayerConnect : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button m_addOnePlayer;
     [SerializeField] private UnityEngine.UI.Button m_removeOnePlayer;
     [SerializeField] private UnityEngine.UI.Button m_startSelection;
+    [SerializeField] private UnityEngine.UI.Button m_repickPlayers;
     [Space]
     [SerializeField] private Transform playerSelectionPanel;
     [SerializeField] private Transform playerCardsPanel;
@@ -38,6 +39,7 @@ public class PlayerConnect : MonoBehaviour
         m_addOnePlayer.onClick.AddListener(addOnePlayer);
         m_removeOnePlayer.onClick.AddListener(removeOnePlayer);
         m_startSelection.onClick.AddListener(StartGame);
+        m_repickPlayers.onClick.AddListener(RepickPlayers);
     }
 
     private void Start()
@@ -151,5 +153,10 @@ public class PlayerConnect : MonoBehaviour
     {
         playerCards[id].GetComponentInChildren<TextMeshProUGUI>().text = "Player Reconnected Succesfully! Joined As Player #" + id;
         playerCardsTop[id].transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    private void RepickPlayers()
+    {
+        Debug.Log("Player Repick");
     }
 }

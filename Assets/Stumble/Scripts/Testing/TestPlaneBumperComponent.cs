@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaneBumperComponent : MonoBehaviour
+public class TestPlaneBumperComponent : MonoBehaviour
 {
-    private PlaneBumper planeBumper;
+    private TestPlaneBumper planeBumper;
     [SerializeField] private collisionType type;
 
     private void Start()
     {
-        planeBumper = this.transform.parent.GetComponent<PlaneBumper>();
+        planeBumper = this.transform.parent.GetComponent<TestPlaneBumper>();
     }
 
     private void OnTriggerEnter(Collider other)
