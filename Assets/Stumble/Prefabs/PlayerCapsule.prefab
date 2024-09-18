@@ -30,8 +30,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 105448737197914705}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2103401, y: 0.000000032181866, z: -0.000000006924039, w: 0.9776283}
-  m_LocalPosition: {x: 0, y: 7.47, z: -13.83}
+  m_LocalRotation: {x: 0.024976606, y: 0.000000014984574, z: -3.743806e-10, w: 0.999688}
+  m_LocalPosition: {x: 0, y: 3, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -58,7 +58,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 4118569603110568923}
+  m_LookAt: {fileID: 7385034098771534592}
   m_Follow: {fileID: 4118569603110568923}
   m_CommonLens: 1
   m_Lens:
@@ -80,11 +80,11 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_YAxis:
-    Value: 1
+    Value: 0
     m_SpeedMode: 0
-    m_MaxSpeed: 4
-    m_AccelTime: 0
-    m_DecelTime: 0
+    m_MaxSpeed: 0
+    m_AccelTime: 0.1
+    m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
     m_InputAxisValue: 0
     m_InvertInput: 0
@@ -106,9 +106,9 @@ MonoBehaviour:
   m_XAxis:
     Value: 0
     m_SpeedMode: 0
-    m_MaxSpeed: 4
-    m_AccelTime: 0.03
-    m_DecelTime: 0.03
+    m_MaxSpeed: 0
+    m_AccelTime: 0.1
+    m_DecelTime: 0.05
     m_InputAxisName: Mouse X
     m_InputAxisValue: 0
     m_InvertInput: 0
@@ -127,19 +127,19 @@ MonoBehaviour:
     m_Bias: 0
   m_RecenterToTargetHeading:
     m_enabled: 0
-    m_WaitTime: 1
-    m_RecenteringTime: 2
+    m_WaitTime: 0
+    m_RecenteringTime: 0.5
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
   m_BindingMode: 4
-  m_SplineCurvature: 0.261
+  m_SplineCurvature: 0
   m_Orbits:
-  - m_Height: 7.47
-    m_Radius: 13.83
-  - m_Height: 2.3
-    m_Radius: 14.2
-  - m_Height: -2.25
-    m_Radius: 11.05
+  - m_Height: 10
+    m_Radius: 0.1
+  - m_Height: 8
+    m_Radius: 12.38
+  - m_Height: 3
+    m_Radius: 20
   m_LegacyHeadingBias: 3.4028235e+38
   m_Rigs:
   - {fileID: 8586026076864141696}
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_ShowCameraFrustum: 1
   m_IgnoreTimeScale: 0
   m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 2
+  m_UpdateMethod: 1
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
     m_Style: 1
@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 7.47, z: -13.83}
+  m_FollowOffset: {x: 0, y: 3, z: -20}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -439,7 +439,7 @@ MonoBehaviour:
   m_HorizontalDamping: 0
   m_VerticalDamping: 0
   m_ScreenX: 0.5
-  m_ScreenY: 0.55
+  m_ScreenY: 0.5
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_SoftZoneWidth: 0.8
@@ -457,7 +457,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7385034098771534592}
   m_Layer: 0
-  m_Name: CameraTopTarget
+  m_Name: CameraTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -472,7 +472,7 @@ Transform:
   m_GameObject: {fileID: 978174171575914643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.23, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -503,7 +503,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2545684285354167078}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000014901161, y: 0.00000004214627, z: -0.000000019016104, w: 1}
+  m_LocalRotation: {x: 0.000000009313226, y: -0.00000003216307, z: 0.0000000016081542, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -536,7 +536,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 7385034098771534592}
+  m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 40
@@ -616,7 +616,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 7.47, z: -13.83}
+  m_FollowOffset: {x: 0, y: 3, z: -20}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -709,7 +709,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3214579820386976306}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.017502815, y: 0.000000029166735, z: -0.000000013779241, w: 0.9998468}
+  m_LocalRotation: {x: 0.000000009313226, y: 0.000000029982875, z: -0.0000000014991438, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -788,7 +788,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3661664397500776292}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0006387681, y: 0.000000002039231, z: -9.185199e-10, w: 0.9999999}
+  m_LocalRotation: {x: 0.000000009313226, y: 0.000000029982875, z: -0.0000000014991438, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1142,9 +1142,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 7920813921562666699}
   cam: {fileID: 8028062947466235836}
-  accelerationSpeed: 99
+  accelerationSpeed: 50
   deccelerationSpeed: 25
-  maxSpeed: 12
+  maxSpeed: 10
   maxBumpSpeed: 2
   bumpDrag: 0.5
   bumpForce: 20
@@ -1153,12 +1153,12 @@ MonoBehaviour:
   jumpPower: 22.5
   jumpableLayers:
     serializedVersion: 2
-    m_Bits: 7
+    m_Bits: 4294967295
   minJumpDistance: 1.2
   gravityMultiplier: 4
-  baseVerticalViewSensitivity: 2
-  baseInvertVerticalInput: 0
-  baseHorizontalViewSensitivity: 150
+  baseVerticalViewSensitivity: 1.4
+  baseInvertVerticalInput: 1
+  baseHorizontalViewSensitivity: 275
   baseInvertHorizontalInput: 0
   diveForce: 25
   diveDragMultiplier: 1
@@ -1236,7 +1236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 7.47, z: -13.83}
+  m_FollowOffset: {x: 0, y: 3, z: -20}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -1296,7 +1296,7 @@ MonoBehaviour:
   m_HorizontalDamping: 0
   m_VerticalDamping: 0
   m_ScreenX: 0.5
-  m_ScreenY: 0.6
+  m_ScreenY: 0.5
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_SoftZoneWidth: 0.8
