@@ -13,8 +13,11 @@ public class PlayerData
         this.device = device;
     }
 
-    public int id;
-    public GameObject playerInScene;
-    public PlayerInput input;
-    public InputDevice device;
+    public int id;                      // Id of the player [0,1,2,3]
+    public GameObject playerInScene;    // The player in the scene (can be changed depending on the level)
+    public PlayerInput input;           // Should be static for every scene once the player joins
+    public InputDevice device;          // The Device the player is connected to
+
+                                        // Cosmetics
+
 }

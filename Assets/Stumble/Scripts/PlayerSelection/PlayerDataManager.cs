@@ -9,6 +9,7 @@ public class PlayerDataManager : MonoBehaviour
     public List<PlayerData> players = new List<PlayerData>();
     [SerializeField] private List<LayerMask> playerLayers;
     private PlayerInputManager playerInputManager;
+    public bool inLobby;
 
     private void Awake()
     {
@@ -73,7 +74,7 @@ public class PlayerDataManager : MonoBehaviour
         {
             Destroy(players[playerID].playerInScene);
             players.RemoveAt(playerID);
-            Debug.Log("Remove player" + playerID);
+            Debug.Log("Remove player: " + playerID);
         }
     }
 

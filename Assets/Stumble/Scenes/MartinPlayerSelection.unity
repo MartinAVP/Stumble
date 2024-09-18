@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 215826498}
   - component: {fileID: 215826499}
   m_Layer: 5
-  m_Name: PlayerSelection
+  m_Name: PlayerQuantitySelection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2612,11 +2612,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1775534738}
-  - component: {fileID: 1775534739}
   - component: {fileID: 1775534740}
+  - component: {fileID: 1775534739}
   - component: {fileID: 1775534741}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: PlayerManager
   m_TagString: Untagged
   m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2719,12 +2719,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCardPrefab: {fileID: 7827064838341630852, guid: 096d049522f96814ea461f454a163bf7, type: 3}
   playerLobbyPrefab: {fileID: 3180369938603618940, guid: 8931f33009838994fa876bd2dd1f75ff, type: 3}
-  _selectionQuantity: {fileID: 575180254}
-  _playerSelectionPanel: {fileID: 215826498}
+  _playerQuantitySelectionPanel: {fileID: 215826498}
+  _decreasePlayerQuantity: {fileID: 1179406151}
+  _increasePlayerQuantity: {fileID: 1142471020}
+  _startControllerConnection: {fileID: 281702920}
+  _targetPlayerCount: {fileID: 575180254}
   _playerCardsPanel: {fileID: 393583803}
   _playerAssignPanel: {fileID: 1367791265}
+  playersViewRangeInWorld: 10
+  _changePlayerCount: {fileID: 1942384698}
   _playerCardView: {fileID: 1630655722}
-  gameObjectViewRange: 10
+  bottomCards: []
+  spawnPositions: []
 --- !u!114 &1775534741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2746,6 +2752,7 @@ MonoBehaviour:
     m_Bits: 512
   - serializedVersion: 2
     m_Bits: 1024
+  inLobby: 0
 --- !u!1 &1889035316
 GameObject:
   m_ObjectHideFlags: 0
