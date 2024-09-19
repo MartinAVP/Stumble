@@ -70,6 +70,7 @@ public class PatrolMovement : MonoBehaviour
         //Debug.Log(player.transform.position);
     }
 
+    /*
     //Player parrenting on collision with plat. 
     void OnCollisionEnter(Collision collision)
     {
@@ -94,6 +95,33 @@ public class PatrolMovement : MonoBehaviour
             player = null;
             Debug.Log("Player Object null: " + player);
             collision.collider.transform.SetParent(null);
+        }
+    }
+    */
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            //Debug.Log("connection");
+            player = other.gameObject;
+            //Debug.Log("Player Object should not be null: " + player.transform.rotation);
+
+            other.transform.SetParent(transform); 
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            //Debug.Log("separation");
+
+            //Debug.Log("Player Object: " + player);
+            player = null;
+            // Debug.Log("Player Object null: " + player);
+
+            other.transform.SetParent(null);
         }
     }
 

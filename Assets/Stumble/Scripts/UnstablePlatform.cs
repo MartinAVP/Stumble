@@ -27,12 +27,13 @@ public class UnstablePlatform : MonoBehaviour
         platforRigidBody.isKinematic = true;
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             if (triggered != true)
             {
+                Debug.Log("touched");
                 triggered = true;
                 StartCoroutine(Fall());
                 /*
