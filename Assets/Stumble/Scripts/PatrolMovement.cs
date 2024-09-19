@@ -25,7 +25,6 @@ public class PatrolMovement : MonoBehaviour
         if (delayed == true)
         {
             delayCounter += Time.deltaTime;
-            //Debug.Log("Delay Counter ms: " + delayCounter);
 
             if (delayCounter < delayTime)
             {
@@ -37,7 +36,6 @@ public class PatrolMovement : MonoBehaviour
         if (Vector3.Distance(transform.position,nextNode.position) < 0.01f)
         {
             transform.position = nextNode.position;
-            //Debug.Log("next node: "  + nextNode);
 
             delayCounter = 0f;
             delayed = true;
@@ -47,67 +45,26 @@ public class PatrolMovement : MonoBehaviour
         else
         {
             transform.position = Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
+
+
+            //this is the toggle for the rotation, object will rotate to face the next node
             if (faceTowardNextNode == true)
             {
                 nodeRotation = Quaternion.LookRotation(nextNode.position - transform.position);
                 float rotationStrength = Mathf.Min(rotationSpeed * Time.deltaTime, 1);
                 transform.rotation = Quaternion.Lerp(transform.rotation, nodeRotation, rotationStrength);
-
-                Debug.Log(player);
-
-                if (player != null)
-                {
-                    //player.transform.rotation = Quaternion.identity;
-
-                    //Debug.Log(nodeRotation);
-
-                    // old "rotation" - cube will snap into direction
-                    //transform.LookAt(nextNode.position);
-                }
             }
         }
-
-        //Debug.Log(player.transform.position);
     }
-
-    /*
-    //Player parrenting on collision with plat. 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("connection");
-            player = collision.gameObject;
-            Debug.Log("Player Object should not be null: " + player.transform.rotation);
-
-            collision.collider.transform.SetParent(transform);
-
-        }
-    } 
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("seperation");
-
-            Debug.Log("Player Object: " + player);
-            player = null;
-            Debug.Log("Player Object null: " + player);
-            collision.collider.transform.SetParent(null);
-        }
-    }
-    */
+    
+    // this requires a trigger collider to function, place one and elevate it roughly 2.5-3 on the collider's y axis
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            //Debug.Log("connection");
-            player = other.gameObject;
-            //Debug.Log("Player Object should not be null: " + player.transform.rotation);
-
-            other.transform.SetParent(transform); 
+            player = other.gameObject; //get player object
+            other.transform.SetParent(transform); //sets platform as parrent
         }
     }
 
@@ -115,14 +72,8 @@ public class PatrolMovement : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            //Debug.Log("separation");
-
-            //Debug.Log("Player Object: " + player);
-            player = null;
-            // Debug.Log("Player Object null: " + player);
-
-            other.transform.SetParent(null);
+            player = null; //emptys out player object
+            other.transform.SetParent(null); //unparrents the player from platform
         }
     }
-
 }
