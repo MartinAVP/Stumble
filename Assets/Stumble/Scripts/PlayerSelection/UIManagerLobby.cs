@@ -39,6 +39,7 @@ public class UIManagerLobby : MonoBehaviour
     //[Header("Misc")]
     private int playersInLobby;
     private PlayerInputManager _playerInputManager;
+    private PlayerDataManager _playerDataManager;
 
     private void Start()
     {
@@ -52,6 +53,7 @@ public class UIManagerLobby : MonoBehaviour
     {
         // Get Player Manager
         _playerInputManager = this.GetComponent<PlayerInputManager>();
+        _playerDataManager = this.GetComponent<PlayerDataManager>();
 
         // Player Quantity Selection Buttons
         _increasePlayerQuantity.onClick.AddListener(AddToPlayerQuantity);
@@ -60,34 +62,47 @@ public class UIManagerLobby : MonoBehaviour
 
 
         // Subscribe to Input System
-        _playerInputManager.onPlayerJoined += (player) => joinNewPlayer(player);
-        _playerInputManager.onPlayerLeft += (player => removeExistingPlayer(player));
+        //_playerInputManager.onPlayerJoined += (player) => joinNewPlayer(player);
+        //_playerInputManager.onPlayerLeft += (player => removeExistingPlayer(player));
 
         // Player Lobby
         _changePlayerCount.onClick.AddListener(ChangePlayerCount);
 
         // Subscribe to Controller Disconnection Event
-        InputSystem.onDeviceChange += OnDeviceChange;
+        //InputSystem.onDeviceChange += OnDeviceChange;
 
         // Initialize Input Manager, Disable Player joining
         _playerInputManager.DisableJoining();
     }
 
+    private void OnEnable()
+    {
+        _playerDataManager.onPlayerConnect += (player) => joinNewPlayer(player);
+        //_playerInputManager.onPlayerLeft += (player) => removeExistingPlayer(player);
+        //_playerDataManager.onPlayerDisconnect += (player) => removeExistingPlayer(player);
+        _playerDataManager.onPlayerInputDeviceDisconnect += (player) => removeExistingPlayer(player);
+    }
+
     private void OnDisable()
     {
-        // Player Quantity Selection Buttons
+        // UI - Player Quantity Selection Buttons
         _increasePlayerQuantity.onClick.RemoveListener(AddToPlayerQuantity);
         _decreasePlayerQuantity.onClick.RemoveListener(SubtractToPlayerQuantity);
         _startControllerConnection.onClick.RemoveListener(StartControllerConnection);
 
-        _playerInputManager.onPlayerJoined -= (player) => joinNewPlayer(player);
-        _playerInputManager.onPlayerLeft -= (player => removeExistingPlayer(player));
+        //_playerInputManager.onPlayerJoined -= (player) => joinNewPlayer(player);
+        //_playerInputManager.onPlayerLeft -= (player => removeExistingPlayer(player));
+
+        // Subscribe to PlayerDataManager
+        _playerDataManager.onPlayerConnect -= (player) => joinNewPlayer(player);
+        //_playerDataManager.onPlayerDisconnect += (player) => removeExistingPlayer(player);
+        _playerDataManager.onPlayerInputDeviceDisconnect += (player) => removeExistingPlayer(player);
 
         // Player Lobby
         _changePlayerCount.onClick.RemoveListener(ChangePlayerCount);
 
         // Subscribe to Controller Disconnection Event
-        InputSystem.onDeviceChange -= OnDeviceChange;
+        //InputSystem.onDeviceChange -= OnDeviceChange;
     }
 
     // Buttons
@@ -178,16 +193,21 @@ public class UIManagerLobby : MonoBehaviour
         }
     }
 
-    private void joinNewPlayer(PlayerInput player)
+    private void joinNewPlayer(PlayerData player)
     {
-        int id = _playerInputManager.playerCount - 1;
+        // Set the Player Position to one of the SpawnPoints
+        player.GetPlayerInScene().gameObject.transform.position = spawnPositions[player.GetID()];
+
+
+        //int id = _playerInputManager.playerCount - 1;
         // Set the position to its defined spawn Pos based on ID
-        player.gameObject.transform.position = spawnPositions[id];
+        //player.gameObject.transform.position = spawnPositions[id];
+        //Debug.Log("Set " +  player.GetID() + " to position " + spawnPositions[player.GetID()]);
         // Add the new player to the List
-        _players.Add(player.gameObject);
+        //_players.Add(player.GetPlayerInScene());
         // Set the Bottom Card Text of the Joined Player.
         //bottomCards[id].GetComponentInChildren<TextMeshProUGUI>().text = "Player #" + (id + 1);
-        sortCardsAndPlayer();
+        //sortCardsAndPlayer();
     }
 
     private void sortCardsAndPlayer() {
@@ -205,25 +225,26 @@ public class UIManagerLobby : MonoBehaviour
         // Re Allign Players
         for (int i = 0; i < _playerInputManager.playerCount; i++)
         {
-            _players[i].transform.position = spawnPositions[i];
+            //_playerDataManager = spawnPositions[i];
         }
     }
 
-    private void removeExistingPlayer(PlayerInput player)
+    private void removeExistingPlayer(PlayerData player)
     {
         Debug.Log("Player Left");
+        Destroy(player.GetPlayerInScene());
     }
 
     // Device Reconnection System
-    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+/*    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
         int playerID = 0;
         switch (change)
         {
             case InputDeviceChange.Removed:
-/*                Debug.Log($"Device removed: {device}");
+*//*                Debug.Log($"Device removed: {device}");
                 playerID = findPlayer(device);
-                Debug.Log("Device Disconnected belonged to player #" + playerID);*/
+                Debug.Log("Device Disconnected belonged to player #" + playerID);*//*
                 this.GetComponent<PlayerDataManager>().RemovePlayer(device);
                 sortCardsAndPlayer();
                 break;
@@ -231,5 +252,5 @@ public class UIManagerLobby : MonoBehaviour
                 Debug.Log("Device Reconnected attached to player #" + playerID);
                 break;
         }
-    }
+    }*/
 }

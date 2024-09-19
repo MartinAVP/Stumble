@@ -13,9 +13,9 @@ public class PlayerDataManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     public bool inLobby;
 
-    public static event Action<PlayerData> onPlayerConnect;
-    public static event Action<List<PlayerData>> onPlayerDisconnect;
-    public static event Action onPlayerInputDeviceDisconnect;
+    public event Action<PlayerData> onPlayerConnect;
+    public event Action<PlayerData> onPlayerDisconnect;
+    public event Action<PlayerData> onPlayerInputDeviceDisconnect;
 
     private void Awake()
     {
@@ -39,7 +39,17 @@ public class PlayerDataManager : MonoBehaviour
     public void AddPlayer(PlayerInput input)
     {
         GameObject player = input.transform.parent.gameObject;
-        PlayerData newList = new PlayerData(players.Count, player, input, input.devices[0]);
+
+        PlayerData newList;
+        if(playerInputManager.playerCount == 0)
+        {
+            newList = new PlayerData(players.Count, player, input, input.devices[0], true);
+        }
+        else
+        {
+            newList = new PlayerData(players.Count, player, input, input.devices[0], false);
+        }
+
         players.Add(newList);
 
         // Need to use the paren due to the structure of the prefab
@@ -60,26 +70,55 @@ public class PlayerDataManager : MonoBehaviour
         //Check for player Count
         //Debug.Log(players.Count);
         //Player3ScreenToggle(players.Count);
+        onPlayerConnect.Invoke(newList);
 
     }
     public void RemovePlayer(PlayerInput input)
     {
         int playerID = findPlayer(input);
+/*        List<PlayerData> tempPlayers = new List<PlayerData>();
+        tempPlayers = players;
+        tempPlayers.RemoveAt(playerID);*/
+
         if (playerID != -1)
         {
-            Destroy(players[playerID].playerInScene);
-            players.RemoveAt(playerID);
-            Debug.Log("Remove player: " + playerID);
+            //Destroy(players[playerID].GetPlayerInScene());
+            //players.RemoveAt(playerID);
+            players.Remove(players[playerID]);
+            Debug.Log("Remove player: " + playerID + " player remaining: " + players.Count);
         }
+
+        // Redefine Ids
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].SetID(i);
+        }
+
+        // players = tempPlayers;
+
+        // Re-orgnize players
+        //players[playerID].GetID();
+        // Start from the player Left ID and move up
+        /*        List<PlayerData> tempOverPlayers = new List<PlayerData>();
+                for (int i = playerID; i < players.Count; i++)
+                {
+                    tempOverPlayers.Add(players[i]);
+                }*/
     }
     public void RemovePlayer(InputDevice device)
     {
         int playerID = findPlayer(device);
         if (playerID != -1)
         {
-            Destroy(players[playerID].playerInScene);
+            Destroy(players[playerID].GetPlayerInScene());
             players.RemoveAt(playerID);
             Debug.Log("Remove player: " + playerID);
+        }
+
+        // Set the IDS again
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].SetID(i);
         }
     }
 
@@ -93,6 +132,7 @@ public class PlayerDataManager : MonoBehaviour
                 Debug.Log($"Device removed: {device}");
                 playerID = findPlayer(device);
                 Debug.Log("Device Disconnected belonged to player #" + playerID);
+                onPlayerInputDeviceDisconnect.Invoke(players[findPlayer(device)]);
                 break;
             case InputDeviceChange.Reconnected:
                 playerID = findPlayer(device);
@@ -106,7 +146,7 @@ public class PlayerDataManager : MonoBehaviour
     {
         for (int i = 0; i < players.Count; i++)
         {
-            if (players[i].input == input)
+            if (players[i].GetInput() == input)
             {
                 return i;
             }
@@ -117,7 +157,7 @@ public class PlayerDataManager : MonoBehaviour
     {
         for (int i = 0; i < players.Count; i++)
         {
-            if (players[i].device == device)
+            if (players[i].GetDevice() == device)
             {
                 return i;
             }
@@ -143,5 +183,9 @@ public class PlayerDataManager : MonoBehaviour
             return players[playerID];
         }
         return null;
+    }
+    public List<PlayerData> GetPlayers()
+    {
+        return players;
     }
 }
