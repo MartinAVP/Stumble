@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[System.Serializable]
 public class PlayerData
 {
     public PlayerData(int id, GameObject playerInScene, PlayerInput input, InputDevice device)
@@ -19,5 +20,4 @@ public class PlayerData
     public InputDevice device;          // The Device the player is connected to
 
                                         // Cosmetics
-
 }

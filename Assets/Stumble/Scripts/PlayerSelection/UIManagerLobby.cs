@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -28,8 +30,9 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private Transform _playerAssignPanel;
     [SerializeField] private float playersViewRangeInWorld;
     [SerializeField] private UnityEngine.UI.Button _changePlayerCount;
-    [SerializeField] private Transform _playerCardView;
+    [SerializeField] private Transform playerBottomCardView;
 
+    [SerializeField] private List<GameObject> _players = new List<GameObject>();
     [SerializeField] private List<GameObject> bottomCards = new List<GameObject>();
     [SerializeField] private List<Vector3> spawnPositions = new List<Vector3>();
 
@@ -55,13 +58,36 @@ public class UIManagerLobby : MonoBehaviour
         _decreasePlayerQuantity.onClick.AddListener(SubtractToPlayerQuantity);
         _startControllerConnection.onClick.AddListener(StartControllerConnection);
 
-        //_playerInputManager.onPlayerJoined.AddListener(StartControllerConnection);
+
+        // Subscribe to Input System
+        _playerInputManager.onPlayerJoined += (player) => joinNewPlayer(player);
+        _playerInputManager.onPlayerLeft += (player => removeExistingPlayer(player));
 
         // Player Lobby
         _changePlayerCount.onClick.AddListener(ChangePlayerCount);
 
+        // Subscribe to Controller Disconnection Event
+        InputSystem.onDeviceChange += OnDeviceChange;
+
         // Initialize Input Manager, Disable Player joining
         _playerInputManager.DisableJoining();
+    }
+
+    private void OnDisable()
+    {
+        // Player Quantity Selection Buttons
+        _increasePlayerQuantity.onClick.RemoveListener(AddToPlayerQuantity);
+        _decreasePlayerQuantity.onClick.RemoveListener(SubtractToPlayerQuantity);
+        _startControllerConnection.onClick.RemoveListener(StartControllerConnection);
+
+        _playerInputManager.onPlayerJoined -= (player) => joinNewPlayer(player);
+        _playerInputManager.onPlayerLeft -= (player => removeExistingPlayer(player));
+
+        // Player Lobby
+        _changePlayerCount.onClick.RemoveListener(ChangePlayerCount);
+
+        // Subscribe to Controller Disconnection Event
+        InputSystem.onDeviceChange -= OnDeviceChange;
     }
 
     // Buttons
@@ -74,7 +100,6 @@ public class UIManagerLobby : MonoBehaviour
         // Update the UI Counter
         _targetPlayerCount.text = targetPlayers.ToString();
     }
-
     private void SubtractToPlayerQuantity()
     {
         if(targetPlayers <= 1) { return; }
@@ -101,6 +126,9 @@ public class UIManagerLobby : MonoBehaviour
             Destroy(c);
         }
 
+        // Clear the Spawn Positions
+        spawnPositions.Clear();
+
         // Update the UI
         _playerQuantitySelectionPanel.gameObject.SetActive(true);
         _playerCardsPanel.gameObject.SetActive(false);
@@ -120,7 +148,7 @@ public class UIManagerLobby : MonoBehaviour
         // Add Bottom Cards to UI
         for (int i = 0; i < targetPlayers; i++)
         {
-            GameObject temp = Instantiate(playerCardPrefab, _playerCardView.GetComponent<ScrollRect>().content);
+            GameObject temp = Instantiate(playerCardPrefab, playerBottomCardView.GetComponent<ScrollRect>().content);
             temp.name = "Player Card #" + i;
             bottomCards.Add(temp);
         }
@@ -131,28 +159,77 @@ public class UIManagerLobby : MonoBehaviour
 
     private void initializePlayerSpawnPositions()
     {
-        ScrollRect view = _playerCardView.transform.GetComponent<ScrollRect>();
-        float width = _playerCardView.transform.GetComponent<RectTransform>().rect.width;
+        ScrollRect view = playerBottomCardView.transform.GetComponent<ScrollRect>();
+
+        float width = playerBottomCardView.transform.GetComponent<RectTransform>().rect.width;
         float scaleFactor = width / playersViewRangeInWorld;
         float offset = playersViewRangeInWorld / 2;
 
-        Debug.Log(width + " " + scaleFactor + " " + offset);
+        float start = width / (targetPlayers * 2); // Starting value
+        float step = start * 2; // Step size between values
 
-        //Debug.Log(width);
+        Debug.Log(width);
         for (int i = 0; i < targetPlayers; i++)
         {
-            Debug.Log(view.content.GetChild(i).GetComponent<RectTransform>().transform.name);
-            //Debug.Log((view.content.GetChild(i).GetComponent<RectTransform>().localPosition.x));
-            Debug.Log((view.content.GetChild(i).GetComponent<RectTransform>().localPosition));
-            Debug.Log((view.content.GetChild(i).GetComponent<RectTransform>().rect.x));
-/*            Debug.Log((view.content.GetChild(i).GetComponent<RectTransform>().anchoredPosition3D.x));
-            Debug.Log((view.content.GetChild(i).GetComponent<RectTransform>().position.x));*/
-            float targetPos = ((view.content.GetChild(i).GetComponent<RectTransform>().localPosition.x) / scaleFactor) - offset;
-            //Debug.Log("Card" + i + ": " + targetPos);
+            float UIPos = start + (i * step);
+            float targetPos = (UIPos / scaleFactor) - offset;
             Vector3 targetVector = new Vector3(targetPos, 0, 0);
             spawnPositions.Add(targetVector);
         }
     }
 
+    private void joinNewPlayer(PlayerInput player)
+    {
+        int id = _playerInputManager.playerCount - 1;
+        // Set the position to its defined spawn Pos based on ID
+        player.gameObject.transform.position = spawnPositions[id];
+        // Add the new player to the List
+        _players.Add(player.gameObject);
+        // Set the Bottom Card Text of the Joined Player.
+        //bottomCards[id].GetComponentInChildren<TextMeshProUGUI>().text = "Player #" + (id + 1);
+        sortCardsAndPlayer();
+    }
 
+    private void sortCardsAndPlayer() {
+        // Re Allign Cards
+        // Set All Cards to Await for Players
+        for (int i = 0; i < targetPlayers; i++)
+        {
+            bottomCards[i].GetComponentInChildren<TextMeshProUGUI>().text = "Press A or Space to Join";
+        }
+
+        for (int i = 0;i < _playerInputManager.playerCount; i++)
+        {
+            bottomCards[i].GetComponentInChildren<TextMeshProUGUI>().text = "Player #" + (i + 1);
+        }
+        // Re Allign Players
+        for (int i = 0; i < _playerInputManager.playerCount; i++)
+        {
+            _players[i].transform.position = spawnPositions[i];
+        }
+    }
+
+    private void removeExistingPlayer(PlayerInput player)
+    {
+        Debug.Log("Player Left");
+    }
+
+    // Device Reconnection System
+    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        int playerID = 0;
+        switch (change)
+        {
+            case InputDeviceChange.Removed:
+/*                Debug.Log($"Device removed: {device}");
+                playerID = findPlayer(device);
+                Debug.Log("Device Disconnected belonged to player #" + playerID);*/
+                this.GetComponent<PlayerDataManager>().RemovePlayer(device);
+                sortCardsAndPlayer();
+                break;
+            case InputDeviceChange.Reconnected:
+                Debug.Log("Device Reconnected attached to player #" + playerID);
+                break;
+        }
+    }
 }

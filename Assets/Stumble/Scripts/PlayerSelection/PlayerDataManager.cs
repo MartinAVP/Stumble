@@ -1,8 +1,10 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class PlayerDataManager : MonoBehaviour
 {
@@ -10,6 +12,10 @@ public class PlayerDataManager : MonoBehaviour
     [SerializeField] private List<LayerMask> playerLayers;
     private PlayerInputManager playerInputManager;
     public bool inLobby;
+
+    public static event Action<PlayerData> onPlayerConnect;
+    public static event Action<List<PlayerData>> onPlayerDisconnect;
+    public static event Action onPlayerInputDeviceDisconnect;
 
     private void Awake()
     {
@@ -35,17 +41,6 @@ public class PlayerDataManager : MonoBehaviour
         GameObject player = input.transform.parent.gameObject;
         PlayerData newList = new PlayerData(players.Count, player, input, input.devices[0]);
         players.Add(newList);
-        //players.Add(player);
-
-        // Temporal Code
-        if(this.gameObject.GetComponent<PlayerConnect>() != null)
-        {
-            Vector3 spawnPos = this.GetComponent<PlayerConnect>().getSpawnPos(players.Count - 1);
-            player.transform.position = spawnPos;
-            player.transform.Rotate(0,180,0);
-
-            this.GetComponent<PlayerConnect>().playerJoined(players.Count - 1);
-        }
 
         // Need to use the paren due to the structure of the prefab
         Transform playerParent = input.transform.parent;
@@ -77,7 +72,18 @@ public class PlayerDataManager : MonoBehaviour
             Debug.Log("Remove player: " + playerID);
         }
     }
+    public void RemovePlayer(InputDevice device)
+    {
+        int playerID = findPlayer(device);
+        if (playerID != -1)
+        {
+            Destroy(players[playerID].playerInScene);
+            players.RemoveAt(playerID);
+            Debug.Log("Remove player: " + playerID);
+        }
+    }
 
+    // Device Reconnection System
     private void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
         int playerID = 0;
@@ -87,26 +93,15 @@ public class PlayerDataManager : MonoBehaviour
                 Debug.Log($"Device removed: {device}");
                 playerID = findPlayer(device);
                 Debug.Log("Device Disconnected belonged to player #" + playerID);
-                if (this.gameObject.GetComponent<PlayerConnect>() != null)
-                {
-
-                    this.GetComponent<PlayerConnect>().playerLostConnect(players.Count - 1);
-                }
-                // Action Triggered When the Device Connection is Lost
                 break;
             case InputDeviceChange.Reconnected:
                 playerID = findPlayer(device);
                 Debug.Log("Device Reconnected attached to player #" + playerID);
-                // Action Triggered when the Device Connection is Regained
-                if (this.gameObject.GetComponent<PlayerConnect>() != null)
-                {
-
-                    this.GetComponent<PlayerConnect>().playerReConnect(players.Count - 1);
-                }
                 break;
         }
     }
 
+    // Find Player
     private int findPlayer(PlayerInput input)
     {
         for (int i = 0; i < players.Count; i++)
@@ -128,5 +123,25 @@ public class PlayerDataManager : MonoBehaviour
             }
         }
         return -1;
+    }
+
+    // Get Player Data
+    public PlayerData GetPlayerData(PlayerInput input)
+    {
+        int playerID = findPlayer(input);
+        if (playerID != -1)
+        {
+            return players[playerID];
+        }
+        return null;
+    }
+    public PlayerData GetPlayerData(InputDevice device)
+    {
+        int playerID = findPlayer(device);
+        if (playerID != -1)
+        {
+            return players[playerID];
+        }
+        return null;
     }
 }
