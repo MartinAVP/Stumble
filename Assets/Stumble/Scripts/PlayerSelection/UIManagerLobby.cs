@@ -37,7 +37,6 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private List<Vector3> spawnPositions = new List<Vector3>();
 
     //[Header("Misc")]
-    private int playersInLobby;
     private PlayerInputManager _playerInputManager;
     private PlayerDataManager _playerDataManager;
 
@@ -144,6 +143,9 @@ public class UIManagerLobby : MonoBehaviour
         // Clear the Spawn Positions
         spawnPositions.Clear();
 
+        // Clear players in Data
+        _playerDataManager.ClearPlayers();
+
         // Update the UI
         _playerQuantitySelectionPanel.gameObject.SetActive(true);
         _playerCardsPanel.gameObject.SetActive(false);
@@ -197,17 +199,6 @@ public class UIManagerLobby : MonoBehaviour
     {
         // Set the Player Position to one of the SpawnPoints
         player.GetPlayerInScene().gameObject.transform.position = spawnPositions[player.GetID()];
-
-
-        //int id = _playerInputManager.playerCount - 1;
-        // Set the position to its defined spawn Pos based on ID
-        //player.gameObject.transform.position = spawnPositions[id];
-        //Debug.Log("Set " +  player.GetID() + " to position " + spawnPositions[player.GetID()]);
-        // Add the new player to the List
-        //_players.Add(player.GetPlayerInScene());
-        // Set the Bottom Card Text of the Joined Player.
-        //bottomCards[id].GetComponentInChildren<TextMeshProUGUI>().text = "Player #" + (id + 1);
-        //sortCardsAndPlayer();
     }
 
     private void sortCardsAndPlayer() {
@@ -223,34 +214,21 @@ public class UIManagerLobby : MonoBehaviour
             bottomCards[i].GetComponentInChildren<TextMeshProUGUI>().text = "Player #" + (i + 1);
         }
         // Re Allign Players
+        // Create a temp List
+        List<PlayerData> tempData = _playerDataManager.players;
         for (int i = 0; i < _playerInputManager.playerCount; i++)
         {
-            //_playerDataManager = spawnPositions[i];
+            tempData[i].GetPlayerInScene().transform.position = spawnPositions[i];
         }
     }
 
     private void removeExistingPlayer(PlayerData player)
     {
-        Debug.Log("Player Left");
+        // Destroy the Player in the Scene
         Destroy(player.GetPlayerInScene());
+        // Re Sort the Players in the screen.
+        sortCardsAndPlayer();
     }
 
     // Device Reconnection System
-/*    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
-    {
-        int playerID = 0;
-        switch (change)
-        {
-            case InputDeviceChange.Removed:
-*//*                Debug.Log($"Device removed: {device}");
-                playerID = findPlayer(device);
-                Debug.Log("Device Disconnected belonged to player #" + playerID);*//*
-                this.GetComponent<PlayerDataManager>().RemovePlayer(device);
-                sortCardsAndPlayer();
-                break;
-            case InputDeviceChange.Reconnected:
-                Debug.Log("Device Reconnected attached to player #" + playerID);
-                break;
-        }
-    }*/
 }

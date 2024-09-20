@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
@@ -9,21 +10,37 @@ using UnityEngine.Windows;
 public class PlayerDataManager : MonoBehaviour
 {
     public List<PlayerData> players = new List<PlayerData>();
+
+    [Header("Player Layers")]
     [SerializeField] private List<LayerMask> playerLayers;
     private PlayerInputManager playerInputManager;
-    public bool inLobby;
 
+    // Subscribable Event
     public event Action<PlayerData> onPlayerConnect;
     public event Action<PlayerData> onPlayerDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
+    public event Action<PlayerData> onPlayerInputDeviceReconnect;
 
+    public static PlayerDataManager Instance { get; private set; }
+
+    // Singleton
     private void Awake()
     {
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        // If there is an instance, and it's not me, delete myself.
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
     private void OnEnable()
     {
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
+
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
         InputSystem.onDeviceChange += OnDeviceChange;
@@ -41,7 +58,7 @@ public class PlayerDataManager : MonoBehaviour
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData newList;
-        if(playerInputManager.playerCount == 0)
+        if(playerInputManager.playerCount == 1)
         {
             newList = new PlayerData(players.Count, player, input, input.devices[0], true);
         }
@@ -88,11 +105,14 @@ public class PlayerDataManager : MonoBehaviour
             Debug.Log("Remove player: " + playerID + " player remaining: " + players.Count);
         }
 
-        // Redefine Ids
+        // Redefine Ids and Set Host to Player 0
         for (int i = 0; i < players.Count; i++)
         {
             players[i].SetID(i);
+            players[i].SetHost(false);
         }
+
+        players[0].SetHost(true);
 
         // players = tempPlayers;
 
@@ -184,8 +204,31 @@ public class PlayerDataManager : MonoBehaviour
         }
         return null;
     }
+
+    // Get All Players
     public List<PlayerData> GetPlayers()
     {
         return players;
     }
+    public void ClearPlayers()
+    {
+        players.Clear();
+    }
+
+/*    public bool isHost(PlayerInput input)
+    {
+        int playerID = findPlayer(input);
+        if (playerID != -1)
+        {
+            if (players[playerID].CheckIsHost())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }*/
 }
