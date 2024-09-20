@@ -6,22 +6,27 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class PlayerData
 {
-    public PlayerData(int id, GameObject playerInScene, PlayerInput input, InputDevice device, bool isHost)
+    public PlayerData(int id, GameObject playerInScene, PlayerInput input, InputDevice device, bool isHost, CosmeticData cosmeticData)
     {
         this.id = id;
         this.playerInScene = playerInScene;
         this.input = input;
         this.device = device;
         this.isHost = isHost;
+        this.cosmeticData = cosmeticData;
     }
 
+    // Main Data
     public int id;                      // Id of the player [0,1,2,3]
     public GameObject playerInScene;    // The player in the scene (can be changed depending on the level)
     public PlayerInput input;           // Should be static for every scene once the player joins
     public InputDevice device;          // The Device the player is connected to
     public bool isHost;
-    // Add Cosmetics Here
 
+    // Add Cosmetics Here
+    public CosmeticData cosmeticData;
+
+    // Main
     #region Setters
     public void SetID(int id)
     {
@@ -44,7 +49,6 @@ public class PlayerData
         this.isHost = isHost;
     }
     #endregion
-
     #region Getters
     public int GetID()
     {
@@ -70,5 +74,20 @@ public class PlayerData
     {
         return this.isHost;
     }
+
+    public CosmeticData GetCosmeticData()
+    {
+        return this.cosmeticData;
+    }
     #endregion
+
+    // Cosmetics
+/*    public void SetColor(Material color)
+    {
+        this.color = color;
+    }
+
+    public Material GetColor(Material color) {
+        return this.color;
+    }*/
 }

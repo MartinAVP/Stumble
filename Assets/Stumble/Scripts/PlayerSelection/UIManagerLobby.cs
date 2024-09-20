@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(PlayerInputManager))]
+//[RequireComponent(typeof(PlayerInputManager))]
 public class UIManagerLobby : MonoBehaviour
 {
     [Header("Prefabs")]
@@ -36,8 +36,11 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private List<GameObject> bottomCards = new List<GameObject>();
     [SerializeField] private List<Vector3> spawnPositions = new List<Vector3>();
 
+    [Header("Player Holder")]
+    public GameObject playerHolder;
+
     //[Header("Misc")]
-    private PlayerInputManager _playerInputManager;
+    public PlayerInputManager _playerInputManager;
     private PlayerDataManager _playerDataManager;
 
     private void Start()
@@ -46,13 +49,26 @@ public class UIManagerLobby : MonoBehaviour
         _playerQuantitySelectionPanel.gameObject.SetActive(true);
         _playerCardsPanel.gameObject.SetActive(false);
         _playerAssignPanel.gameObject.SetActive(false);
+
+        //=-==================================================
+        _playerDataManager = PlayerDataManager.Instance;
+        //_playerInputManager = FindObjectOfType<PlayerInputManager>();
+        _playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        // Initialize Input Manager, Disable Player joining
+        _playerInputManager.DisableJoining();
+
+
+        _playerDataManager.onPlayerConnect += (player) => joinNewPlayer(player);
+        //_playerInputManager.onPlayerLeft += (player) => removeExistingPlayer(player);
+        //_playerDataManager.onPlayerDisconnect += (player) => removeExistingPlayer(player);
+        _playerDataManager.onPlayerInputDeviceDisconnect += (player) => removeExistingPlayer(player);
     }
 
     private void Awake()
     {
         // Get Player Manager
-        _playerInputManager = this.GetComponent<PlayerInputManager>();
-        _playerDataManager = this.GetComponent<PlayerDataManager>();
+        /*        _playerInputManager = this.GetComponent<PlayerInputManager>();
+                _playerDataManager = this.GetComponent<PlayerDataManager>();*/
 
         // Player Quantity Selection Buttons
         _increasePlayerQuantity.onClick.AddListener(AddToPlayerQuantity);
@@ -69,17 +85,10 @@ public class UIManagerLobby : MonoBehaviour
 
         // Subscribe to Controller Disconnection Event
         //InputSystem.onDeviceChange += OnDeviceChange;
-
-        // Initialize Input Manager, Disable Player joining
-        _playerInputManager.DisableJoining();
     }
 
     private void OnEnable()
     {
-        _playerDataManager.onPlayerConnect += (player) => joinNewPlayer(player);
-        //_playerInputManager.onPlayerLeft += (player) => removeExistingPlayer(player);
-        //_playerDataManager.onPlayerDisconnect += (player) => removeExistingPlayer(player);
-        _playerDataManager.onPlayerInputDeviceDisconnect += (player) => removeExistingPlayer(player);
     }
 
     private void OnDisable()
@@ -199,6 +208,12 @@ public class UIManagerLobby : MonoBehaviour
     {
         // Set the Player Position to one of the SpawnPoints
         player.GetPlayerInScene().gameObject.transform.position = spawnPositions[player.GetID()];
+
+        // Prevent Player Spawning If already At Max
+        if(_playerInputManager.playerCount >= targetPlayers)
+        {
+            _playerInputManager.DisableJoining();
+        }
     }
 
     private void sortCardsAndPlayer() {
@@ -228,6 +243,11 @@ public class UIManagerLobby : MonoBehaviour
         Destroy(player.GetPlayerInScene());
         // Re Sort the Players in the screen.
         sortCardsAndPlayer();
+
+        if (_playerInputManager.playerCount <= targetPlayers)
+        {
+            _playerInputManager.EnableJoining();
+        }
     }
 
     // Device Reconnection System

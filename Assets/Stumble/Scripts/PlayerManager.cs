@@ -13,16 +13,25 @@ public class PlayerManager : MonoBehaviour
     [Header("Cosmetic")]
     public Transform players3FillScreen;
 
-    private PlayerInputManager playerInputManager;
+    public PlayerInputManager playerInputManager;
+    private PlayerDataManager playerDataManager;
 
     private void Awake()
     {
         playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerDataManager = PlayerDataManager.Instance;
+        
     }
 
     private void OnEnable()
     {
         playerInputManager.onPlayerJoined += AddPlayer;
+
+/*        int playersInGame = playerInputManager.playerCount;
+        Debug.Log("The current player count is " + playersInGame);
+        string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
+        InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
+        playerInputManager.JoinPlayer(playersInGame, playersInGame, playerControlScheme, playerDevice);*/
     }
 
     private void OnDisable()
@@ -30,9 +39,27 @@ public class PlayerManager : MonoBehaviour
         playerInputManager.onPlayerJoined -= AddPlayer;
     }
 
+    private void Start()
+    {
+        int playersInGame = playerInputManager.playerCount;
+        Debug.Log("The current player count is " + playersInGame);
+        string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
+        InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
+        playerInputManager.JoinPlayer(playersInGame, playersInGame, playerControlScheme, playerDevice);
+/*        for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
+        {
+        }*/
+    }
+
     public void AddPlayer(PlayerInput player)
     {
         players.Add(player);
+
+        // Player Data Manager
+        //playerDataManager.GetPlayerData(player).SetPlayerInScene(player.gameObject);
+
+        playerDataManager.GetPlayerData(playerInputManager.playerCount - 1).SetPlayerInput(player);
+        playerDataManager.GetPlayerData(playerInputManager.playerCount - 1).SetPlayerInScene(player.transform.parent.gameObject);
 
         // Need to use the paren due to the structure of the prefab
         Transform playerParent = player.transform.parent;
@@ -52,7 +79,7 @@ public class PlayerManager : MonoBehaviour
         //Check for player Count
         //Debug.Log(players.Count);
         Player3ScreenToggle(players.Count);
-        
+
     }
 
     private void Player3ScreenToggle(int count)

@@ -21,6 +21,9 @@ public class PlayerDataManager : MonoBehaviour
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
 
+    // Scene Variables
+    public bool isLobby;
+
     public static PlayerDataManager Instance { get; private set; }
 
     // Singleton
@@ -34,6 +37,7 @@ public class PlayerDataManager : MonoBehaviour
         else
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -55,16 +59,17 @@ public class PlayerDataManager : MonoBehaviour
 
     public void AddPlayer(PlayerInput input)
     {
+        if (!isLobby) { return; }
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData newList;
         if(playerInputManager.playerCount == 1)
         {
-            newList = new PlayerData(players.Count, player, input, input.devices[0], true);
+            newList = new PlayerData(players.Count, player, input, input.devices[0], true, new CosmeticData());
         }
         else
         {
-            newList = new PlayerData(players.Count, player, input, input.devices[0], false);
+            newList = new PlayerData(players.Count, player, input, input.devices[0], false, new CosmeticData());
         }
 
         players.Add(newList);
@@ -92,6 +97,8 @@ public class PlayerDataManager : MonoBehaviour
     }
     public void RemovePlayer(PlayerInput input)
     {
+        Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
+        if (!isLobby) { return; }
         int playerID = findPlayer(input);
 /*        List<PlayerData> tempPlayers = new List<PlayerData>();
         tempPlayers = players;
@@ -112,7 +119,10 @@ public class PlayerDataManager : MonoBehaviour
             players[i].SetHost(false);
         }
 
-        players[0].SetHost(true);
+        if(playerInputManager.playerCount > 0)
+        {
+            players[0].SetHost(true);
+        }
 
         // players = tempPlayers;
 
@@ -192,6 +202,15 @@ public class PlayerDataManager : MonoBehaviour
         if (playerID != -1)
         {
             return players[playerID];
+        }
+        return null;
+    }
+    public PlayerData GetPlayerData(int id)
+    {
+        Debug.Log("Current Players PlayerDataMAnager: " + players.Count);
+        if (id <= players.Count)
+        {
+            return players[id];
         }
         return null;
     }
