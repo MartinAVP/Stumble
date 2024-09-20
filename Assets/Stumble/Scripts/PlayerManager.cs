@@ -41,14 +41,15 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
-        int playersInGame = playerInputManager.playerCount;
-        Debug.Log("The current player count is " + playersInGame);
-        string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
-        InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
-        playerInputManager.JoinPlayer(playersInGame, playersInGame, playerControlScheme, playerDevice);
-/*        for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
+        for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
         {
-        }*/
+            int playersInGame = playerInputManager.playerCount;
+            Debug.Log("The current player count is " + playersInGame);
+            string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
+            InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
+            playerInputManager.JoinPlayer(playersInGame, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
+            Debug.Log("Split Screen Index for " + i + " is " + playersInGame);
+        }
     }
 
     public void AddPlayer(PlayerInput player)
@@ -63,10 +64,12 @@ public class PlayerManager : MonoBehaviour
 
         // Need to use the paren due to the structure of the prefab
         Transform playerParent = player.transform.parent;
-        playerParent.position = spawnPoints[players.Count - 1].position;
+        playerParent.position = spawnPoints[playerInputManager.playerCount - 1].position;
+        playerParent.name = "Player #" + (playerInputManager.playerCount - 1);
+        Debug.Log("Setting player #" + (playerInputManager.playerCount - 1) + " to " + spawnPoints[playerInputManager.playerCount - 1].position);
 
         // Convert layer mask (bit) to an integer
-        int layerToAdd = (int)Mathf.Log(playerLayers[players.Count - 1].value, 2);
+        int layerToAdd = (int)Mathf.Log(playerLayers[playerInputManager.playerCount - 1].value, 2);
 
         //set the layer
         playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
@@ -75,6 +78,9 @@ public class PlayerManager : MonoBehaviour
 
         // set the action in the custom cinemachine Input handler
         playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
+
+        // Add Cosmetic [Prototype]
+        player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
 
         //Check for player Count
         //Debug.Log(players.Count);

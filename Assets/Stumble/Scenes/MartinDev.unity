@@ -1720,9 +1720,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1275040271}
   - component: {fileID: 1275040270}
-  - component: {fileID: 1275040273}
   - component: {fileID: 1275040274}
   - component: {fileID: 1275040275}
+  - component: {fileID: 1275040276}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1757,7 +1757,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1275040273
+--- !u!114 &1275040274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275040269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f409804cc7442ff4ea234086b47858f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoints:
+  - {fileID: 98436743}
+  - {fileID: 1195977933}
+  - {fileID: 1308305096}
+  - {fileID: 1064672957}
+  playerLayers:
+  - serializedVersion: 2
+    m_Bits: 128
+  - serializedVersion: 2
+    m_Bits: 256
+  - serializedVersion: 2
+    m_Bits: 512
+  - serializedVersion: 2
+    m_Bits: 1024
+  players3FillScreen: {fileID: 2069420100}
+  playerInputManager: {fileID: 1275040276}
+--- !u!114 &1275040275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275040269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b494b4f06565b3446a2fe94d25cc5a6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isLobby: 0
+--- !u!114 &1275040276
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1801,47 +1842,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &1275040274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275040269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f409804cc7442ff4ea234086b47858f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnPoints:
-  - {fileID: 98436743}
-  - {fileID: 1195977933}
-  - {fileID: 1308305096}
-  - {fileID: 1064672957}
-  playerLayers:
-  - serializedVersion: 2
-    m_Bits: 128
-  - serializedVersion: 2
-    m_Bits: 256
-  - serializedVersion: 2
-    m_Bits: 512
-  - serializedVersion: 2
-    m_Bits: 1024
-  players3FillScreen: {fileID: 2069420100}
-  playerInputManager: {fileID: 0}
---- !u!114 &1275040275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275040269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b494b4f06565b3446a2fe94d25cc5a6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isLobby: 0
 --- !u!1 &1308305095
 GameObject:
   m_ObjectHideFlags: 0
