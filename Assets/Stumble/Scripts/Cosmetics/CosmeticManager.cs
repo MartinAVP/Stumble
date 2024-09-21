@@ -74,6 +74,13 @@ public class CosmeticManager : MonoBehaviour
         }
     }
 
+    public void setDefaultCosmetic(PlayerData data)
+    {
+        // Set Color
+        data.GetCosmeticData().SetColorIndex(0);
+        data.GetCosmeticData().SetMaterialPicked(colors[0].color);
+    }
+
 /*    private void AddIfNotExist(PlayerData data)
     {
         // Add the Player to the Dictionary

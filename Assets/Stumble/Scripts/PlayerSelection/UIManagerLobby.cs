@@ -214,6 +214,10 @@ public class UIManagerLobby : MonoBehaviour
         {
             _playerInputManager.DisableJoining();
         }
+
+        // Set Default Cosmetics
+        //player.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = CosmeticManager.Instance.colors[0].color;
+        CosmeticManager.Instance.setDefaultCosmetic(player);
     }
 
     private void sortCardsAndPlayer() {

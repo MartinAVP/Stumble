@@ -207,7 +207,7 @@ public class PlayerDataManager : MonoBehaviour
     }
     public PlayerData GetPlayerData(int id)
     {
-        Debug.Log("Current Players PlayerDataMAnager: " + players.Count);
+        //Debug.Log("Current Players PlayerDataMAnager: " + players.Count);
         if (id <= players.Count)
         {
             return players[id];
