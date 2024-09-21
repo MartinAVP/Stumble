@@ -12,6 +12,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 {
     // Requierements
     public CharacterController controller;
+    public Transform camController;
     public Transform cam;
 
     #region Horizontal Movement
@@ -85,7 +86,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Awake()
     {
-        freelookcam = cam.gameObject.GetComponent<CinemachineFreeLook>();
+        freelookcam = camController.gameObject.GetComponent<CinemachineFreeLook>();
     }
 
     private void Start()
