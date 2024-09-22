@@ -76,7 +76,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [SerializeField] private float diveDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
+    private float playerRadius = 0.5f;
     [SerializeField] private bool rotateModelonDive = true;
+    #endregion
+
+    #region Base
+    private MovingBase currentBase;
     #endregion
 
     [Header("Debug")]
@@ -104,6 +109,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         ApplyVerticalMovement();
         Movement();
         Bumping();
+        isGrounded();
+
+    }
+
+    private void FixedUpdate()
+    {
+        MoveWithBase();
     }
 
     // Input Actions Callback Functions
@@ -278,19 +290,65 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private bool isGrounded()
     {
+        Vector3 start1 = transform.position + Vector3.forward * playerRadius;
+        Vector3 start2 = transform.position - Vector3.forward * playerRadius;
+        Vector3 start3 = transform.position + Vector3.right * playerRadius;
+        Vector3 start4 = transform.position - Vector3.right * playerRadius;
+
+        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
+
+        Debug.DrawLine(start1, start1 + delta, Color.red);
+        Debug.DrawLine(start2, start2 + delta, Color.blue);
+        Debug.DrawLine(start3, start3 + delta, Color.green);
+        Debug.DrawLine(start4, start4 + delta, Color.magenta);
+
+        bool isGrounded = false;
+        RaycastHit hit;
+
         // Check if the character is grounded using a raycast
         // Is grounded Raycast changes the origin based on proning state
-        if (!isProne)
+        isGrounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayers);
+        if (isGrounded == false) isGrounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayers);
+        if (isGrounded == false) isGrounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayers);
+        if (isGrounded == false) isGrounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayers);
+
+        Debug.Log("Player grounded? " + isGrounded);
+
+        if (isGrounded)
         {
-            //Debug.DrawRay(transform.position - new Vector3(0, playerHeight, 0), Vector3.down * 10, Color.white);
-            return Physics.Raycast(transform.position, Vector3.down, out _, (playerHeight / 2) + .2f, jumpableLayers);
+            Debug.Log("Grounded on: " + hit.transform.name);
+
+            MovingBase newBase = hit.transform.GetComponent<MovingBase>();
+            if (newBase != null)
+            {
+                currentBase = newBase;
+            }
         }
         else
         {
-            //Debug.DrawRay(transform.position - new Vector3(0, playerHeight, 0), Vector3.down * 10, Color.green);
-            return Physics.Raycast(transform.position - new Vector3(0, playerHeight, 0), Vector3.down, out _, (playerHeight / 2) + .2f, jumpableLayers);
+            currentBase = null;
         }
 
+        return isGrounded;
+    }
+
+    private void MoveWithBase()
+    {
+        if (currentBase == null) return;
+
+        transform.position += currentBase.ChangeInPosition;
+
+        Vector3 xzRotation = new Vector3(currentBase.ChangeInRotation.x, 0, currentBase.ChangeInRotation.z);
+        Vector3 yRotation = new Vector3(0, currentBase.ChangeInRotation.y, 0);
+
+        Quaternion orientation = transform.rotation;
+
+        transform.RotateAround(currentBase.transform.position, Vector3.right, currentBase.ChangeInRotation.x);
+        transform.RotateAround(currentBase.transform.position, Vector3.forward, currentBase.ChangeInRotation.z);
+
+        transform.rotation = orientation;
+
+        transform.RotateAround(currentBase.transform.position, Vector3.up, currentBase.ChangeInRotation.y);
     }
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)

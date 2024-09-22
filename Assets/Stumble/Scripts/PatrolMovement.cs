@@ -44,36 +44,15 @@ public class PatrolMovement : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
-
+            transform.position += (nextNode.position - transform.position).normalized * speed * Time.fixedDeltaTime; //Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
 
             //this is the toggle for the rotation, object will rotate to face the next node
             if (faceTowardNextNode == true)
             {
                 nodeRotation = Quaternion.LookRotation(nextNode.position - transform.position);
-                float rotationStrength = Mathf.Min(rotationSpeed * Time.deltaTime, 1);
+                float rotationStrength = Mathf.Min(rotationSpeed * Time.fixedDeltaTime, 1);
                 transform.rotation = Quaternion.Lerp(transform.rotation, nodeRotation, rotationStrength);
             }
-        }
-    }
-    
-    // this requires a trigger collider to function, place one and elevate it roughly 2.5-3 on the collider's y axis
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            player = other.gameObject; //get player object
-            other.transform.SetParent(transform); //sets platform as parrent
-        }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            player = null; //emptys out player object
-            other.transform.SetParent(null); //unparrents the player from platform
         }
     }
 }
