@@ -9,6 +9,7 @@ public enum RotationAxis
     Forward
 }
 
+[RequireComponent(typeof(MovingBase))]
 public class RotationMovement : MonoBehaviour
 {
     [SerializeField] protected float rotationSpeed = 2f;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MovingBase))]
 public class PatrolMovement : MonoBehaviour
 {
     // public int NodeCount = 4;
