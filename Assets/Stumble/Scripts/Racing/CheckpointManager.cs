@@ -35,13 +35,8 @@ public class CheckpointManager : MonoBehaviour
         InitializePlayers();
     }
 
-/*    private IEnumerator delayStart()
-    {
-        yield return new WaitForSeconds(.1f);
-        InitializePlayers();
-        Debug.Log("Players Initialized");
-    }
-*/
+
+    
     public void initializeCheckpoints()
     {
         Checkpoints.Clear();
@@ -62,7 +57,6 @@ public class CheckpointManager : MonoBehaviour
             Checkpoints.Add(data);
         }
     }
-
     public void InitializePlayers()
     {
         // Get all the players that joined and add them to the first checkpoint.
@@ -96,22 +90,23 @@ public class CheckpointManager : MonoBehaviour
             Checkpoints[currentCheckpoint].removePlayer(playerID);
             Checkpoints[targetCheckpoint].addPlayer(playerID);
         }
-/*        else
+
+        // Check if the checkpoint reached is the last one.
+        if(targetCheckpoint == Checkpoints.Count - 1)
         {
-            Debug.LogWarning("Player #" + playerID + "Tried to grab checkpoint #" + targetCheckpoint + " but is on Checkpoint #" + currentCheckpoint);
-        }*/
+            RaceManager.Instance.ReachFinishLine(data);
+        }
+
     }
 
     public void Respawn(GameObject playerObject)
     {
         int playerID = PlayerDataManager.Instance.GetPlayerData(playerObject.GetComponent<PlayerInput>()).GetID();
         int currentCheckpoint = findCheckpointPlayerIsin(playerID);
-        List<Transform> spawns = Checkpoints[currentCheckpoint].GetCheckpointSpawns();
 
-        // Handle Respawn
+        List<Transform> spawns = Checkpoints[currentCheckpoint].GetCheckpointSpawns();
         Transform spawn = GetNonBlockedSpawn(spawns);
-        // Parent Becomes spawn
-        //Instantiate(new GameObject(), spawns[0].transform.position, spawns[0].transform.rotation);
+
         //
         // BIG NOTE: Unity has a bug with the character controller, while enabled the position of the
         //           player cannot change if the character controller is enabled. A small disable
@@ -119,18 +114,18 @@ public class CheckpointManager : MonoBehaviour
         // 
         // Fix Link: https://discussions.unity.com/t/transform-position-does-not-work/802628/14
         //
+
         playerObject.GetComponent<CharacterController>().enabled = false;
         playerObject.transform.position = spawn.position;
         playerObject.GetComponent<CharacterController>().enabled = true;
 
         playerObject.transform.rotation = spawn.rotation;
-        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().transform.rotation = spawn.rotation;
+        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().m_YAxis.Value = .5f;
+/*        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().m_XAxis.Value = spawn.rotation.y;*/
+        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position, spawn.rotation);
 
-        // Children is teleported to Spawn
-/*        playerObject.transform.GetChild(0).transform.position = spawn.position;
-        playerObject.transform.GetChild(0).transform.rotation = spawn.rotation;*/
-        Debug.Log("The attached name: " + playerObject.transform.name);
-        //Debug.Log("The child name: " + playerObject.transform.GetChild(0).name);
+        Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
+        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
     }
 
     private Transform GetNonBlockedSpawn(List<Transform> spawns)
@@ -156,7 +151,6 @@ public class CheckpointManager : MonoBehaviour
         // Loop through each Checkpoint Data
         for (int i = 0; i < Checkpoints.Count; i++)
         {
-            //
             if (Checkpoints[i].GetPlayersInCheckpoint().Contains(ID))
             {
                 return Checkpoints[i].GetID();
