@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,8 +32,16 @@ public class CheckpointManager : MonoBehaviour
     private void Start()
     {
         initializeCheckpoints();
+        InitializePlayers();
     }
 
+/*    private IEnumerator delayStart()
+    {
+        yield return new WaitForSeconds(.1f);
+        InitializePlayers();
+        Debug.Log("Players Initialized");
+    }
+*/
     public void initializeCheckpoints()
     {
         Checkpoints.Clear();
@@ -52,51 +61,27 @@ public class CheckpointManager : MonoBehaviour
             CheckpointData data = new CheckpointData(i, checkpoint, spawns, new List<int>());
             Checkpoints.Add(data);
         }
+    }
 
+    public void InitializePlayers()
+    {
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
         List<PlayerData> tempPlayerList = PlayerDataManager.Instance.GetPlayers();
         List<Transform> checkPointSpawns = Checkpoints[0].GetCheckpointSpawns();
 
-        for (int i = 0;i < tempPlayerList.Count; i++)
+        for (int i = 0; i < tempPlayerList.Count; i++)
         {
             Transform spawn = checkPointSpawns[i].transform;
             // Parent Becomes spawn
+            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
             tempPlayerList[i].GetPlayerInScene().transform.position = spawn.position;
+            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
             tempPlayerList[i].GetPlayerInScene().transform.rotation = spawn.rotation;
 
-            // Children is teleported to Spawn
-/*            tempPlayerList[i].GetPlayerInScene().transform.GetChild(0).transform.position = spawn.position;
-            tempPlayerList[i].GetPlayerInScene().transform.GetChild(0).transform.rotation = spawn.rotation;*/
-/*
-            Debug.Log("The attached name: " + tempPlayerList[i].GetPlayerInScene().transform.name);
-            Debug.Log("The child name: " + tempPlayerList[i].GetPlayerInScene().transform.GetChild(0).name);*/
-
-            //Debug.Log(spawn.position);
-            //Debug.Log(Checkpoints.Count);
             Checkpoints[0].addPlayer(tempPlayerList[i].GetID());
         }
-
     }
-
-/*    public void ReachCheckpoint(GameObject playerObject, GameObject checkpoint)
-    {
-        // Check if the checkpoint id is bigger than the previous one           V adjust for Prefab
-        int playerID = PlayerDataManager.Instance.GetPlayerData(playerObject.transform.parent.GetComponent<PlayerInput>()).GetID();
-        int currentCheckpoint = findCheckpointPlayerIsin(playerID);
-        int targetCheckpoint = GetCheckpointID(checkpoint);
-
-        // Checkpoint is HIGHER than Current
-        if (targetCheckpoint > currentCheckpoint)
-        {
-            Checkpoints[currentCheckpoint].removePlayer(playerID);
-            Checkpoints[targetCheckpoint].addPlayer(playerID);
-        }
-        else
-        {
-            Debug.LogWarning("Player #" + playerID + "Tried to grab checkpoint #" + targetCheckpoint + " but is on Checkpoint #" + currentCheckpoint);
-        }
-    }*/
 
     public void ReachCheckpoint(PlayerData data, GameObject checkpoint)
     {
@@ -125,24 +110,21 @@ public class CheckpointManager : MonoBehaviour
 
         // Handle Respawn
         Transform spawn = GetNonBlockedSpawn(spawns);
-
-        Debug.Log("The namefor is " + playerObject.transform.name);
-        /*        playerObject.transform.parent.position = spawn.position;
-                playerObject.transform.parent.rotation = spawn.rotation;*/
-
-        Debug.LogWarning("Respawning Player");
         // Parent Becomes spawn
         //Instantiate(new GameObject(), spawns[0].transform.position, spawns[0].transform.rotation);
         //
         // BIG NOTE: Unity has a bug with the character controller, while enabled the position of the
         //           player cannot change if the character controller is enabled. A small disable
         //           fixes the problem.
+        // 
+        // Fix Link: https://discussions.unity.com/t/transform-position-does-not-work/802628/14
         //
         playerObject.GetComponent<CharacterController>().enabled = false;
         playerObject.transform.position = spawn.position;
         playerObject.GetComponent<CharacterController>().enabled = true;
 
         playerObject.transform.rotation = spawn.rotation;
+        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().transform.rotation = spawn.rotation;
 
         // Children is teleported to Spawn
 /*        playerObject.transform.GetChild(0).transform.position = spawn.position;
@@ -158,15 +140,15 @@ public class CheckpointManager : MonoBehaviour
         int randomSpawn = Random.Range(0, spawns.Count);
         bool spawnBlocked = true;
         //Debug.Log("Starting While Loop");
-/*        while (spawnBlocked == true)
+        while (spawnBlocked == true)
         {
             randomSpawn = Random.Range(0, spawns.Count);
             spawnBlocked = spawns[randomSpawn].GetComponent<CheckpointSpawn>().spawnBlocked;
-            Debug.Log("Checking " + randomSpawn + " to " + spawnBlocked);
-        }*/
+            Debug.Log("Check spawn #" + randomSpawn + " and is blocked: " + spawnBlocked);
+        }
 
-        //return spawns[randomSpawn];
-        return spawns[0];
+        return spawns[randomSpawn];
+        //return spawns[0];
     }
 
     private int findCheckpointPlayerIsin(int ID)
