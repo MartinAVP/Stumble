@@ -97,7 +97,7 @@ public class PlayerDataManager : MonoBehaviour
     }
     public void RemovePlayer(PlayerInput input)
     {
-        Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
+        //Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
         if (!isLobby) { return; }
         int playerID = findPlayer(input);
 /*        List<PlayerData> tempPlayers = new List<PlayerData>();

@@ -6,12 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class LobbySceneTesting : MonoBehaviour
 {
-    public GameObject playerHolder;
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(playerHolder);
-    }
 
     public void Load(string name)
     {
