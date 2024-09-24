@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MovingBase : MonoBehaviour
@@ -29,5 +30,29 @@ public class MovingBase : MonoBehaviour
 
         previousPosition = transform.position;
         previousRotation = transform.rotation;
+    }
+
+    public void PropagateToChildren()
+    {
+        Stack<Transform> stack = new Stack<Transform>();
+        stack.Push(transform);
+
+        while (stack.Count > 0)
+        {
+            Transform checkForMovingBase = stack.Pop();
+
+            Debug.Log("Checking " + checkForMovingBase.gameObject.name);
+
+            MovingBase movingBase = checkForMovingBase.GetComponent<MovingBase>();
+            if (movingBase == null)
+            {
+                checkForMovingBase.AddComponent<MovingBase>();
+            }
+
+            foreach (Transform t in checkForMovingBase)
+            {
+                stack.Push(t);
+            }
+        }
     }
 }

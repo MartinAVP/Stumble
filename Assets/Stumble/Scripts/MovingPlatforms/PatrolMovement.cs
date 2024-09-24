@@ -21,6 +21,12 @@ public class PatrolMovement : MonoBehaviour
 
     private Quaternion nodeRotation;
 
+    private void Start()
+    {
+        MovingBase movingBase = GetComponent<MovingBase>();
+        movingBase.PropagateToChildren();
+    }
+
     void FixedUpdate()
     {
         if (delayed == true)
