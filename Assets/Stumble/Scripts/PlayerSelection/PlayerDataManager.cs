@@ -97,7 +97,7 @@ public class PlayerDataManager : MonoBehaviour
     }
     public void RemovePlayer(PlayerInput input)
     {
-        Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
+        //Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
         if (!isLobby) { return; }
         int playerID = findPlayer(input);
 /*        List<PlayerData> tempPlayers = new List<PlayerData>();
@@ -167,6 +167,7 @@ public class PlayerDataManager : MonoBehaviour
             case InputDeviceChange.Reconnected:
                 playerID = findPlayer(device);
                 Debug.Log("Device Reconnected attached to player #" + playerID);
+                onPlayerInputDeviceReconnect.Invoke(players[findPlayer(device)]);
                 break;
         }
     }
@@ -232,6 +233,20 @@ public class PlayerDataManager : MonoBehaviour
     public void ClearPlayers()
     {
         players.Clear();
+    }
+
+    public int GetPlayersWithInGameCharacter()
+    {
+        int count = 0;
+        foreach (PlayerData player in players)
+        {
+            if(player.GetPlayerInScene() != null)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
 /*    public bool isHost(PlayerInput input)

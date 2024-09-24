@@ -26,13 +26,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     #region Bumping
     [Header("Bumping")]
-    [SerializeField] private float maxBumpSpeed = 2;
-    [SerializeField] private float bumpDrag = .2f;
-    [Space]
     [SerializeField] private float bumpForce = 20f;
     [Range(0f, 5f)][SerializeField] private float bumpUpwardForce = .2f;
-    private Vector3 bumpDir = Vector3.zero;
-    private float currentBumpSpeed = 0;
+    private Vector3 _bumpHorizontalVelocity = Vector3.zero;
     #endregion
 
     #region Rotating
@@ -108,7 +104,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         ApplyGravity();
         ApplyVerticalMovement();
         Movement();
-        Bumping();
         isGrounded();
 
     }
@@ -176,6 +171,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Direction Vector
         Vector3 moveDir;
 
+        // Composite movement
+        Vector3 inputVelocity;
+        Vector3 finalVelocity;
+
+        // Reduce bump velocity
+        if (_bumpHorizontalVelocity.magnitude > 0.05f)
+            _bumpHorizontalVelocity -= (deccelerationSpeed * 2) * _bumpHorizontalVelocity.normalized * Time.deltaTime;
+        else
+            _bumpHorizontalVelocity = Vector3.zero;
+
         // Check for proning state, prevents horizontal movement and character rotation
         if (isProne)
         {
@@ -183,12 +188,23 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized, Color.yellow);
 
             _horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
+
             if (_horizontalVelocity <= 0.05f)
             {
                 _horizontalVelocity = 0;
             }
 
-            controller.Move(moveDir.normalized * _horizontalVelocity * Time.deltaTime);
+            inputVelocity = moveDir * _horizontalVelocity;
+            finalVelocity = inputVelocity + _bumpHorizontalVelocity;
+
+            if (finalVelocity.magnitude < 0.05f)
+            {
+                _bumpHorizontalVelocity = Vector3.zero;
+                _horizontalVelocity = finalVelocity.magnitude;
+            }
+
+            controller.Move(finalVelocity * Time.deltaTime);
+
             return;
         }
 
@@ -196,19 +212,18 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         float targetAngle = Mathf.Atan2(rawDirection.x, rawDirection.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
         float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
 
+        // Player input detected, move player
         if (rawDirection.magnitude >= 0.1f)
         {
             moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             transform.rotation = Quaternion.Euler(0, angle, 0);
 
+            _horizontalVelocity += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
+
             if (_horizontalVelocity > maxSpeed)
             {
                 _horizontalVelocity = maxSpeed;
             }
-
-            _horizontalVelocity += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
-
-            controller.Move(moveDir.normalized * _horizontalVelocity * Time.deltaTime);
         }
 
         // No player input
@@ -218,32 +233,23 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
             _horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+
             if (_horizontalVelocity <= 0.05f)
             {
                 _horizontalVelocity = 0;
             }
-            controller.Move(moveDir.normalized * _horizontalVelocity * Time.deltaTime);
         }
-    }
 
-    /// <summary>
-    /// Apply Bumping to the player, not affected by player movement
-    /// </summary>
-    private void Bumping()
-    {
-        if(currentBumpSpeed <= 0) { return; }
-        currentBumpSpeed -= bumpDrag * bumpDir.magnitude * Time.deltaTime;
+        inputVelocity = moveDir * _horizontalVelocity;
+        finalVelocity = inputVelocity + _bumpHorizontalVelocity;
 
-        if (currentBumpSpeed > maxBumpSpeed + 0.1f)
+        if (finalVelocity.magnitude < maxSpeed)
         {
-            currentBumpSpeed = maxBumpSpeed;
+            _bumpHorizontalVelocity = Vector3.zero;
+            _horizontalVelocity = finalVelocity.magnitude;
         }
 
-        if (currentBumpSpeed <= 0.05f)
-        {
-            currentBumpSpeed = 0;
-        }
-        controller.Move(bumpDir * currentBumpSpeed * Time.deltaTime);
+        controller.Move(finalVelocity * Time.deltaTime);
     }
 
     /// <summary>
@@ -312,11 +318,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (isGrounded == false) isGrounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayers);
         if (isGrounded == false) isGrounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayers);
 
-        Debug.Log("Player grounded? " + isGrounded);
+        //Debug.Log("Player grounded? " + isGrounded);
 
         if (isGrounded)
         {
-            Debug.Log("Grounded on: " + hit.transform.name);
+            //Debug.Log("Grounded on: " + hit.transform.name);
 
             MovingBase newBase = hit.transform.GetComponent<MovingBase>();
             if (newBase != null)
@@ -418,10 +424,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
-        _verticalVelocity = 0;
-        _horizontalVelocity = 0;
-        currentBumpSpeed = magnitude;
-        bumpDir = direction.normalized * magnitude;
+        Vector3 bumpVelocity = direction * magnitude;
+
+        _bumpHorizontalVelocity = new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
+        _verticalVelocity += bumpVelocity.y;
     }
     #endregion
 
