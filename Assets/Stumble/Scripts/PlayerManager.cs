@@ -123,6 +123,8 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    // Game Pause Disconnection Management
+    private List<int> playerDisconnectIDs = new List<int>();
     private void OnPlayerInputDisconnected(PlayerData data)
     {
         Time.timeScale = 0;
