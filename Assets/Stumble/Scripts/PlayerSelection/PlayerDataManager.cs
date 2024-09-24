@@ -234,6 +234,20 @@ public class PlayerDataManager : MonoBehaviour
         players.Clear();
     }
 
+    public int GetPlayersWithInGameCharacter()
+    {
+        int count = 0;
+        foreach (PlayerData player in players)
+        {
+            if(player.GetPlayerInScene() != null)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
 /*    public bool isHost(PlayerInput input)
     {
         int playerID = findPlayer(input);
