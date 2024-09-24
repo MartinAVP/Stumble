@@ -45,8 +45,6 @@ public class PatrolMovement : MonoBehaviour
         }
         else
         {
-            transform.position += (nextNode.position - transform.position).normalized * speed * Time.fixedDeltaTime; //Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
-
             //this is the toggle for the rotation, object will rotate to face the next node
             if (faceTowardNextNode == true)
             {
@@ -54,6 +52,8 @@ public class PatrolMovement : MonoBehaviour
                 float rotationStrength = Mathf.Min(rotationSpeed * Time.fixedDeltaTime, 1);
                 transform.rotation = Quaternion.Lerp(transform.rotation, nodeRotation, rotationStrength);
             }
+
+            transform.position = Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
         }
     }
 }
