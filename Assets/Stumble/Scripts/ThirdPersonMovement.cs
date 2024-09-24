@@ -312,11 +312,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (isGrounded == false) isGrounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayers);
         if (isGrounded == false) isGrounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayers);
 
-        Debug.Log("Player grounded? " + isGrounded);
+        //Debug.Log("Player grounded? " + isGrounded);
 
         if (isGrounded)
         {
-            Debug.Log("Grounded on: " + hit.transform.name);
+            //Debug.Log("Grounded on: " + hit.transform.name);
 
             MovingBase newBase = hit.transform.GetComponent<MovingBase>();
             if (newBase != null)

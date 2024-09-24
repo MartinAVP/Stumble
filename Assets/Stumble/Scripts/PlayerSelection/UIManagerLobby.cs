@@ -37,7 +37,7 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private List<Vector3> spawnPositions = new List<Vector3>();
 
     [Header("Player Holder")]
-    public GameObject playerHolder;
+/*    public GameObject playerHolder;*/
 
     //[Header("Misc")]
     public PlayerInputManager _playerInputManager;
@@ -194,7 +194,7 @@ public class UIManagerLobby : MonoBehaviour
         float start = width / (targetPlayers * 2); // Starting value
         float step = start * 2; // Step size between values
 
-        Debug.Log(width);
+        //Debug.Log(width);
         for (int i = 0; i < targetPlayers; i++)
         {
             float UIPos = start + (i * step);
