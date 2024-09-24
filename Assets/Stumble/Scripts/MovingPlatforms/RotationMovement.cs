@@ -25,6 +25,9 @@ public class RotationMovement : MonoBehaviour
             startAxis = transform.right;
         else if (rotateAroundAxis ==  RotationAxis.Forward)
             startAxis = transform.forward;
+
+        MovingBase movingBase = GetComponent<MovingBase>();
+        movingBase.PropagateToChildren();
     }
 
     void FixedUpdate()
