@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,8 @@ public class RaceManager : MonoBehaviour
 {
     private Stopwatch stopwatch;
     public SortedDictionary<float, PlayerData> positions = new SortedDictionary<float, PlayerData>();
+
+    public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
 
     public static RaceManager Instance { get; private set; }
 
@@ -49,6 +52,11 @@ public class RaceManager : MonoBehaviour
         // Add player to the finish
         positions.Add(GetElapsedTime(), player);
         UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
+
+        if(positions.Count == PlayerDataManager.Instance.GetPlayers().Count)
+        {
+            onCompleteFinish.Invoke(positions);
+        }
     }
 
     public float GetElapsedTime()

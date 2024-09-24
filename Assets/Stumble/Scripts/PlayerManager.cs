@@ -127,11 +127,22 @@ public class PlayerManager : MonoBehaviour
     private List<int> playerDisconnectIDs = new List<int>();
     private void OnPlayerInputDisconnected(PlayerData data)
     {
-        Time.timeScale = 0;
+        playerDisconnectIDs.Add(data.id);
+
+        if(playerDisconnectIDs.Count > 0)
+        {
+            // Freeze Time
+            Time.timeScale = 0;
+        }
     }
 
     private void OnPlayerInputReconnected(PlayerData data)
     {
-        Time.timeScale += 1;
+        playerDisconnectIDs.Remove(data.GetID());
+
+        if(playerDisconnectIDs.Count == 0)
+        {
+            Time.timeScale += 1;
+        }
     }
 }
