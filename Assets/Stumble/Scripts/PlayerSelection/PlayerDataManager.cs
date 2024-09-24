@@ -167,6 +167,7 @@ public class PlayerDataManager : MonoBehaviour
             case InputDeviceChange.Reconnected:
                 playerID = findPlayer(device);
                 Debug.Log("Device Reconnected attached to player #" + playerID);
+                onPlayerInputDeviceReconnect.Invoke(players[findPlayer(device)]);
                 break;
         }
     }

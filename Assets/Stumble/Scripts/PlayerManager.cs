@@ -20,7 +20,10 @@ public class PlayerManager : MonoBehaviour
     {
         playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerDataManager = PlayerDataManager.Instance;
+
         playerInputManager.onPlayerJoined += AddPlayer;
+        playerDataManager.onPlayerInputDeviceDisconnect += OnPlayerInputDisconnected;
+        playerDataManager.onPlayerInputDeviceReconnect += OnPlayerInputReconnected;
     }
 
     private void OnEnable()
@@ -47,6 +50,9 @@ public class PlayerManager : MonoBehaviour
     private void OnDisable()
     {
         playerInputManager.onPlayerJoined -= AddPlayer;
+
+        playerDataManager.onPlayerInputDeviceDisconnect -= OnPlayerInputDisconnected;
+        playerDataManager.onPlayerInputDeviceReconnect -= OnPlayerInputReconnected;
     }
 
     private void Start()
@@ -115,5 +121,15 @@ public class PlayerManager : MonoBehaviour
         {
             players3FillScreen.transform.gameObject.SetActive(false);
         }
+    }
+
+    private void OnPlayerInputDisconnected(PlayerData data)
+    {
+        Time.timeScale = 0;
+    }
+
+    private void OnPlayerInputReconnected(PlayerData data)
+    {
+        Time.timeScale += 1;
     }
 }
