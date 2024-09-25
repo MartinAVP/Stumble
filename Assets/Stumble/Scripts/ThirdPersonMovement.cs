@@ -77,7 +77,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     #endregion
 
     #region Base
-    private MovingBase currentBase;
+    private MovingPlatformData currentBase;
     #endregion
 
     [Header("Debug")]
@@ -328,7 +328,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             //Debug.Log("Grounded on: " + hit.transform.name);
 
-            MovingBase newBase = hit.transform.GetComponent<MovingBase>();
+            MovingPlatformData newBase = hit.transform.GetComponent<MovingPlatformData>();
             if (newBase != null)
             {
                 currentBase = newBase;
@@ -348,18 +348,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         controller.enabled = false;
 
-        transform.position += currentBase.ancestor.ChangeInPosition;
-
-        float f = Time.fixedDeltaTime / Time.deltaTime;
+        transform.position += currentBase.parent.ChangeInPosition;
 
         Quaternion orientation = transform.rotation;
 
-        transform.RotateAround(currentBase.ancestor.transform.position, Vector3.right, currentBase.ancestor.ChangeInRotation.x);
-        transform.RotateAround(currentBase.ancestor.transform.position, Vector3.forward, currentBase.ancestor.ChangeInRotation.z);
+        transform.RotateAround(currentBase.parent.transform.position, Vector3.right, currentBase.parent.ChangeInRotation.x);
+        transform.RotateAround(currentBase.parent.transform.position, Vector3.forward, currentBase.parent.ChangeInRotation.z);
 
         transform.rotation = orientation;
 
-        transform.RotateAround(currentBase.ancestor.transform.position, Vector3.up, currentBase.ancestor.ChangeInRotation.y);
+        transform.RotateAround(currentBase.parent.transform.position, Vector3.up, currentBase.parent.ChangeInRotation.y);
 
         controller.enabled = true;
     }
