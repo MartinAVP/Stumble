@@ -101,10 +101,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Update()
     {
+        isGrounded();
         ApplyGravity();
         ApplyVerticalMovement();
         Movement();
-        isGrounded();
 
     }
 
@@ -342,19 +342,21 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if (currentBase == null) return;
 
-        transform.position += currentBase.ChangeInPosition;
+        transform.position += currentBase.owner.ChangeInPosition;
 
-        Vector3 xzRotation = new Vector3(currentBase.ChangeInRotation.x, 0, currentBase.ChangeInRotation.z);
-        Vector3 yRotation = new Vector3(0, currentBase.ChangeInRotation.y, 0);
+        print("change in rot " + currentBase.owner.changeInRotation);
+
+        Vector3 xzRotation = new Vector3(currentBase.owner.ChangeInRotation.x, 0, currentBase.owner.ChangeInRotation.z);
+        Vector3 yRotation = new Vector3(0, currentBase.owner.ChangeInRotation.y, 0);
 
         Quaternion orientation = transform.rotation;
 
-        transform.RotateAround(currentBase.transform.position, Vector3.right, currentBase.ChangeInRotation.x);
-        transform.RotateAround(currentBase.transform.position, Vector3.forward, currentBase.ChangeInRotation.z);
+        transform.RotateAround(currentBase.owner.transform.position, Vector3.right, currentBase.owner.ChangeInRotation.x);
+        transform.RotateAround(currentBase.owner.transform.position, Vector3.forward, currentBase.owner.ChangeInRotation.z);
 
         transform.rotation = orientation;
 
-        transform.RotateAround(currentBase.transform.position, Vector3.up, currentBase.ChangeInRotation.y);
+        transform.RotateAround(currentBase.owner.transform.position, Vector3.up, currentBase.owner.ChangeInRotation.y);
     }
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
