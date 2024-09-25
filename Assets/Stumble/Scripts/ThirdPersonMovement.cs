@@ -22,6 +22,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [SerializeField] private float maxSpeed = 10;
     private Vector3 rawDirection;
     private float _horizontalVelocity = 0;
+    private bool _grounded = false;
     #endregion
 
     #region Bumping
@@ -112,11 +113,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         MoveWithBase();
     }
 
-    private void LateUpdate()
-    {
-
-    }
-
     // Input Actions Callback Functions
     // ===========================================================================================
     #region Player Input Functions
@@ -173,7 +169,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private void Movement()
     {
         // Direction Vector
-        Vector3 moveDir;
+        Vector3 moveDir = transform.forward.normalized;
 
         // Composite movement
         Vector3 inputVelocity;
@@ -312,36 +308,33 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Debug.DrawLine(start3, start3 + delta, Color.green);
         Debug.DrawLine(start4, start4 + delta, Color.magenta);
 
-        bool isGrounded = false;
+        _grounded = false;
         RaycastHit hit;
 
         // Check if the character is grounded using a raycast
         // Is grounded Raycast changes the origin based on proning state
-        isGrounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayers);
-        if (isGrounded == false) isGrounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayers);
-        if (isGrounded == false) isGrounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayers);
-        if (isGrounded == false) isGrounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayers);
+        _grounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayers);
+        if (_grounded == false) _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayers);
+        if (_grounded == false) _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayers);
+        if (_grounded == false) _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayers);
 
-        //Debug.Log("Player grounded? " + isGrounded);
-
-        if (isGrounded)
+        if (_grounded)
         {
-            //Debug.Log("Grounded on: " + hit.transform.name);
-
             MovingPlatformData newBase = hit.transform.GetComponent<MovingPlatformData>();
-            if (newBase != null)
-            {
+            if(newBase != null)
                 currentBase = newBase;
-            }
         }
         else
         {
             currentBase = null;
         }
 
-        return isGrounded;
+        return _grounded;
     }
 
+    /// <summary>
+    /// Stick the player to moving platforms.
+    /// </summary>
     private void MoveWithBase()
     {
         if (currentBase == null) return;
