@@ -24,10 +24,11 @@ public class PatrolMovement : MonoBehaviour
     private void Start()
     {
         MovingBase movingBase = GetComponent<MovingBase>();
+        movingBase.ancestor = movingBase;
         movingBase.PropagateToChildren();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if (delayed == true)
         {

@@ -11,8 +11,12 @@ public class MovingBase : MonoBehaviour
     private Vector3 previousPosition = Vector3.zero;
     private Quaternion previousRotation;
 
-    public Vector3 ChangeInPosition { get { return changeInPosition; } }
-    public Vector3 ChangeInRotation { get { return changeInRotation; } }
+    public Vector3 ChangeInPosition { get { resetPrevious = false; return transform.position - previousPosition; } }
+    public Vector3 ChangeInRotation { get { resetPrevious = false; return (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles; } }
+
+    public MovingBase ancestor;
+
+    public bool resetPrevious = false;
 
     private void Start()
     {
@@ -23,13 +27,15 @@ public class MovingBase : MonoBehaviour
         previousRotation = transform.rotation;
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         changeInPosition = transform.position - previousPosition;
         changeInRotation = (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles;
 
         previousPosition = transform.position;
         previousRotation = transform.rotation;
+
+        resetPrevious = true;
     }
 
     public void PropagateToChildren()
@@ -46,8 +52,9 @@ public class MovingBase : MonoBehaviour
             MovingBase movingBase = checkForMovingBase.GetComponent<MovingBase>();
             if (movingBase == null)
             {
-                checkForMovingBase.AddComponent<MovingBase>();
+                movingBase = checkForMovingBase.AddComponent<MovingBase>();
             }
+            movingBase.ancestor = ancestor;
 
             foreach (Transform t in checkForMovingBase)
             {

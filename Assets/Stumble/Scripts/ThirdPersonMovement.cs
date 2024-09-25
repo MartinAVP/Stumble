@@ -97,6 +97,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Set the player Height
         controller.height = playerHeight;
+
+        //Application.targetFrameRate = 20;
+
+        controller.detectCollisions = false;
     }
 
     private void Update()
@@ -105,12 +109,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         ApplyVerticalMovement();
         Movement();
         isGrounded();
-
+        MoveWithBase();
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
-        MoveWithBase();
+
     }
 
     // Input Actions Callback Functions
@@ -342,19 +346,22 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if (currentBase == null) return;
 
-        transform.position += currentBase.ChangeInPosition;
+        controller.enabled = false;
 
-        Vector3 xzRotation = new Vector3(currentBase.ChangeInRotation.x, 0, currentBase.ChangeInRotation.z);
-        Vector3 yRotation = new Vector3(0, currentBase.ChangeInRotation.y, 0);
+        transform.position += currentBase.ancestor.ChangeInPosition;
+
+        float f = Time.fixedDeltaTime / Time.deltaTime;
 
         Quaternion orientation = transform.rotation;
 
-        transform.RotateAround(currentBase.transform.position, Vector3.right, currentBase.ChangeInRotation.x);
-        transform.RotateAround(currentBase.transform.position, Vector3.forward, currentBase.ChangeInRotation.z);
+        transform.RotateAround(currentBase.ancestor.transform.position, Vector3.right, currentBase.ancestor.ChangeInRotation.x);
+        transform.RotateAround(currentBase.ancestor.transform.position, Vector3.forward, currentBase.ancestor.ChangeInRotation.z);
 
         transform.rotation = orientation;
 
-        transform.RotateAround(currentBase.transform.position, Vector3.up, currentBase.ChangeInRotation.y);
+        transform.RotateAround(currentBase.ancestor.transform.position, Vector3.up, currentBase.ancestor.ChangeInRotation.y);
+
+        controller.enabled = true;
     }
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)

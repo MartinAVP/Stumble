@@ -27,11 +27,14 @@ public class RotationMovement : MonoBehaviour
             startAxis = transform.forward;
 
         MovingBase movingBase = GetComponent<MovingBase>();
+        movingBase.ancestor = movingBase;
         movingBase.PropagateToChildren();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         transform.RotateAround(transform.position, startAxis, rotationSpeed * Time.deltaTime);
+
+        //print(Time.deltaTime * rotationSpeed);
     }
 }
