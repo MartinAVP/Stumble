@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(MovingBase))]
-public class PatrolMovement : MovingPlatform
+public class PatrolMovement : MonoBehaviour
 {
     // public int NodeCount = 4;
     private int CurrentNode = 0;
@@ -24,17 +23,12 @@ public class PatrolMovement : MovingPlatform
 
     private void Start()
     {
-        base.Start();
-
         MovingBase movingBase = GetComponent<MovingBase>();
-        movingBase.owner = this;
         movingBase.PropagateToChildren();
     }
 
     void FixedUpdate()
     {
-        base.FixedUpdate();
-
         if (delayed == true)
         {
             delayCounter += Time.deltaTime;

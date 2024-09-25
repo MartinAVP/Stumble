@@ -10,17 +10,15 @@ public enum RotationAxis
 }
 
 [RequireComponent(typeof(MovingBase))]
-public class RotationMovement : MovingPlatform
+public class RotationMovement : MonoBehaviour
 {
     [SerializeField] protected float rotationSpeed = 2f;
     [SerializeField] protected RotationAxis rotateAroundAxis;
 
     private Vector3 startAxis;
     
-    protected void Start()
+    private void Start()
     {
-        base.Start();
-
         if (rotateAroundAxis == RotationAxis.Up)
             startAxis = transform.up;
         else if (rotateAroundAxis == RotationAxis.Right)
@@ -29,14 +27,11 @@ public class RotationMovement : MovingPlatform
             startAxis = transform.forward;
 
         MovingBase movingBase = GetComponent<MovingBase>();
-        movingBase.owner = this;
         movingBase.PropagateToChildren();
     }
 
-    protected void FixedUpdate()
+    void FixedUpdate()
     {
-        base.FixedUpdate();
-
         transform.RotateAround(transform.position, startAxis, rotationSpeed * Time.deltaTime);
     }
 }
