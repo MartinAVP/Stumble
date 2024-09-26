@@ -77,19 +77,22 @@ public class CarSpawner : MonoBehaviour
 
                 int Prev_Prev_S = Prev_S;
                 Prev_S = S;
+                //Debug.Log(S + Prev_S + Prev_Prev_S);
 
                 if (ActiveLanes >= 3)
                 {
                     while (S == Prev_S || S == Prev_Prev_S)
                     {
-                        S = Random.Range(0, 3);
+                        //Debug.Log("3 " + S + Prev_S + Prev_Prev_S);
+                        S = Random.Range(0, 4);
                     }
                 }
                 else
                 {
                     while (S == Prev_S)
                     {
-                        S = Random.Range(0, 3);
+                        //Debug.Log("2" + S + Prev_S + Prev_Prev_S);
+                        S = Random.Range(0, 4);
                     }
                 }
                 
@@ -121,7 +124,7 @@ public class CarSpawner : MonoBehaviour
             else
             {
                 //Debug.Log("c");
-                yield return new WaitForSecondsRealtime(FlatWaveDelay);
+                yield return new WaitForSecondsRealtime(FlatWaveDelay); 
                 spawning = true;
                 CarSpawnerCounter = 0;
             }
