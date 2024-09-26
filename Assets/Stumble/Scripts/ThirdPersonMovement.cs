@@ -111,7 +111,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Movement();
         isGrounded();
         MoveWithBase();
+        isFloored = isGrounded();
     }
+
+    public bool isFloored;
 
     // Input Actions Callback Functions
     // ===========================================================================================
@@ -135,7 +138,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (!context.started) return;
 
         // Check if player is prone, unprone if proned;
-        if (isProne) { toggleProne(false); return; }
+        if (isProne) {
+            Debug.Log("Un Toggle Prone");
+            toggleProne(false);
+            return; 
+        }
 
         // Check if player is on the air
         if (!isGrounded()) return;
@@ -296,10 +303,24 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private bool isGrounded()
     {
-        Vector3 start1 = transform.position + Vector3.forward * playerRadius;
-        Vector3 start2 = transform.position - Vector3.forward * playerRadius;
-        Vector3 start3 = transform.position + Vector3.right * playerRadius;
-        Vector3 start4 = transform.position - Vector3.right * playerRadius;
+        Vector3 start1, start2, start3, start4 = Vector3.zero;
+
+        // Player not proning
+        if (!isProne)
+        {
+            start1 = transform.position + Vector3.forward * playerRadius;
+            start2 = transform.position - Vector3.forward * playerRadius;
+            start3 = transform.position + Vector3.right * playerRadius;
+            start4 = transform.position - Vector3.right * playerRadius;
+        }
+        // Player in Prone
+        else
+        {
+            start1 = transform.position + (Vector3.down * .4f) + Vector3.forward * playerRadius * 2;
+            start2 = transform.position + (Vector3.down * .4f) - Vector3.forward * playerRadius * 2;
+            start3 = transform.position + (Vector3.down * .4f) + Vector3.right * playerRadius;
+            start4 = transform.position + (Vector3.down * .4f) - Vector3.right * playerRadius;
+        }
 
         Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
 
@@ -393,6 +414,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         else
         {
+            if (!isGrounded()) return;
+
             isProne = false;
             if (rotateModelonDive)
             {

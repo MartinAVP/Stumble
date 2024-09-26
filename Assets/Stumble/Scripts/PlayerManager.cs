@@ -78,9 +78,9 @@ public class PlayerManager : MonoBehaviour
         //playerDataManager.GetPlayerData(player).SetPlayerInScene(player.gameObject);
         //int playerID = playerDataManager.GetPlayers().Count;
         int playerID = playerDataManager.GetPlayersWithInGameCharacter();
-        Debug.Log("Current Player Count: " +  playerID);
-        Debug.Log("Current Player on Input Count: " +  playerInputManager.playerCount);
-        Debug.Log("Current Player on New Count: " +  playerDataManager.GetPlayersWithInGameCharacter());
+        //Debug.Log("Current Player Count: " +  playerID);
+        //Debug.Log("Current Player on Input Count: " +  playerInputManager.playerCount);
+        //Debug.Log("Current Player on New Count: " +  playerDataManager.GetPlayersWithInGameCharacter());
 
         playerDataManager.GetPlayerData(playerID).SetPlayerInput(player);
         playerDataManager.GetPlayerData(playerID).SetPlayerInScene(player.transform.gameObject);
