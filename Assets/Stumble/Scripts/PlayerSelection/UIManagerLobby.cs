@@ -206,6 +206,8 @@ public class UIManagerLobby : MonoBehaviour
 
     private void joinNewPlayer(PlayerData player)
     {
+        // Check if the player is not in the lobby
+        if (!PlayerDataManager.Instance.isLobby) { return; }
         // Set the Player Position to one of the SpawnPoints
         player.GetPlayerInScene().gameObject.transform.position = spawnPositions[player.GetID()];
 
@@ -243,6 +245,8 @@ public class UIManagerLobby : MonoBehaviour
 
     private void removeExistingPlayer(PlayerData player)
     {
+        // Check if the player is not in the lobby
+        if (!PlayerDataManager.Instance.isLobby) { return; }
         // Destroy the Player in the Scene
         Destroy(player.GetPlayerInScene());
         // Re Sort the Players in the screen.
