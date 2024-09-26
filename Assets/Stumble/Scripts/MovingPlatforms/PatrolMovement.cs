@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MovingBase))]
-public class PatrolMovement : MonoBehaviour
+public class PatrolMovement : MovingPlatform
 {
     // public int NodeCount = 4;
     private int CurrentNode = 0;
@@ -21,7 +20,7 @@ public class PatrolMovement : MonoBehaviour
 
     private Quaternion nodeRotation;
 
-    void FixedUpdate()
+    public override void Move()
     {
         if (delayed == true)
         {
@@ -45,8 +44,6 @@ public class PatrolMovement : MonoBehaviour
         }
         else
         {
-            transform.position += (nextNode.position - transform.position).normalized * speed * Time.fixedDeltaTime; //Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
-
             //this is the toggle for the rotation, object will rotate to face the next node
             if (faceTowardNextNode == true)
             {
@@ -54,6 +51,8 @@ public class PatrolMovement : MonoBehaviour
                 float rotationStrength = Mathf.Min(rotationSpeed * Time.fixedDeltaTime, 1);
                 transform.rotation = Quaternion.Lerp(transform.rotation, nodeRotation, rotationStrength);
             }
+
+            transform.position = Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
         }
     }
 }

@@ -13,7 +13,8 @@ public class UnstablePlatformManager : MonoBehaviour
 
     public void Fall()
     {
-        if (!triggered)
+        print("Start Falling");
+        if (triggered == false)
         {
             triggered = true;
             StartCoroutine(StartFallDelay());
