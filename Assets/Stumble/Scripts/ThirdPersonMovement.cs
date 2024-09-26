@@ -156,6 +156,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if(lockMovement) return;
 
+        // Prevent Diving when on the ground
+        if (isGrounded()) return;
+
         //Debug.Log("Dive");
         // Change Model
         if (context.started)
