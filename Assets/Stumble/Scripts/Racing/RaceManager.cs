@@ -10,6 +10,7 @@ public class RaceManager : MonoBehaviour
     public SortedDictionary<float, PlayerData> positions = new SortedDictionary<float, PlayerData>();
 
     public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
+    public event Action onRaceStart;
 
     public static RaceManager Instance { get; private set; }
 
@@ -30,7 +31,8 @@ public class RaceManager : MonoBehaviour
     private void Start()
     {
         stopwatch = new Stopwatch();
-        stopwatch.Start();
+        //StartRace();
+        StartCoroutine(StartCinematic());
     }
 
     private void Update()
@@ -39,6 +41,40 @@ public class RaceManager : MonoBehaviour
 
         //UnityEngine.Debug.Log(GetElapsedTimeString());
     }
+    
+    public IEnumerator StartCinematic()
+    {
+        LockPlayersMovement(true);
+
+        CinematicController.Instance.StartTimeline();
+        yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+        StartRace();
+    }
+
+    public void StartRace()
+    {
+        // Lock all Player Movement
+        foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+        {
+            data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+        }
+        onRaceStart.Invoke();
+        StartCoroutine(ComenzeRacing());
+    }
+
+    public IEnumerator ComenzeRacing()
+    {
+        yield return new WaitForSeconds(5.0f);
+        // Start the Timer
+        stopwatch.Start();
+        UnityEngine.Debug.LogWarning("Finalized Timer");
+
+        // Unlock all Player Movement
+        LockPlayersMovement(false);
+
+    }
+
+
     public void ReachFinishLine(PlayerData player)
     {
         
@@ -53,6 +89,7 @@ public class RaceManager : MonoBehaviour
         positions.Add(GetElapsedTime(), player);
         UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
 
+        // Check if the last player reached the checkpoint
         if(positions.Count == PlayerDataManager.Instance.GetPlayers().Count)
         {
             onCompleteFinish.Invoke(positions);
@@ -63,10 +100,26 @@ public class RaceManager : MonoBehaviour
     {
         return (float)stopwatch.Elapsed.TotalSeconds;
     }
-
     public string GetElapsedTimeString()
     {
         return $"{stopwatch.Elapsed.Hours:D2}:{stopwatch.Elapsed.Minutes:D2}:{stopwatch.Elapsed.Seconds:D2}.{stopwatch.Elapsed.Milliseconds:D3}";
     }
 
+    private void LockPlayersMovement(bool value)
+    {
+        if (value)
+        {
+            foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+            {
+                data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+            }
+        }
+        else
+        {
+            foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+            {
+                data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
+            }
+        }
+    }
 }

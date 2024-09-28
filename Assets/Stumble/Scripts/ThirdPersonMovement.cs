@@ -139,7 +139,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Check if player is prone, unprone if proned;
         if (isProne) {
-            Debug.Log("Un Toggle Prone");
+            //Debug.Log("Un Toggle Prone");
             toggleProne(false);
             return; 
         }
