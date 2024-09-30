@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class MenuPlayerManager : MonoBehaviour
 {
@@ -35,37 +37,43 @@ public class MenuPlayerManager : MonoBehaviour
 
     private void Start()
     {
-        // Spawn the player
-        int playersInGame = playerInputManager.playerCount;
-        Debug.Log("The current player count is " + playersInGame);
-        string playerControlScheme = playerDataManager.GetPlayerData(0).input.currentControlScheme;
-        InputDevice playerDevice = playerDataManager.GetPlayerData(0).device;
-        //playerInputManager.JoinPlayer(0, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
-        playerInputManager.JoinPlayer(0, playersInGame, playerControlScheme, playerDevice);
-        Debug.Log("The current player count is #2 " + playerInputManager.playerCount);
-
-        // Assign UI Controller
+        for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
+        {
+            int playersInGame = playerInputManager.playerCount;
+            //Debug.Log("The current player count is " + playersInGame);
+            string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
+            InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
+            playerInputManager.JoinPlayer(playersInGame, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
+            //Debug.Log("Split Screen Index for " + i + " is " + playersInGame);
+        }
     }
 
     private void AddPlayer(PlayerInput input)
     {
-        //multiplayerEventSystem.playerRoot = input.gameObject.transform.parent.gameObject;
-
-        //canvas.transform.parent = input.gameObject.transform.parent;
-        //eventSystem.transform.parent = input.gameObject.transform.parent;
-
-        input.uiInputModule = multiplayerEventSystem.transform.GetComponent<InputSystemUIInputModule>();
+        if (playerDataManager.GetPlayers().Count == 0) {
+            input.uiInputModule = multiplayerEventSystem.transform.GetComponent<InputSystemUIInputModule>();
+        }
         input.camera = Camera.main;
 
+        int playerID = playerDataManager.GetPlayersWithInGameCharacter();
 
-        PlayerDataManager.Instance.GetPlayerData(0).SetPlayerInput(input);
-        PlayerDataManager.Instance.GetPlayerData(0).SetPlayerInScene(input.transform.parent.gameObject);
+        playerDataManager.GetPlayerData(playerID).SetPlayerInput(input);
+        playerDataManager.GetPlayerData(playerID).SetPlayerInScene(input.transform.gameObject);
 
-        Debug.Log(input.currentControlScheme);
-        if(input.currentControlScheme == "Controller")
+        // Need to use the paren due to the structure of the prefab
+        Transform playerParent = input.transform.parent;
+        //playerParent.position = spawnPoints[playerInputManager.playerCount - 1].position;
+        playerParent.name = "Player #" + (playerID);
+
+        if (playerDataManager.GetPlayerData(playerID).CheckIsHost())
         {
-            Debug.LogWarning("The player is using a controller.");
-            multiplayerEventSystem.firstSelectedGameObject = firstSelectedIfController.gameObject;
+            // Player is host
+            if (input.currentControlScheme == "Controller")
+            {
+                //Debug.LogWarning("Player #0 is using a Controller.");
+                multiplayerEventSystem.firstSelectedGameObject = firstSelectedIfController.gameObject;
+            }
         }
+
     }
 }

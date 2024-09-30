@@ -293,6 +293,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void ApplyVerticalMovement()
     {
+        if (lockMovement) { return; }
         Vector3 fallVector = new Vector3(0, _verticalVelocity, 0);
         controller.Move(fallVector * Time.deltaTime);
     }

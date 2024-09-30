@@ -34,6 +34,7 @@ public class PlayerManager : MonoBehaviour
                 string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
                 InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
                 playerInputManager.JoinPlayer(playersInGame, playersInGame, playerControlScheme, playerDevice);*/
+        Debug.Log(playerDataManager.GetPlayers().Count);
         for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
         {
             int playersInGame = playerInputManager.playerCount;
@@ -43,6 +44,7 @@ public class PlayerManager : MonoBehaviour
             playerInputManager.JoinPlayer(playersInGame, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
             //Debug.Log("Split Screen Index for " + i + " is " + playersInGame);
         }
+        Debug.Log(playerDataManager.GetPlayers().Count);
 
         Cursor.visible = false;
     }
