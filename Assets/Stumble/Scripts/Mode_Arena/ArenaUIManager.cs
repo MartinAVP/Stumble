@@ -27,13 +27,13 @@ public class ArenaUIManager : MonoBehaviour
     private void OnEnable()
     {
         //ArenaManager.Instance.onBumpFinish += DisplayEndScores;
-        //ArenaManager.Instance.onArenaStart += StartRace;
+        ArenaManager.Instance.onStartArena += StartRace;
     }
 
     private void OnDisable()
     {
         //ArenaManager.Instance.onBumpFinish -= DisplayEndScores;
-        //ArenaManager.Instance.onArenaStart -= StartRace;
+        ArenaManager.Instance.onStartArena -= StartRace;
     }
 
     private void Start()
@@ -50,6 +50,7 @@ public class ArenaUIManager : MonoBehaviour
     public IEnumerator StartRaceCountdown()
     {
         float waitTime = 1.2f;
+/*        countdownPanel.SetActive(true);*/
 
         yield return new WaitForSeconds(waitTime);
         countdownPanel.SetActive(true);
@@ -76,21 +77,21 @@ public class ArenaUIManager : MonoBehaviour
         playerCounter.text = alivePlayers.ToString();
     }
 
-/*    public void DisplayEndScores(SortedDictionary<float, PlayerData> players)
-    {
-
-        Transform content = playerScores.GetComponent<ScrollRect>().content;
-
-        EndScoreScreen.SetActive(true);
-        int index = 1;
-        foreach (var item in players)
+    /*    public void DisplayEndScores(SortedDictionary<float, PlayerData> players)
         {
-            GameObject card = Instantiate(playerWinCardPrefab, content);
-            card.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = index.ToString("D2");
-            card.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Player #" + item.Value.GetID();
-            card.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = item.Key.ToString("F3");
-            index++;
-        }
-        index = 0;
-    }*/
+
+            Transform content = playerScores.GetComponent<ScrollRect>().content;
+
+            EndScoreScreen.SetActive(true);
+            int index = 1;
+            foreach (var item in players)
+            {
+                GameObject card = Instantiate(playerWinCardPrefab, content);
+                card.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = index.ToString("D2");
+                card.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Player #" + item.Value.GetID();
+                card.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = item.Key.ToString("F3");
+                index++;
+            }
+            index = 0;
+        }*/
 }

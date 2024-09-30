@@ -6,16 +6,19 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class MenuPlayerManager : MonoBehaviour
 {
     private PlayerInputManager playerInputManager;
     private PlayerDataManager playerDataManager;
-    [SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
+    private MultiplayerEventSystem multiplayerEventSystem;
     [SerializeField] private Transform canvas;
     [SerializeField] private Transform eventSystem;
     [SerializeField] private Transform firstSelectedIfController;
+
+    [SerializeField] private Button bumpArena;
 
     private void Awake()
     {
@@ -46,6 +49,23 @@ public class MenuPlayerManager : MonoBehaviour
             playerInputManager.JoinPlayer(playersInGame, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
             //Debug.Log("Split Screen Index for " + i + " is " + playersInGame);
         }
+
+        // Block the Bump Arena if the player count is less than 2
+        if(playerDataManager.GetPlayers().Count <= 1)
+        {
+            Navigation navigation = new Navigation
+            {
+                mode = Navigation.Mode.Explicit,
+                selectOnUp = null,
+                selectOnDown = null,
+                selectOnLeft = null,
+                selectOnRight = null
+            };
+
+            // Assign the new navigation settings to the button
+            firstSelectedIfController.GetComponent<Button>().navigation = navigation;
+            bumpArena.interactable = false;
+        }
     }
 
     private void AddPlayer(PlayerInput input)
@@ -72,6 +92,8 @@ public class MenuPlayerManager : MonoBehaviour
             {
                 //Debug.LogWarning("Player #0 is using a Controller.");
                 multiplayerEventSystem.firstSelectedGameObject = firstSelectedIfController.gameObject;
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
 

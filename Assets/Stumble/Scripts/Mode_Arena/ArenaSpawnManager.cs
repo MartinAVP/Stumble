@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,6 +44,9 @@ public class ArenaSpawnManager : MonoBehaviour
             tempPlayerList[i].GetPlayerInScene().transform.position = spawn.position;
             tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
             tempPlayerList[i].GetPlayerInScene().transform.rotation = spawn.rotation;
+
+            Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
+            tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
         }
     }
 
