@@ -24,9 +24,12 @@ public class CarSpawner : MonoBehaviour
     public float MinTimeBetweenWaves = 5f;
     public float MaxTimeBetweenWaves = 10f;
 
+    public bool RepeatsBetweenFours = false;
+
     private int CarSpawnerCounter = 0;
 
     private int CarsSpawned = 0;
+    private int temp = 5;
 
     void FixedUpdate()
     {
@@ -57,6 +60,15 @@ public class CarSpawner : MonoBehaviour
                 {
                     //Debug.Log("f");
                     int selectedLane = Random.Range(0, AvailableLaneStorage.Count);
+                    if (AvailableLaneStorage.Count == 4 && temp != 5 && RepeatsBetweenFours == false)
+                    {
+                        while (selectedLane == temp)
+                        {
+                            Debug.Log("p " + selectedLane);
+                            selectedLane = Random.Range(0, AvailableLaneStorage.Count);
+                            Debug.Log("a " + selectedLane);
+                        }
+                    }
                     //Debug.Log(selectedLane);
                     int NewLane = AvailableLaneStorage[selectedLane];
                     //Debug.Log("g");
@@ -67,6 +79,11 @@ public class CarSpawner : MonoBehaviour
                     
                     if (AvailableLaneStorage.Count > 0)
                     {
+                        if (AvailableLaneStorage.Count == 1)
+                        {
+                            temp = AvailableLaneStorage[selectedLane];
+                            Debug.Log(temp);
+                        }
                         AvailableLaneStorage.RemoveAt(selectedLane);
                     }
 
