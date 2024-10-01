@@ -63,7 +63,7 @@ public class ArenaSpectator : MonoBehaviour
         // Check if its the last player
 
         //data.GetPlayerInScene().SetActive(false);
-        data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+        data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockVeritcalMovement = true;
         data.GetPlayerInScene().GetComponent<CapsuleCollider>().enabled = false;
         data.GetPlayerInScene().transform.GetChild(0).gameObject.SetActive(false);
     }

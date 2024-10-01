@@ -525,7 +525,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4031247604561132707}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14654577, y: 0.000000012904767, z: -2.3415825e-11, w: 0.989204}
+  m_LocalRotation: {x: 0.14654577, y: 0.000000021507944, z: -3.9026476e-11, w: 0.989204}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -806,7 +806,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4298771231049084065}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1285284, y: 0.000000019354587, z: 3.169786e-10, w: 0.9917059}
+  m_LocalRotation: {x: 0.1285284, y: 0.000000015053567, z: 2.4653893e-10, w: 0.9917059}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1049,16 +1049,52 @@ MonoBehaviour:
     m_ActionName: Player/Dive[/Keyboard/leftShift]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 8e4b037d-8192-450c-8025-52a28304fa2f
-    m_ActionName: menu/Pause[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
     m_ActionId: 3aff67fd-3609-465f-a0f3-dedaf932e206
     m_ActionName: Player/Look[/XInputControllerWindows/rightStick,/Mouse/delta]
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 4518f07f-15ae-46c7-83f3-b30873ee494d
     m_ActionName: Player/Select[/XInputControllerWindows/dpad/up,/XInputControllerWindows/dpad/down,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/right]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 972f0d8f-a709-4280-86cc-539526382eda
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 17e56eac-2224-4b2d-b05a-1fe206c7212c
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 84f2b8e5-80fa-4a8a-ad82-5ce0a9e544f0
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 82d93cc6-c45e-4e1e-a19b-d9542e1973f0
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bd16a4d9-8868-4542-9ee4-76daaaa3a768
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 61e9ae06-80a0-45c3-abde-708be23c8576
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b73d245d-bfdd-493b-a7b8-2ad4ec293170
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e626d8b1-457c-4a05-8030-a28511fd28ca
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ed9494b9-a678-4449-a1c3-cd93097802ef
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8f21f6ee-294e-4b09-8de1-ef075b473f70
+    m_ActionName: UI/TrackedDeviceOrientation
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -1079,24 +1115,11 @@ MonoBehaviour:
   controller: {fileID: 1859867012211200387}
   camController: {fileID: 1389962876889350260}
   cam: {fileID: 7928900723520279080}
-  accelerationSpeed: 50
-  deccelerationSpeed: 25
-  maxSpeed: 10
-  bumpForce: 20
-  bumpUpwardForce: 0.2
-  turnSmoothTime: 0.1
-  jumpPower: 22.5
-  jumpableLayers:
-    serializedVersion: 2
-    m_Bits: 3
-  minJumpDistance: 1.2
-  gravityMultiplier: 4
+  playerMovementSettings: {fileID: 11400000, guid: 2090dde63f0671e4d994ae82a23c5d03, type: 2}
   baseVerticalViewSensitivity: 1.4
   baseInvertVerticalInput: 1
   baseHorizontalViewSensitivity: 275
   baseInvertHorizontalInput: 0
-  diveForce: 20
-  diveDragMultiplier: 0.5
   isProne: 0
   rotateModelonDive: 1
   lockMovement: 0

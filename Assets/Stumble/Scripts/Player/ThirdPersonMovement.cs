@@ -14,42 +14,42 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public CharacterController controller;
     public Transform camController;
     public Transform cam;
+    public PlayerMovement playerMovementSettings;
 
     #region Horizontal Movement
     [Header("Movement")]
-    [SerializeField] private float accelerationSpeed = 10f;
-    [SerializeField] private float deccelerationSpeed = 4f;
-    [SerializeField] private float maxSpeed = 10;
+    private float accelerationSpeed = 10f;
+    private float deccelerationSpeed = 4f;
+    private float maxSpeed = 10;
     private Vector3 rawDirection;
-    private float _horizontalVelocity = 0;
+    [HideInInspector]public float horizontalVelocity = 0;
     private bool _grounded = false;
     #endregion
 
     #region Bumping
     [Header("Bumping")]
-    [SerializeField] private float bumpForce = 20f;
-    [Range(0f, 5f)][SerializeField] private float bumpUpwardForce = .2f;
+    private float bumpForce = 20f;
+    private float bumpUpwardForce = .2f;
     private Vector3 _bumpHorizontalVelocity = Vector3.zero;
     #endregion
 
     #region Rotating
     [Header("Rotation")]
-    [SerializeField] private float turnSmoothTime = 0.1f;
+    private float turnSmoothTime = 0.1f;
     private float turnSmoothVelocity;
     #endregion
 
     #region Jumping
     [Header("Jump & Gravity")]
-    [SerializeField] private float jumpPower = 10;
-    [SerializeField] private LayerMask jumpableLayers;
-    [Tooltip("It has to be more half the height of the character. Recommended [0.2] more than half the height. [0.2] Allows jumping on a 45 degree surface")]
-    [SerializeField] private float minJumpDistance = .2f;
+    private float jumpPower = 10;
+    private LayerMask jumpableLayers;
+    private float minJumpDistance = .2f;
     #endregion
 
     #region Vertical Movement
     // Gravity Variables
     [Space]
-    [SerializeField] private float gravityMultiplier = 3.0f;
+    private float gravityMultiplier = 3.0f;
     private float _gravity = -9.81f;
     private float _verticalVelocity = 0;
     #endregion
@@ -64,17 +64,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Tooltip("Default: 300")]
     [SerializeField] private float baseHorizontalViewSensitivity = 300.0f;
     [SerializeField] private bool baseInvertHorizontalInput = false;
+
     private CinemachineFreeLook freelookcam;
     #endregion
 
     #region Diving
     [Header("Diving")]
-    [SerializeField] private float diveForce = 2;
-    [SerializeField] private float diveDragMultiplier = 1f;
+    private float diveForce = 2;
+    private float diveDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
     private float playerRadius = 0.5f;
-    [SerializeField] private bool rotateModelonDive = true;
     #endregion
 
     #region Base
@@ -84,7 +84,49 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Debug")]
     // Lock Movement is made for testing bumping
     // If left unchecked, 2 characters will move with the same input
+    [SerializeField] private bool rotateModelonDive = true;
     public bool lockMovement = false;
+    public bool lockVeritcalMovement = false;
+
+    private void OnEnable()
+    {
+        if(playerMovementSettings == null)
+        {
+            Debug.LogError("All the variables were changed to default due to the third person controller not having a player card attached");
+        }
+
+        // Horizontal Movement
+        accelerationSpeed = playerMovementSettings.accelerationSpeed;
+        deccelerationSpeed = playerMovementSettings.deccelerationSpeed;
+        maxSpeed = playerMovementSettings.maxSpeed;
+
+        // Bumping
+        bumpForce = playerMovementSettings.bumpForce;
+        bumpUpwardForce = playerMovementSettings.bumpUpwardForce;
+
+        // Roatation
+        turnSmoothTime = playerMovementSettings.turnSmoothTime;
+
+        // Jumping
+        jumpPower = playerMovementSettings.jumpPower;
+        jumpableLayers = playerMovementSettings.jumpableLayers;
+        minJumpDistance = playerMovementSettings.minJumpDistance;
+
+        // Vertical Movement
+        gravityMultiplier = playerMovementSettings.gravityMultiplier;
+
+        // Camera Controls
+        baseVerticalViewSensitivity = playerMovementSettings.baseVerticalViewSensitivity;
+        baseInvertVerticalInput = playerMovementSettings.baseInvertVerticalInput;
+
+        baseHorizontalViewSensitivity = playerMovementSettings.baseHorizontalViewSensitivity;
+        baseInvertHorizontalInput = playerMovementSettings.baseInvertHorizontalInput;
+
+        // Diving
+        diveForce = playerMovementSettings.diveForce;
+        diveDragMultiplier = playerMovementSettings.diveDragMultiplier;
+
+    }
 
     private void Awake()
     {
@@ -197,20 +239,20 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             moveDir = transform.forward.normalized;
             Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized, Color.yellow);
 
-            _horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
+            horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
 
-            if (_horizontalVelocity <= 0.05f)
+            if (horizontalVelocity <= 0.05f)
             {
-                _horizontalVelocity = 0;
+                horizontalVelocity = 0;
             }
 
-            inputVelocity = moveDir * _horizontalVelocity;
+            inputVelocity = moveDir * horizontalVelocity;
             finalVelocity = inputVelocity + _bumpHorizontalVelocity;
 
             if (finalVelocity.magnitude < 0.05f)
             {
                 _bumpHorizontalVelocity = Vector3.zero;
-                _horizontalVelocity = finalVelocity.magnitude;
+                horizontalVelocity = finalVelocity.magnitude;
             }
 
             controller.Move(finalVelocity * Time.deltaTime);
@@ -228,11 +270,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
             transform.rotation = Quaternion.Euler(0, angle, 0);
 
-            _horizontalVelocity += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
+            horizontalVelocity += accelerationSpeed * moveDir.magnitude * Time.deltaTime;
 
-            if (_horizontalVelocity > maxSpeed)
+            if (horizontalVelocity > maxSpeed)
             {
-                _horizontalVelocity = maxSpeed;
+                horizontalVelocity = maxSpeed;
             }
         }
 
@@ -242,21 +284,21 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
-            _horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+            horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
 
-            if (_horizontalVelocity <= 0.05f)
+            if (horizontalVelocity <= 0.05f)
             {
-                _horizontalVelocity = 0;
+                horizontalVelocity = 0;
             }
         }
 
-        inputVelocity = moveDir * _horizontalVelocity;
+        inputVelocity = moveDir * horizontalVelocity;
         finalVelocity = inputVelocity + _bumpHorizontalVelocity;
 
         if (finalVelocity.magnitude < maxSpeed)
         {
             _bumpHorizontalVelocity = Vector3.zero;
-            _horizontalVelocity = finalVelocity.magnitude;
+            horizontalVelocity = finalVelocity.magnitude;
         }
 
         controller.Move(finalVelocity * Time.deltaTime);
@@ -293,7 +335,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void ApplyVerticalMovement()
     {
-        if (lockMovement) { return; }
+        if (lockVeritcalMovement) { return; }
         Vector3 fallVector = new Vector3(0, _verticalVelocity, 0);
         controller.Move(fallVector * Time.deltaTime);
     }
@@ -320,10 +362,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Player in Prone
         else
         {
-            start1 = transform.position + (Vector3.down * .4f) + Vector3.forward * playerRadius * 2;
-            start2 = transform.position + (Vector3.down * .4f) - Vector3.forward * playerRadius * 2;
-            start3 = transform.position + (Vector3.down * .4f) + Vector3.right * playerRadius;
-            start4 = transform.position + (Vector3.down * .4f) - Vector3.right * playerRadius;
+            start1 = transform.position + (Vector3.down * .9f) + this.transform.forward * playerRadius * 2;
+            start2 = transform.position + (Vector3.down * .9f) - this.transform.forward * playerRadius * 2;
+            start3 = transform.position + (Vector3.down * .9f) + this.transform.right * playerRadius;
+            start4 = transform.position + (Vector3.down * .9f) - this.transform.right * playerRadius;
         }
 
         Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
@@ -393,10 +435,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if (activate)
         {
-            _horizontalVelocity += diveForce;
-            if(_horizontalVelocity > maxSpeed + diveForce)
+            horizontalVelocity += diveForce;
+            if(horizontalVelocity > maxSpeed + diveForce)
             {
-                _horizontalVelocity = maxSpeed + diveForce;
+                horizontalVelocity = maxSpeed + diveForce;
             }
 
             isProne = true;
