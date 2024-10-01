@@ -92,7 +92,7 @@ public class PlayerDataManager : MonoBehaviour
         //Check for player Count
         //Debug.Log(players.Count);
         //Player3ScreenToggle(players.Count);
-        onPlayerConnect.Invoke(newList);
+        onPlayerConnect?.Invoke(newList);
 
     }
     public void RemovePlayer(PlayerInput input)
