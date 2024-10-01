@@ -16,7 +16,7 @@ public class CarInstance : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(wheel1.transform.position);
+        //Debug.Log(wheel1.transform.position);
     }
 
     // Update is called once per frame
@@ -25,8 +25,8 @@ public class CarInstance : MonoBehaviour
         Quaternion localRotation = Quaternion.Euler(-rpm * Time.deltaTime, 0f, 0f);
         wheel1.transform.localRotation = Quaternion.Euler(-rpm * Time.deltaTime, 0f, 0f);
         
-        //wheel3.transform.rotation = wheel1.transform.rotation * localRotation;
-        //wheel4.transform.rotation = wheel1.transform.rotation * localRotation;
+        wheel3.transform.rotation = wheel3.transform.rotation * localRotation;
+        wheel4.transform.rotation = wheel4.transform.rotation * localRotation;
         Debug.Log("spin");
 
         CarPositioning();
@@ -36,8 +36,8 @@ public class CarInstance : MonoBehaviour
     {
         Vector3 FrontLeft = wheel1.transform.position; // - Vector3.forward * 1.2f + Vector3.right * 0.9f;
         Vector3 FrontRight = wheel2.transform.position; // - Vector3.forward * 1;
-        Vector3 BackLeft = transform.position + Vector3.right * 1;
-        Vector3 BackRight = transform.position - Vector3.right * 1;
+        Vector3 BackLeft = wheel3.transform.position;
+        Vector3 BackRight = wheel4.transform.position;
 
         Vector3 delta = Vector3.down * ((0.5f * 1) + .2f);
 
