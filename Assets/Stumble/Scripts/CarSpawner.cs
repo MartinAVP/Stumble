@@ -6,6 +6,7 @@ public class CarSpawner : MonoBehaviour
 {
     public GameObject CarPrefab;
     public List<GameObject> CarLanes = new List<GameObject>();
+    public List<int> AvailableLaneStorage = new List<int> { 0, 1, 2, 3 };
 
     public int ActiveLanes;
 
@@ -17,8 +18,7 @@ public class CarSpawner : MonoBehaviour
     public bool WavesMode = false;
     public float FlatWaveDelay = 4f;
 
-    private bool spawning = false;
-    private bool delayed = false;
+    private bool spawning = true;
 
     public bool RandomTimingWaves = false;
     public float MinTimeBetweenWaves = 5f;
@@ -27,84 +27,58 @@ public class CarSpawner : MonoBehaviour
     private int CarSpawnerCounter = 0;
 
     private int CarsSpawned = 0;
-    private int S = 0;
-
-    private int Prev_S;
-
 
     void FixedUpdate()
     {
         if (Triggered == true)
         {
-            // accounts for the lack of first case (int for Prev_S) for the beginning of the spawn cycles
-            if (CarsSpawned == 0)
-            {
-                S = Random.Range(0, 3);
-                //Debug.Log("Random Lane: " + S);
-                Prev_S = S;
-
-                Instantiate(CarPrefab, CarLanes[S].transform.position, Quaternion.identity);
-                CarsSpawned++;
-
-                CarSpawnerCounter++;
-                //Debug.Log("Car Count (Starter): " + CarsSpawned);
-
-                StartCoroutine(Delay(true, true));
-
-                //Debug.Log("start finished");
-            }
+            //Debug.Log("a");
             if (spawning)
             {
                 //Debug.Log("b");
                 spawning = false;
-                StartCoroutine(Delay(true, false));
+                StartCoroutine(SpawnCars(true, false));
             }
         }
     }
 
 
     //delay between "waves"
-    private IEnumerator Delay(bool car, bool wave) 
+    private IEnumerator SpawnCars(bool car, bool wave) 
     {
+        //Debug.Log("c");
         if (car)
         {
+            //Debug.Log("d");
             while (CarSpawnerCounter < ActiveLanes)
             {
-                float CT = Random.Range(MinTimeBetweenCars, MaxTimeBetweenCars);
-                //Debug.Log(CT);
-                yield return new WaitForSecondsRealtime(CT);
-                //Debug.Log("car timer done");
-
-                int Prev_Prev_S = Prev_S;
-                Prev_S = S;
-                //Debug.Log(S + Prev_S + Prev_Prev_S);
-
-                if (ActiveLanes >= 3)
+                //Debug.Log("e");
+                if (AvailableLaneStorage.Count > 0)
                 {
-                    while (S == Prev_S || S == Prev_Prev_S)
+                    //Debug.Log("f");
+                    int selectedLane = Random.Range(0, AvailableLaneStorage.Count);
+                    //Debug.Log(selectedLane);
+                    int NewLane = AvailableLaneStorage[selectedLane];
+                    //Debug.Log("g");
+                    Instantiate(CarPrefab, CarLanes[NewLane].transform.position, Quaternion.identity);
+                    CarsSpawned++;
+                    CarSpawnerCounter++;
+
+                    
+                    if (AvailableLaneStorage.Count > 0)
                     {
-                        //Debug.Log("3 " + S + Prev_S + Prev_Prev_S);
-                        S = Random.Range(0, 4);
+                        AvailableLaneStorage.RemoveAt(selectedLane);
                     }
-                }
-                else
-                {
-                    while (S == Prev_S)
-                    {
-                        //Debug.Log("2" + S + Prev_S + Prev_Prev_S);
-                        S = Random.Range(0, 4);
-                    }
-                }
-                
-                Instantiate(CarPrefab, CarLanes[S].transform.position, Quaternion.identity);
-                //Debug.Log("Instantiated " + CarPrefab + " at " + CarLanes[S].transform.position + " with " + Quaternion.identity + " rotation");
-                CarsSpawned++;
-                CarSpawnerCounter++;
 
-                Debug.Log("Car Count: " + CarsSpawned);
-                if (CarSpawnerCounter == ActiveLanes)
-                {
-                    //Debug.Log("wave complete");
+                    if (AvailableLaneStorage.Count <= 0 || CarSpawnerCounter >= ActiveLanes)
+                    {
+                        AvailableLaneStorage = new List<int> { 0, 1, 2, 3 };
+                    }
+
+                    //Debug.Log("h");
+                    float CT = Random.Range(MinTimeBetweenCars, MaxTimeBetweenCars);
+                    //Debug.Log(CT);
+                    yield return new WaitForSecondsRealtime(CT);
                 }
             }
         }
@@ -136,6 +110,8 @@ public class CarSpawner : MonoBehaviour
             CarSpawnerCounter = 0;
         }
     }
+
+
 
     //spawner
 
