@@ -40,62 +40,149 @@ public class CosmeticManager : MonoBehaviour
         {
             // Handle Change Category
 
-            // Handle Selection in Category
+            // Player moves right
             if(input.x > 0.5f)
             {
-                //data.GetCosmeticData().SetColorIndex(0);
                 // Get The current Selected Color
                 int currentlyAt = data.GetCosmeticData().GetColorIndex();
+                currentlyAt = GetNextAvailableIndexColor(currentlyAt);
                 // Check if there is more colors available
-                if (colors.Count - 1 == currentlyAt)
-                {
-                    // Set the Index at 0 - First Color
-                    data.GetCosmeticData().SetColorIndex(0);
-                    currentlyAt = 0;
-                }
-                // 
-                else
-                {
-                    data.GetCosmeticData().SetColorIndex(currentlyAt + 1);
-                    currentlyAt += 1;
-                }
-                // Change the Material to the One Chosen
                 // Set the Material to Cosmetic Data
+                data.GetCosmeticData().SetColorIndex(currentlyAt);
                 data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].color);
                 // Set the Material to the Player
                 data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
-                Debug.Log("Right by " + data.id + "///" + data.GetCosmeticData().GetColorIndex());
 
             }
             else if (input.x < -0.5f)
             {
-                Debug.Log("Left by " + data.id);
+                int currentlyAt = data.GetCosmeticData().GetColorIndex();
+                currentlyAt = GetNextAvailableIndexColor(currentlyAt);
+                // Check if there is more colors available
+                // Set the Material to Cosmetic Data
+                data.GetCosmeticData().SetColorIndex(currentlyAt);
+                data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].color);
+                // Set the Material to the Player
+                data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
             }
         }
     }
 
+
+    /// <summary>
+    /// Takes the playerData when getting setting the default cosmetic and applies a non used
+    /// color to the new player
+    /// </summary>
+    /// <param name="data"> The Data of the New joined player</param>
     public void setDefaultCosmetic(PlayerData data)
     {
         // Set Color
+/*        data.GetCosmeticData().SetColorIndex(0);
+        data.GetCosmeticData().SetMaterialPicked(colors[0].color);*/
+
+        // Set a Color that is Not used
+        List<PlayerData> playerData = new List<PlayerData>();
+        // Loop through all players
+        // Check if the color is being used by the player
+        for (int i = 0; i < colors.Count; i++)
+        {
+            // Check if the color is used
+            if (!IsColorInUse(colors[i]))
+            {
+                // Color is not in Use
+                data.GetCosmeticData().SetColorIndex(i);
+                data.GetCosmeticData().SetMaterialPicked(colors[i].color);
+                data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                return;
+            }
+        }
+
+        // Default Color 0
         data.GetCosmeticData().SetColorIndex(0);
         data.GetCosmeticData().SetMaterialPicked(colors[0].color);
     }
 
-/*    private void AddIfNotExist(PlayerData data)
+    /// <summary>
+    ///  Checks if the color is in use
+    /// </summary>
+    /// <param name="color">The color to be checked</param>
+    /// <returns></returns>
+    private bool IsColorInUse(CosmeticColor color)
     {
-        // Add the Player to the Dictionary
-        // Check if the player already Exists in Colors
-        if (!cosmeticColors.ContainsKey(data.id))
+        List<PlayerData> players = PlayerDataManager.Instance.GetPlayers();
+        for (int i = 0; i < players.Count; i++)
         {
+            int colorID = players[i].GetCosmeticData().GetColorIndex();
+            // Check if the ColorID is in the array size
+            if(colorID < 0 || colorID > colors.Count)
+            {
+                return false;
+            }
 
+            if (colors[colorID] == color)
+            {
+                //Debug.Log("Color is in Use by Player #" + i);
+                return true;
+            }
         }
 
-        foreach (var SelectedCosmetic in selectedCosmetic.Values)
-        {
-            
-        }
-    }*/
+        //Debug.Log("Color is not in Use");
+        return false;
+    }
 
+    /// <summary>
+    /// Gets the next Available color that is not used by any player
+    /// 
+    /// !! Function is Recursive
+    /// </summary>
+    /// <param name="currentlyAt">The Index ID of the player's current color</param>
+    /// <returns></returns>
+    private int GetNextAvailableIndexColor(int currentlyAt)
+    {
+        // Add one to currently At
+        int index = currentlyAt + 1;
+        // Loop through list
+        if(index >= colors.Count)
+        {
+            index = 0;
+        }
+        
+        // Check if the index is busy
+        if (IsColorInUse(colors[index]))
+        {
+            index = GetNextAvailableIndexColor(index);
+        }
+        // 
+        return index;
+    }
+
+    /// <summary>
+    /// Gets the previous available color in the colors array that no player is using
+    /// 
+    /// !! Function is Recursive
+    /// </summary>
+    /// <param name="currentlyAt">The index of the colors array the player is currently at</param>
+    /// <returns></returns>
+    private int GetPreviousAvailableIndexColor(int currentlyAt)
+    {
+        // Add one to currently At
+        int index = currentlyAt - 1;
+        // Loop through list
+        if (index <= colors.Count)
+        {
+            index = colors.Count;
+        }
+
+        // Check if the index is busy
+        if (IsColorInUse(colors[index]))
+        {
+            index = GetPreviousAvailableIndexColor(index);
+        }
+        // 
+        return index;
+    }
+
+    // Enum for Selected Cosmetic
     public enum SelectedCosmetic
     {
         Colors

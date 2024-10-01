@@ -19,16 +19,23 @@ public class BoxBumper : MonoBehaviour
             Debug.DrawRay(this.transform.position, direction, Color.magenta, 100f);
             if (Physics.Raycast(other.transform.position, invDirection, out hit, 100))
             {
-/*                Debug.Log("Hitted: " + hit.transform.name);
+                /*                Debug.Log("Hitted: " + hit.transform.name);
 
-                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
+                                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
 
-                if (other.transform.GetComponent<Rigidbody>() != null)
-                {
-                    other.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    other.transform.GetComponent<Rigidbody>().AddForce(hit.normal * bounceForce, ForceMode.Impulse);
-                }*/
-                other.GetComponent<IBumper>().Bump(hit.normal, bounceForce);
+                                if (other.transform.GetComponent<Rigidbody>() != null)
+                                {
+                                    other.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                                    other.transform.GetComponent<Rigidbody>().AddForce(hit.normal * bounceForce, ForceMode.Impulse);
+                                }*/
+
+                // Potential Momentum Keep
+                Vector3 fwd = other.transform.forward.normalized;
+                fwd = fwd * other.GetComponent<ThirdPersonMovement>().horizontalVelocity / 100;
+                Vector3 dir = fwd + hit.normal;
+                //Vector3 dir = hit.normal;
+                //Vector3 dir = fwd + hit.normal;
+                other.GetComponent<IBumper>().Bump(dir, bounceForce);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
             }
         }

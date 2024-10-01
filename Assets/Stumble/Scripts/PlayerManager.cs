@@ -34,6 +34,7 @@ public class PlayerManager : MonoBehaviour
                 string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
                 InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
                 playerInputManager.JoinPlayer(playersInGame, playersInGame, playerControlScheme, playerDevice);*/
+        Debug.Log(playerDataManager.GetPlayers().Count);
         for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
         {
             int playersInGame = playerInputManager.playerCount;
@@ -43,6 +44,7 @@ public class PlayerManager : MonoBehaviour
             playerInputManager.JoinPlayer(playersInGame, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
             //Debug.Log("Split Screen Index for " + i + " is " + playersInGame);
         }
+        Debug.Log(playerDataManager.GetPlayers().Count);
 
         Cursor.visible = false;
     }
@@ -78,9 +80,9 @@ public class PlayerManager : MonoBehaviour
         //playerDataManager.GetPlayerData(player).SetPlayerInScene(player.gameObject);
         //int playerID = playerDataManager.GetPlayers().Count;
         int playerID = playerDataManager.GetPlayersWithInGameCharacter();
-        Debug.Log("Current Player Count: " +  playerID);
-        Debug.Log("Current Player on Input Count: " +  playerInputManager.playerCount);
-        Debug.Log("Current Player on New Count: " +  playerDataManager.GetPlayersWithInGameCharacter());
+        //Debug.Log("Current Player Count: " +  playerID);
+        //Debug.Log("Current Player on Input Count: " +  playerInputManager.playerCount);
+        //Debug.Log("Current Player on New Count: " +  playerDataManager.GetPlayersWithInGameCharacter());
 
         playerDataManager.GetPlayerData(playerID).SetPlayerInput(player);
         playerDataManager.GetPlayerData(playerID).SetPlayerInScene(player.transform.gameObject);
@@ -123,13 +125,26 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    // Game Pause Disconnection Management
+    private List<int> playerDisconnectIDs = new List<int>();
     private void OnPlayerInputDisconnected(PlayerData data)
     {
-        Time.timeScale = 0;
+        playerDisconnectIDs.Add(data.id);
+
+        if(playerDisconnectIDs.Count > 0)
+        {
+            // Freeze Time
+            Time.timeScale = 0;
+        }
     }
 
     private void OnPlayerInputReconnected(PlayerData data)
     {
-        Time.timeScale += 1;
+        playerDisconnectIDs.Remove(data.GetID());
+
+        if(playerDisconnectIDs.Count == 0)
+        {
+            Time.timeScale += 1;
+        }
     }
 }
