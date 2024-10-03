@@ -346,11 +346,27 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         controller.Move(finalVelocity * Time.deltaTime);
 
-        //Vector3 slideVector = Sliding();
-        //controller.Move(slideVector * Time.deltaTime);
+        Vector3 slideVector = Sliding();
+        // Not on a surface
+        if (slideVector == Vector3.zero) {
+        
+            slideVelocity -= (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
+            Debug.Log(slideVelocity);
+        }
+        else // Is not on a slanted surface
+        {
+            slideVelocity += (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
+        }
+        slideVector = slideVector * currentSlideVelocity;
+
+        controller.Move(slideVelocity * Time.deltaTime);
     }
 
-/*    private Vector3 Sliding()
+    private Vector3 slideVelocity = Vector3.zero;
+    private float currentSlideVelocity = 1;
+    private float maxSlideVel;
+
+    private Vector3 Sliding()
     {
         // Check for Surface Sliding
         float surfaceAngle = 0;
@@ -358,13 +374,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (Physics.Raycast(this.transform.position, Vector3.down, out hit, 5, jumpableLayers))
         {
             surfaceAngle = Vector3.Angle(hit.normal, Vector3.up);
-            Debug.Log(surfaceAngle);
+            //Debug.Log(surfaceAngle);
         }
-        Vector3 dir = hit.normal - this.transform.position;
+        Vector3 thisObj = this.transform.position;
+        Vector3 dir = Vector3.Reflect(Vector3.down, hit.normal);
         dir = Vector3.ProjectOnPlane(dir, hit.normal);
         Debug.DrawRay(this.transform.position, dir * 5, Color.magenta);
+        if(surfaceAngle < 25) { return Vector3.zero; }
+
         return dir;
-    }*/
+    }
 
     /// <summary>
     /// Applies Gravity over time to the player, does not run the calculation if the player is grounded
