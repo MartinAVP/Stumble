@@ -23,7 +23,7 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _startControllerConnection;
 
     [SerializeField] private TextMeshProUGUI _targetPlayerCount;
-    private int targetPlayers = 1;
+    public int targetPlayers { get; private set; } = 1;
 
     [Header("Controller Connection Screen")]
     [SerializeField] private Transform _playerCardsPanel;
@@ -37,7 +37,7 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private List<Vector3> spawnPositions = new List<Vector3>();
 
     [Header("Player Holder")]
-    public GameObject playerHolder;
+/*    public GameObject playerHolder;*/
 
     //[Header("Misc")]
     public PlayerInputManager _playerInputManager;
@@ -194,7 +194,7 @@ public class UIManagerLobby : MonoBehaviour
         float start = width / (targetPlayers * 2); // Starting value
         float step = start * 2; // Step size between values
 
-        Debug.Log(width);
+        //Debug.Log(width);
         for (int i = 0; i < targetPlayers; i++)
         {
             float UIPos = start + (i * step);
@@ -206,6 +206,8 @@ public class UIManagerLobby : MonoBehaviour
 
     private void joinNewPlayer(PlayerData player)
     {
+        // Check if the player is not in the lobby
+        if (!PlayerDataManager.Instance.isLobby) { return; }
         // Set the Player Position to one of the SpawnPoints
         player.GetPlayerInScene().gameObject.transform.position = spawnPositions[player.GetID()];
 
@@ -243,6 +245,8 @@ public class UIManagerLobby : MonoBehaviour
 
     private void removeExistingPlayer(PlayerData player)
     {
+        // Check if the player is not in the lobby
+        if (!PlayerDataManager.Instance.isLobby) { return; }
         // Destroy the Player in the Scene
         Destroy(player.GetPlayerInScene());
         // Re Sort the Players in the screen.
@@ -255,4 +259,8 @@ public class UIManagerLobby : MonoBehaviour
     }
 
     // Device Reconnection System
+/*    public int GetTargetPlayers()
+    {
+        return targetPlayers;
+    }*/
 }

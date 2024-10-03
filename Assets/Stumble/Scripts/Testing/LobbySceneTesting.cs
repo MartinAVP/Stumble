@@ -6,16 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class LobbySceneTesting : MonoBehaviour
 {
-    public GameObject playerHolder;
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(playerHolder);
-    }
 
     public void Load(string name)
     {
-
+        int target = FindAnyObjectByType<UIManagerLobby>().targetPlayers;
+        if(PlayerDataManager.Instance.GetPlayers().Count != target) { return; }
         // Prevent Data Clear when changing scene
         PlayerDataManager.Instance.isLobby = false;
         //DontDestroyOnLoad (Camera.main.gameObject);

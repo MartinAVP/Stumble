@@ -1,33 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MovingBase : MonoBehaviour
 {
-    private Vector3 changeInPosition = Vector3.zero;
-    private Vector3 changeInRotation = Vector3.zero;
-
     private Vector3 previousPosition = Vector3.zero;
     private Quaternion previousRotation;
 
-    public Vector3 ChangeInPosition { get { return changeInPosition; } }
-    public Vector3 ChangeInRotation { get { return changeInRotation; } }
+    public Vector3 ChangeInPosition { get { return transform.position - previousPosition; } }
+    public Vector3 ChangeInRotation { get { return (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles; } }
+
+    public MovingBase ancestor;
 
     private void Start()
     {
-        changeInPosition = transform.position - previousPosition;
-        changeInRotation = Vector3.zero;
-
         previousPosition = transform.position;
         previousRotation = transform.rotation;
     }
 
-    private void FixedUpdate()
+    public void UpdatePreviousRotation()
     {
-        changeInPosition = transform.position - previousPosition;
-        changeInRotation = (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles;
-
         previousPosition = transform.position;
         previousRotation = transform.rotation;
+    }
+
+    public void PropagateToChildren()
+    {
+        Stack<Transform> stack = new Stack<Transform>();
+        stack.Push(transform);
+
+        while (stack.Count > 0)
+        {
+            Transform checkForMovingBase = stack.Pop();
+
+            Debug.Log("Checking " + checkForMovingBase.gameObject.name);
+
+            MovingBase movingBase = checkForMovingBase.GetComponent<MovingBase>();
+            if (movingBase == null)
+            {
+                movingBase = checkForMovingBase.AddComponent<MovingBase>();
+            }
+            movingBase.ancestor = ancestor;
+
+            foreach (Transform t in checkForMovingBase)
+            {
+                stack.Push(t);
+            }
+        }
     }
 }

@@ -43,7 +43,7 @@ public class PlayerDataManager : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
 
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
@@ -92,12 +92,12 @@ public class PlayerDataManager : MonoBehaviour
         //Check for player Count
         //Debug.Log(players.Count);
         //Player3ScreenToggle(players.Count);
-        onPlayerConnect.Invoke(newList);
+        onPlayerConnect?.Invoke(newList);
 
     }
     public void RemovePlayer(PlayerInput input)
     {
-        Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
+        //Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
         if (!isLobby) { return; }
         int playerID = findPlayer(input);
 /*        List<PlayerData> tempPlayers = new List<PlayerData>();
@@ -162,11 +162,12 @@ public class PlayerDataManager : MonoBehaviour
                 Debug.Log($"Device removed: {device}");
                 playerID = findPlayer(device);
                 Debug.Log("Device Disconnected belonged to player #" + playerID);
-                onPlayerInputDeviceDisconnect.Invoke(players[findPlayer(device)]);
+                onPlayerInputDeviceDisconnect?.Invoke(players[findPlayer(device)]);
                 break;
             case InputDeviceChange.Reconnected:
                 playerID = findPlayer(device);
                 Debug.Log("Device Reconnected attached to player #" + playerID);
+                onPlayerInputDeviceReconnect?.Invoke(players[findPlayer(device)]);
                 break;
         }
     }
@@ -232,6 +233,20 @@ public class PlayerDataManager : MonoBehaviour
     public void ClearPlayers()
     {
         players.Clear();
+    }
+
+    public int GetPlayersWithInGameCharacter()
+    {
+        int count = 0;
+        foreach (PlayerData player in players)
+        {
+            if(player.GetPlayerInScene() != null)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
 /*    public bool isHost(PlayerInput input)
