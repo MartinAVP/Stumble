@@ -45,6 +45,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float jumpPower = 10;
     private LayerMask jumpableLayers;
     private float minJumpDistance = .2f;
+    private LayerMask jumpableLayersMinusPlayer;  // < Important for making the physics ignore the player this is attached to.
     #endregion
 
     #region Vertical Movement
@@ -77,6 +78,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
     private float playerRadius = 0.5f;
+    private bool diveWasCanceled = false;
     #endregion
 
     #region Base
@@ -148,11 +150,23 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         //Application.targetFrameRate = 20;
 
         controller.detectCollisions = false;
+
+        // Remove Player from Calculating Physics with the world
+        jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
     }
+
 
     private void Update()
     {
         isGrounded();
+        if (diveWasCanceled)
+        {
+            if (isGrounded())
+            {
+                diveWasCanceled = false;
+            }
+        }
+
         ApplyGravity();
         ApplyVerticalMovement();
         Movement();
@@ -162,7 +176,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void FixedUpdate()
     {
-        
+
     }
 
     public bool isFloored;
@@ -208,7 +222,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if(lockMovement) return;
 
         // Prevent Diving when on the ground
-        if (isGrounded()) return;
+        //if (isGrounded()) return;
 
         //Debug.Log("Dive");
         // Change Model
@@ -331,7 +345,26 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
 
         controller.Move(finalVelocity * Time.deltaTime);
+
+        //Vector3 slideVector = Sliding();
+        //controller.Move(slideVector * Time.deltaTime);
     }
+
+/*    private Vector3 Sliding()
+    {
+        // Check for Surface Sliding
+        float surfaceAngle = 0;
+        RaycastHit hit;
+        if (Physics.Raycast(this.transform.position, Vector3.down, out hit, 5, jumpableLayers))
+        {
+            surfaceAngle = Vector3.Angle(hit.normal, Vector3.up);
+            Debug.Log(surfaceAngle);
+        }
+        Vector3 dir = hit.normal - this.transform.position;
+        dir = Vector3.ProjectOnPlane(dir, hit.normal);
+        Debug.DrawRay(this.transform.position, dir * 5, Color.magenta);
+        return dir;
+    }*/
 
     /// <summary>
     /// Applies Gravity over time to the player, does not run the calculation if the player is grounded
@@ -407,7 +440,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             start4 = transform.position + (Vector3.down * .6f) - this.transform.right * playerRadius * offset;
             // Note: Don't go under .5f
 
-            // Additionals Fix Prone Lock
+            // 
         }
 
         Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
@@ -422,10 +455,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Check if the character is grounded using a raycast
         // Is grounded Raycast changes the origin based on proning state
-        _grounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayers);
-        if (_grounded == false) _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayers);
-        if (_grounded == false) _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayers);
-        if (_grounded == false) _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayers);
+        _grounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayersMinusPlayer);
+        if (_grounded == false) _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayersMinusPlayer);
+        if (_grounded == false) _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayersMinusPlayer);
+        if (_grounded == false) _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayersMinusPlayer);
 
         if (_grounded)
         {
@@ -437,7 +470,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             currentBase = null;
         }
-
+        
         return _grounded;
     }
 
@@ -477,6 +510,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if (activate)
         {
+            // Prevent Diving when Diving was canceled midair
+            if (diveWasCanceled) { return; }
+
             horizontalVelocity += diveForce;
             if(horizontalVelocity > maxSpeed + diveForce)
             {
@@ -501,9 +537,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
             playerHeight = controller.height;
         }
-        else
+        else // Stand Up
         {
-            if (!isGrounded()) return;
+            // Check if the player is already Diving and Prevent from Diving Again;
+            if (isProne)
+            {
+                if (!isGrounded())
+                {
+                    diveWasCanceled = true;
+                }
+            }
 
             isProne = false;
             if (rotateModelonDive)
