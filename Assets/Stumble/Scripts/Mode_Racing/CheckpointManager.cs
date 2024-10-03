@@ -171,4 +171,23 @@ public class CheckpointManager : MonoBehaviour
         }
         return -1;
     }
+
+    public void ForceReachNextCheckpoint(PlayerData data)
+    {
+        // Check if the checkpoint id is bigger than the previous one
+        int playerID = data.GetID();
+        int currentCheckpoint = findCheckpointPlayerIsin(playerID);
+        int targetCheckpoint = findCheckpointPlayerIsin(playerID) + 1;
+
+        // Checkpoint is HIGHER than Current
+        Checkpoints[currentCheckpoint].removePlayer(playerID);
+        Checkpoints[targetCheckpoint].addPlayer(playerID);
+
+        // Check if the checkpoint reached is the last one.
+        if (targetCheckpoint == Checkpoints.Count - 1)
+        {
+            RaceManager.Instance.ReachFinishLine(data);
+        }
+        Respawn(data.GetPlayerInScene());
+    }
 }

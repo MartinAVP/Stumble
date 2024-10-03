@@ -28,12 +28,6 @@ public class PlayerManager : MonoBehaviour
 
     private void OnEnable()
     {
-
-        /*        int playersInGame = playerInputManager.playerCount;
-                Debug.Log("The current player count is " + playersInGame);
-                string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
-                InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
-                playerInputManager.JoinPlayer(playersInGame, playersInGame, playerControlScheme, playerDevice);*/
         Debug.Log(playerDataManager.GetPlayers().Count);
         for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
         {
@@ -47,6 +41,7 @@ public class PlayerManager : MonoBehaviour
         Debug.Log(playerDataManager.GetPlayers().Count);
 
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void OnDisable()

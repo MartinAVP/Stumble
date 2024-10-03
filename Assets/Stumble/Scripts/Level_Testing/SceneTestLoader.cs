@@ -12,7 +12,7 @@ public class SceneTestLoader : MonoBehaviour
     [SerializeField] private TMP_InputField input;
     private PlayerInputManager playerInputManager;
     private PlayerDataManager playerDataManager;
-
+    [SerializeField] string quickAccess1, quickAccess2, quickAccess3;
     private void Awake()
     {
         playerInputManager = GetComponent<PlayerInputManager>();
@@ -22,7 +22,7 @@ public class SceneTestLoader : MonoBehaviour
     private void SubmitName(string arg0)
     {
         Debug.Log("Loading Scene... " + arg0);
-        if(SceneManager.GetSceneByName(arg0) != null)
+        if(SceneManager.GetSceneByName(arg0) != null && arg0 != "")
         {
             PlayerDataManager.Instance.isLobby = false;
             SceneManager.LoadScene(arg0);
@@ -83,4 +83,25 @@ public class SceneTestLoader : MonoBehaviour
         CosmeticManager.Instance.setDefaultCosmetic(playerDataManager.GetPlayerData(playerID));
 
     }
+
+    public void loadQuickAccesLevel(int level)
+    {
+        switch (level)
+        {
+            case 1:
+                SubmitName(quickAccess1);
+                break;
+            case 2:
+                SubmitName(quickAccess2);
+                break;
+            case 3:
+                SubmitName(quickAccess3);
+                break;
+            default:
+                Debug.LogError("Not a possible Scene");
+                break;
+        }
+    }
+
+
 }

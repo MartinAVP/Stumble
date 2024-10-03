@@ -23,19 +23,19 @@ public class RaceUIManager : MonoBehaviour
     private void OnEnable()
     {
         RaceManager.Instance.onCompleteFinish += DisplayEndScores;
-        RaceManager.Instance.onRaceStart += StartRace;
+        RaceManager.Instance.onCountdownStart += StartRace;
     }
 
     private void OnDisable()
     {
         RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        RaceManager.Instance.onRaceStart -= StartRace;
+        RaceManager.Instance.onCountdownStart -= StartRace;
     }
 
     private void Start()
     {
-        EndScoreScreen.SetActive(false);
-        countdownPanel.SetActive(false);
+        EndScoreScreen?.SetActive(false);
+        countdownPanel?.SetActive(false);
     }
 
     private void StartRace()
@@ -48,7 +48,7 @@ public class RaceUIManager : MonoBehaviour
         float waitTime = 1.2f;
 
         yield return new WaitForSeconds(waitTime);
-        countdownPanel.SetActive(true);
+        countdownPanel?.SetActive(true);
         countdownTime.sprite = countdownThree;
         //countdownPanel.GetComponent<Animator>().SetTrigger("StartTrigger");
         countdownTime.gameObject.GetComponent<Animation>().Play("ShowNumber");

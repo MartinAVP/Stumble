@@ -20,6 +20,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Movement")]
     private float accelerationSpeed = 10f;
     private float deccelerationSpeed = 4f;
+    private float groundDragMultiplier = 1f;
     private float maxSpeed = 10;
     private Vector3 rawDirection;
     [HideInInspector]public float horizontalVelocity = 0;
@@ -57,13 +58,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     #region Camera Controls
     [Header("Camera Controls")]
     // Note: These values will only update when starting the game, not while the scene is playing.
-    [Tooltip("Default: 5")]
-    [SerializeField] private float baseVerticalViewSensitivity = 5.0f;
-    [SerializeField] private bool baseInvertVerticalInput = false;
+/*    [Tooltip("Default: 5")]*/
+    private float baseVerticalViewSensitivity = 5.0f;
+    private bool baseInvertVerticalInput = false;
     [Space]
-    [Tooltip("Default: 300")]
-    [SerializeField] private float baseHorizontalViewSensitivity = 300.0f;
-    [SerializeField] private bool baseInvertHorizontalInput = false;
+/*    [Tooltip("Default: 300")]*/
+    private float baseHorizontalViewSensitivity = 300.0f;
+    private bool baseInvertHorizontalInput = false;
 
     private CinemachineFreeLook freelookcam;
     #endregion
@@ -72,6 +73,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Diving")]
     private float diveForce = 2;
     private float diveDragMultiplier = 1f;
+    private float diveGroundDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
     private float playerRadius = 0.5f;
@@ -98,6 +100,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Horizontal Movement
         accelerationSpeed = playerMovementSettings.accelerationSpeed;
         deccelerationSpeed = playerMovementSettings.deccelerationSpeed;
+        groundDragMultiplier = playerMovementSettings.groundDragMultiplier;
         maxSpeed = playerMovementSettings.maxSpeed;
 
         // Bumping
@@ -125,6 +128,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Diving
         diveForce = playerMovementSettings.diveForce;
         diveDragMultiplier = playerMovementSettings.diveDragMultiplier;
+        diveGroundDragMultiplier = playerMovementSettings.diveGroundDragMultiplier;
 
     }
 
@@ -148,12 +152,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Update()
     {
+        isGrounded();
         ApplyGravity();
         ApplyVerticalMovement();
         Movement();
-        isGrounded();
         MoveWithBase();
         isFloored = isGrounded();
+    }
+
+    private void FixedUpdate()
+    {
+        
     }
 
     public bool isFloored;
@@ -237,9 +246,20 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (isProne)
         {
             moveDir = transform.forward.normalized;
-            Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized, Color.yellow);
+            Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized * 2, Color.yellow);
 
-            horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
+            // Apply Extra Drag Multiplier if the player is grounded
+            if (isGrounded())
+            {
+                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * diveGroundDragMultiplier * Time.deltaTime;
+                Debug.Log("Extra Dive Drag");
+            }
+            else
+            {
+                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
+                Debug.Log("Normal Dive Drag");
+            }
+
 
             if (horizontalVelocity <= 0.05f)
             {
@@ -284,7 +304,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
-            horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+            // Extra Drag Force if the player is Grounded
+            if (isGrounded())
+            {
+                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * groundDragMultiplier * Time.deltaTime;
+                //Debug.Log("Using Extra Ground Force");
+            }
+            else
+            {
+                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+            }
 
             if (horizontalVelocity <= 0.05f)
             {
@@ -309,6 +338,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void ApplyGravity()
     {
+        if (lockVeritcalMovement) { return; }
+
         // Prone Logic
         if (isProne)
         {
@@ -350,22 +381,33 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private bool isGrounded()
     {
         Vector3 start1, start2, start3, start4 = Vector3.zero;
+        //Vector3 start5, start6, start7, start8 = Vector3.zero;
 
         // Player not proning
         if (!isProne)
         {
-            start1 = transform.position + Vector3.forward * playerRadius;
-            start2 = transform.position - Vector3.forward * playerRadius;
-            start3 = transform.position + Vector3.right * playerRadius;
-            start4 = transform.position - Vector3.right * playerRadius;
+            start1 = transform.position + this.transform.forward * playerRadius;
+            start2 = transform.position - this.transform.forward * playerRadius;
+            start3 = transform.position + this.transform.right * playerRadius;
+            start4 = transform.position - this.transform.right * playerRadius;
         }
         // Player in Prone
         else
         {
-            start1 = transform.position + (Vector3.down * .9f) + this.transform.forward * playerRadius * 2;
-            start2 = transform.position + (Vector3.down * .9f) - this.transform.forward * playerRadius * 2;
-            start3 = transform.position + (Vector3.down * .9f) + this.transform.right * playerRadius;
-            start4 = transform.position + (Vector3.down * .9f) - this.transform.right * playerRadius;
+            float offset = 1.1f;
+
+            // Capsule Collider on Prone
+/*            start1 = transform.position + (Vector3.down * .5f) + this.transform.forward * playerRadius * 2;
+            start2 = transform.position + (Vector3.down * .5f) - this.transform.forward * playerRadius * 2;*/
+            // Sphere Collider on Prone
+            start1 = transform.position + (Vector3.down * .6f) + this.transform.forward * playerRadius * (offset + .2f);
+            start2 = transform.position + (Vector3.down * .6f) - this.transform.forward * playerRadius * offset;
+
+            start3 = transform.position + (Vector3.down * .6f) + this.transform.right * playerRadius * offset;
+            start4 = transform.position + (Vector3.down * .6f) - this.transform.right * playerRadius * offset;
+            // Note: Don't go under .5f
+
+            // Additionals Fix Prone Lock
         }
 
         Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
@@ -449,7 +491,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
             this.GetComponent<CapsuleCollider>().center = new Vector3(0, -0.5f, 0);
             // Capsule Collider Direction Horizontal
-            this.GetComponent<CapsuleCollider>().direction = 2;
+            //this.GetComponent<CapsuleCollider>().direction = 2;
+            this.GetComponent<CapsuleCollider>().height = 1;
 
             // Make Character controller to a ball
             controller.height = 1;
@@ -470,8 +513,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
             this.GetComponent<CapsuleCollider>().center = new Vector3(0, 0, 0);
             // Capsule Collider Vertical
-            this.GetComponent<CapsuleCollider>().direction = 1;
+            //this.GetComponent<CapsuleCollider>().direction = 1;
             // Make Character controller to a ball
+            this.GetComponent<CapsuleCollider>().height = 2;
             controller.height = 2;
             controller.center = new Vector3(0, 0, 0);
 

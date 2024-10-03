@@ -806,7 +806,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4298771231049084065}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1285284, y: 0.000000015053567, z: 2.4653893e-10, w: 0.9917059}
+  m_LocalRotation: {x: 0.1285284, y: 0.000000019354587, z: 3.169786e-10, w: 0.9917059}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1116,6 +1116,7 @@ MonoBehaviour:
   camController: {fileID: 1389962876889350260}
   cam: {fileID: 7928900723520279080}
   playerMovementSettings: {fileID: 11400000, guid: 2090dde63f0671e4d994ae82a23c5d03, type: 2}
+  horizontalVelocity: 0
   baseVerticalViewSensitivity: 1.4
   baseInvertVerticalInput: 1
   baseHorizontalViewSensitivity: 275
@@ -1123,6 +1124,7 @@ MonoBehaviour:
   isProne: 0
   rotateModelonDive: 1
   lockMovement: 0
+  lockVeritcalMovement: 0
   isFloored: 0
 --- !u!1 &4995286471882313037
 GameObject:
@@ -1135,7 +1137,7 @@ GameObject:
   - component: {fileID: 1839580127755968448}
   - component: {fileID: 9189893142720544371}
   - component: {fileID: 4348577350339610862}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

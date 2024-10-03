@@ -10,6 +10,7 @@ public class RaceManager : MonoBehaviour
     public SortedDictionary<float, PlayerData> positions = new SortedDictionary<float, PlayerData>();
 
     public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
+    public event Action onCountdownStart;
     public event Action onRaceStart;
 
     public static RaceManager Instance { get; private set; }
@@ -31,49 +32,51 @@ public class RaceManager : MonoBehaviour
     private void Start()
     {
         stopwatch = new Stopwatch();
-        //StartRace();
-        StartCoroutine(StartCinematic());
-    }
 
-    private void Update()
-    {
-        // Optional: Update logic for your timer if needed
+        // Lock all players in place
+        LockPlayersMovement(true);
 
-        //UnityEngine.Debug.Log(GetElapsedTimeString());
+        // Check if Cinematic Controler Exists
+        if (CinematicController.Instance != null)
+        {
+            StartCoroutine(StartCinematic());
+        }
+        // No Cinematic Controller in Scene
+        else
+        {
+            // Start the Race Directly
+            StartRace();
+        }
     }
     
     public IEnumerator StartCinematic()
-    {
-        LockPlayersMovement(true);
-
+    { 
         CinematicController.Instance.StartTimeline();
         yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
-        StartRace();
-    }
 
-    public void StartRace()
-    {
-        // Lock all Player Movement
-        foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
-        {
-            data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
-        }
-        onRaceStart.Invoke();
+        // On Cinematic End
         StartCoroutine(ComenzeRacing());
     }
 
     public IEnumerator ComenzeRacing()
     {
+        onCountdownStart?.Invoke();
         yield return new WaitForSeconds(5.0f);
+        StartRace();
+    }
+
+    public void StartRace()
+    {
+        // Invoke Event
+        onRaceStart?.Invoke();
+
         // Start the Timer
         stopwatch.Start();
         UnityEngine.Debug.LogWarning("Finalized Timer");
 
         // Unlock all Player Movement
         LockPlayersMovement(false);
-
     }
-
 
     public void ReachFinishLine(PlayerData player)
     {

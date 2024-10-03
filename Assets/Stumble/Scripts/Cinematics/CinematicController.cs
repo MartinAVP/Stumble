@@ -7,7 +7,7 @@ public class CinematicController : MonoBehaviour
 {
     [SerializeField] private List<CinematicPoint> points;
 
-    private PlayableDirector timeline;
+    public PlayableDirector timeline;
 
     public static CinematicController Instance { get; private set; }
 
