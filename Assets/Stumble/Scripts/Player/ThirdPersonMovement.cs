@@ -158,6 +158,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Update()
     {
+        Movement();
+        ApplyGravity();
+        ApplyVerticalMovement();
+    }
+
+    private void FixedUpdate()
+    {
         isGrounded();
         if (diveWasCanceled)
         {
@@ -167,15 +174,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
         }
 
-        ApplyGravity();
-        ApplyVerticalMovement();
-        Movement();
         MoveWithBase();
         isFloored = isGrounded();
-    }
-
-    private void FixedUpdate()
-    {
 
     }
 
@@ -266,12 +266,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             if (isGrounded())
             {
                 horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * diveGroundDragMultiplier * Time.deltaTime;
-                Debug.Log("Extra Dive Drag");
+                //Debug.Log("Extra Dive Drag");
             }
             else
             {
                 horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
-                Debug.Log("Normal Dive Drag");
+                //Debug.Log("Normal Dive Drag");
             }
 
 
@@ -346,10 +346,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         controller.Move(finalVelocity * Time.deltaTime);
 
-        Vector3 slideVector = Sliding();
+        // Slide Prototype Logic - Not Working.
+/*        Vector3 slideVector = groundedVector;
         // Not on a surface
-        if (slideVector == Vector3.zero) {
-        
+        if (slideVector == Vector3.zero)
+        {
+
             slideVelocity -= (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
             Debug.Log(slideVelocity);
         }
@@ -359,14 +361,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         slideVector = slideVector * currentSlideVelocity;
 
-        controller.Move(slideVelocity * Time.deltaTime);
+        controller.Move(slideVelocity * Time.deltaTime);*/
     }
 
-    private Vector3 slideVelocity = Vector3.zero;
+/*    private Vector3 slideVelocity = Vector3.zero;
     private float currentSlideVelocity = 1;
-    private float maxSlideVel;
+    private float maxSlideVel;*/
 
-    private Vector3 Sliding()
+/*    private Vector3 Sliding()
     {
         // Check for Surface Sliding
         float surfaceAngle = 0;
@@ -383,7 +385,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if(surfaceAngle < 25) { return Vector3.zero; }
 
         return dir;
-    }
+    }*/
 
     /// <summary>
     /// Applies Gravity over time to the player, does not run the calculation if the player is grounded
@@ -470,14 +472,34 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Debug.DrawLine(start4, start4 + delta, Color.magenta);
 
         _grounded = false;
-        RaycastHit hit;
+/*        Vector3 groundedVector = start1;*/
+/*        float surfaceAngle = 0;*/
+        RaycastHit hit = new RaycastHit();
 
         // Check if the character is grounded using a raycast
         // Is grounded Raycast changes the origin based on proning state
-        _grounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayersMinusPlayer);
-        if (_grounded == false) _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayersMinusPlayer);
-        if (_grounded == false) _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayersMinusPlayer);
-        if (_grounded == false) _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayersMinusPlayer);
+        _grounded = Physics.Linecast(start1, start1 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start1;
+        if (_grounded == false) { _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start2; };
+        if (_grounded == false) { _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start3; };
+        if (_grounded == false) { _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start4; };
+
+        // Slidding Test - Not Efficient
+        if (_grounded)
+        {
+            if (Physics.Raycast(groundedVector, delta, out hit, delta.magnitude, jumpableLayers))
+            {
+                float surfaceAngle = Vector3.Angle(hit.normal, Vector3.up);
+                if (surfaceAngle > 60)
+                {
+/*                    Vector3 result = new Vector3(hit.normal.x, 0, hit.normal.z);
+                    this.GetComponent<CharacterController>().Move(result * Time.deltaTime * slantedSurfacePushbackMultiplier);
+                    groundedVector = Vector3.zero;
+                    Debug.DrawRay(hit.point, result * 5, Color.red);*/
+                    _grounded = false;
+                }
+                Debug.Log(surfaceAngle);
+            }
+        }
 
         if (_grounded)
         {
@@ -492,6 +514,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         
         return _grounded;
     }
+
+    private Vector3 groundedVector = Vector3.zero;
+    public float slantedSurfacePushbackMultiplier = 1;
 
     /// <summary>
     /// Stick the player to moving platforms.
