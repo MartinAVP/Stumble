@@ -1,15 +1,13 @@
 using Cinemachine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArenaSpawnManager : MonoBehaviour
+public class PodiumSpawnManager : MonoBehaviour
 {
-
     public List<Transform> spawns;
 
-    public static ArenaSpawnManager Instance { get; private set; }
+    public static PodiumSpawnManager Instance { get; private set; }
 
     // Singleton
     private void Awake()
@@ -47,7 +45,7 @@ public class ArenaSpawnManager : MonoBehaviour
             tempPlayerList[i].GetPlayerInScene().transform.rotation = spawn.rotation;
 
             Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
-            tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
+            //tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
         }
     }
 
