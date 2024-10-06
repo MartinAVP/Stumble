@@ -2,10 +2,8 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 public class PlayerDataManager : MonoBehaviour
 {
@@ -17,7 +15,6 @@ public class PlayerDataManager : MonoBehaviour
 
     // Subscribable Event
     public event Action<PlayerData> onPlayerConnect;
-    public event Action<PlayerData> onPlayerDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
 
@@ -248,21 +245,4 @@ public class PlayerDataManager : MonoBehaviour
 
         return count;
     }
-
-/*    public bool isHost(PlayerInput input)
-    {
-        int playerID = findPlayer(input);
-        if (playerID != -1)
-        {
-            if (players[playerID].CheckIsHost())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return false;
-    }*/
 }

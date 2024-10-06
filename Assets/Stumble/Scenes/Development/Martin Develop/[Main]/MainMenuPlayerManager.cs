@@ -8,20 +8,18 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
-public class MenuPlayerManager : MonoBehaviour
+public class MainMenuPlayerManager : MonoBehaviour
 {
     private PlayerInputManager playerInputManager;
     private PlayerDataManager playerDataManager;
     private MultiplayerEventSystem multiplayerEventSystem;
-    [SerializeField] private Transform canvas;
-    [SerializeField] private Transform eventSystem;
-    [SerializeField] private Transform firstSelectedIfController;
-
-    [SerializeField] private Button bumpArena;
 
     private void Awake()
     {
+        // Find Player Data Manager
         playerDataManager = PlayerDataManager.Instance;
+
+        // All Scenes Must Have a Player Input Manager
         playerInputManager = this.GetComponent<PlayerInputManager>();
         multiplayerEventSystem = FindObjectOfType<MultiplayerEventSystem>();
     }
@@ -34,7 +32,7 @@ public class MenuPlayerManager : MonoBehaviour
     private void OnDisable()
     {
         playerInputManager.onPlayerJoined -= AddPlayer;
-        
+
     }
 
     private void Start()
@@ -50,7 +48,7 @@ public class MenuPlayerManager : MonoBehaviour
         }
 
         // Block the Bump Arena if the player count is less than 2
-        if(playerDataManager.GetPlayers().Count <= 1)
+        if (playerDataManager.GetPlayers().Count <= 1)
         {
             Navigation navigation = new Navigation
             {
@@ -69,7 +67,8 @@ public class MenuPlayerManager : MonoBehaviour
 
     private void AddPlayer(PlayerInput input)
     {
-        if (playerDataManager.GetPlayers().Count == 0) {
+        if (playerDataManager.GetPlayers().Count == 0)
+        {
             input.uiInputModule = multiplayerEventSystem.transform.GetComponent<InputSystemUIInputModule>();
         }
         input.camera = Camera.main;
