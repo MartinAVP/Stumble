@@ -7,5 +7,5 @@ using UnityEngine;
 public class CosmeticColor : ScriptableObject
 {
     public String Title;
-    public Material color;
+    public Material colorMaterial;
 }

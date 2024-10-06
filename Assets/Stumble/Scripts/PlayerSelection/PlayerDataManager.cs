@@ -74,6 +74,11 @@ public class PlayerDataManager : MonoBehaviour
     }
     public void RemovePlayer(PlayerInput input)
     {
+        GameState state = GameController.Instance.gameState;
+        if(state != GameState.Lobby)
+        {
+            return;
+        }
         //Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
 /*        if (!isLobby) { return; }*/
         int playerID = findPlayer(input);

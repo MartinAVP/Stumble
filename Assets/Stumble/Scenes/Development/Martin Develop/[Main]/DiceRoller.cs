@@ -62,7 +62,7 @@ public class DiceRoller : MonoBehaviour
         // Create a button
         if (GUI.Button(buttonRect, "Click Me"))
         {
-            RollDice(Random.Range(1, 7));
+            RollDice(Random.Range(1, 5));
         }
     }
 }

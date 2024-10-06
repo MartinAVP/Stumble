@@ -1,19 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CosmeticManager : MonoBehaviour
 {
+    // Important:
+    // This script is only meant to be in the lobby scene if its
+    // on another scene it is possible that it will clash with
+    // other systems.
 
     public List<CosmeticColor> colors = new List<CosmeticColor>();
 /*    public SelectedCosmetic currentCosmeticSelection;
 
     public IDictionary<int, SelectedCosmetic> selectedCosmetic;
     public IDictionary<int, int> cosmeticColors;*/
-    public bool canEdit;
+    //public bool canEdit;
 
     // Singleton
     public static CosmeticManager Instance { get; private set; }
+    private PlayerInputManager playerInputManager;
 
     // Singleton
     private void Awake()
@@ -29,14 +35,41 @@ public class CosmeticManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        playerInputManager.onPlayerJoined += AddPlayer;
+    }
+
+    private void OnDisable()
+    {
+        playerInputManager.onPlayerJoined -= AddPlayer;
+    }
+
     private void Start()
     {
-        canEdit = GameSceneManager.Instance.GetLobby();
+        //canEdit = GameSceneManager.Instance.GetLobby();
+    }
+
+    private void AddPlayer(PlayerInput player)
+    {
+        PlayerDataManager playerDataManager = PlayerDataManager.Instance; 
+        // Player Data Manager Exists
+        if (playerDataManager != null)
+        {
+            setDefaultCosmetic(playerDataManager.GetPlayerData(player));
+        }
+        else // No Data Manager
+        {
+            // Set Default color to all players
+            Debug.Log("No Player Data Manager, Using default Color");
+            player.gameObject.transform.parent.GetComponentInChildren<MeshRenderer>().material = colors[0].colorMaterial;
+        }
     }
 
     public void ChangeCosmetic(Vector2 input, PlayerData data)
     {
-        if (canEdit)
+        if (GameController.Instance.gameState == GameState.Lobby)
         {
             // Handle Change Category
 
@@ -49,7 +82,7 @@ public class CosmeticManager : MonoBehaviour
                 // Check if there is more colors available
                 // Set the Material to Cosmetic Data
                 data.GetCosmeticData().SetColorIndex(currentlyAt);
-                data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].color);
+                data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].colorMaterial);
                 // Set the Material to the Player
                 data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
 
@@ -61,7 +94,7 @@ public class CosmeticManager : MonoBehaviour
                 // Check if there is more colors available
                 // Set the Material to Cosmetic Data
                 data.GetCosmeticData().SetColorIndex(currentlyAt);
-                data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].color);
+                data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].colorMaterial);
                 // Set the Material to the Player
                 data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
             }
@@ -91,7 +124,7 @@ public class CosmeticManager : MonoBehaviour
             {
                 // Color is not in Use
                 data.GetCosmeticData().SetColorIndex(i);
-                data.GetCosmeticData().SetMaterialPicked(colors[i].color);
+                data.GetCosmeticData().SetMaterialPicked(colors[i].colorMaterial);
                 data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
                 return;
             }
@@ -99,7 +132,7 @@ public class CosmeticManager : MonoBehaviour
 
         // Default Color 0
         data.GetCosmeticData().SetColorIndex(0);
-        data.GetCosmeticData().SetMaterialPicked(colors[0].color);
+        data.GetCosmeticData().SetMaterialPicked(colors[0].colorMaterial);
     }
 
     /// <summary>

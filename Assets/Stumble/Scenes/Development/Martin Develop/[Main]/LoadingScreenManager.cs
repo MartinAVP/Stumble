@@ -20,6 +20,11 @@ public class LoadingScreenManager : MonoBehaviour
         loadingScreenRectTransform = LoadingScreen.GetComponent<RectTransform>();
     }
 
+    private void Start()
+    {
+        LoadingScreen.SetActive(true);
+    }
+
     private void DefineAsSingleton()
     {
         if (Instance != null && Instance != this)
