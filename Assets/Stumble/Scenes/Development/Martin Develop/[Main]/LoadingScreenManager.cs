@@ -42,8 +42,8 @@ public class LoadingScreenManager : MonoBehaviour
     public void EndTransition()
     {
         onLoadScreenFinishTransition?.Invoke();
-/*        if (LoadingScreen == null) { Debug.LogError("No Loading Screen Defined"); return; }
-        //StartCoroutine(TransitionFromLoadingScreen());*/
+        /*        if (LoadingScreen == null) { Debug.LogError("No Loading Screen Defined"); return; }
+                //StartCoroutine(TransitionFromLoadingScreen());*/
     }
 
     private IEnumerator TransitionToLoadingScreen()
@@ -66,21 +66,22 @@ public class LoadingScreenManager : MonoBehaviour
         EndTransition();
     }
 
-    private void OnGUI()
-    {
-        // Set the button's position and size
-        Rect buttonRect = new Rect(100, 100, 200, 50);
-
-        // Create a button
-        if (GUI.Button(buttonRect, "Click Me"))
+    /*    private void OnGUI()
         {
-            ButtonClicked();
-        }
-    }
+            // Set the button's position and size
+            Rect buttonRect = new Rect(100, 100, 200, 50);
 
-    private void ButtonClicked()
-    {
-        StartTransition();
-        Debug.Log("Button clicked!");
-    }
+            // Create a button
+            if (GUI.Button(buttonRect, "Click Me"))
+            {
+                ButtonClicked();
+            }
+        }
+
+        private void ButtonClicked()
+        {
+            StartTransition();
+            Debug.Log("Button clicked!");
+        }
+    */
 }

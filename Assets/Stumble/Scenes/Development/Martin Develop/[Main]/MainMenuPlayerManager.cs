@@ -48,7 +48,7 @@ public class MainMenuPlayerManager : MonoBehaviour
         }
 
         // Block the Bump Arena if the player count is less than 2
-        if (playerDataManager.GetPlayers().Count <= 1)
+/*        if (playerDataManager.GetPlayers().Count <= 1)
         {
             Navigation navigation = new Navigation
             {
@@ -60,9 +60,9 @@ public class MainMenuPlayerManager : MonoBehaviour
             };
 
             // Assign the new navigation settings to the button
-            firstSelectedIfController.GetComponent<Button>().navigation = navigation;
-            bumpArena.interactable = false;
-        }
+*//*            firstSelectedIfController.GetComponent<Button>().navigation = navigation;
+            bumpArena.interactable = false;*//*
+        }*/
     }
 
     private void AddPlayer(PlayerInput input)
@@ -89,7 +89,7 @@ public class MainMenuPlayerManager : MonoBehaviour
             if (input.currentControlScheme == "Controller")
             {
                 //Debug.LogWarning("Player #0 is using a Controller.");
-                multiplayerEventSystem.firstSelectedGameObject = firstSelectedIfController.gameObject;
+/*                multiplayerEventSystem.firstSelectedGameObject = firstSelectedIfController.gameObject;*/
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }

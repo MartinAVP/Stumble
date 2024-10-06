@@ -9,8 +9,6 @@ public class PlayerDataManager : MonoBehaviour
 {
     public List<PlayerData> players = new List<PlayerData>();
 
-    [Header("Player Layers")]
-    [SerializeField] private List<LayerMask> playerLayers;
     private PlayerInputManager playerInputManager;
 
     // Subscribable Event
@@ -19,6 +17,7 @@ public class PlayerDataManager : MonoBehaviour
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
 
     // Scene Variables
+    // Eliminate this variable ASAP
     public bool isLobby;
 
     public static PlayerDataManager Instance { get; private set; }
@@ -56,46 +55,27 @@ public class PlayerDataManager : MonoBehaviour
 
     public void AddPlayer(PlayerInput input)
     {
-        if (!isLobby) { return; }
         GameObject player = input.transform.parent.gameObject;
 
-        PlayerData newList;
+        PlayerData tempPlayerData;
         if(playerInputManager.playerCount == 1)
         {
-            newList = new PlayerData(players.Count, player, input, input.devices[0], true, new CosmeticData());
+            tempPlayerData = new PlayerData(input.playerIndex, player, input, input.devices[0], true, new CosmeticData());
         }
         else
         {
-            newList = new PlayerData(players.Count, player, input, input.devices[0], false, new CosmeticData());
+            tempPlayerData = new PlayerData(players.Count, player, input, input.devices[0], false, new CosmeticData());
         }
 
-        players.Add(newList);
+        players.Add(tempPlayerData);
 
-        // Need to use the paren due to the structure of the prefab
-        Transform playerParent = input.transform.parent;
-        //playerParent.position = spawnPoints[players.Count - 1].position;
-
-        // Convert layer mask (bit) to an integer
-        int layerToAdd = (int)Mathf.Log(playerLayers[players.Count - 1].value, 2);
-
-        //set the layer
-        //playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
-        // add the layer
-        //playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd;
-
-        // set the action in the custom cinemachine Input handler
-        //playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
-
-        //Check for player Count
-        //Debug.Log(players.Count);
-        //Player3ScreenToggle(players.Count);
-        onPlayerConnect?.Invoke(newList);
+        onPlayerConnect?.Invoke(tempPlayerData);
 
     }
     public void RemovePlayer(PlayerInput input)
     {
         //Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
-        if (!isLobby) { return; }
+/*        if (!isLobby) { return; }*/
         int playerID = findPlayer(input);
 /*        List<PlayerData> tempPlayers = new List<PlayerData>();
         tempPlayers = players;
@@ -121,16 +101,6 @@ public class PlayerDataManager : MonoBehaviour
             players[0].SetHost(true);
         }
 
-        // players = tempPlayers;
-
-        // Re-orgnize players
-        //players[playerID].GetID();
-        // Start from the player Left ID and move up
-        /*        List<PlayerData> tempOverPlayers = new List<PlayerData>();
-                for (int i = playerID; i < players.Count; i++)
-                {
-                    tempOverPlayers.Add(players[i]);
-                }*/
     }
     public void RemovePlayer(InputDevice device)
     {
