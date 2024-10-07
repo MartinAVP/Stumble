@@ -1,8 +1,10 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
@@ -19,6 +21,9 @@ public class ExperimentalPlayerManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     private PlayerDataManager playerDataManager;
 
+    [HideInInspector]
+    //public UnityEvent OnAllPlayersBroughtInSpawned;
+
 
     [Header("Settings")]
     [SerializeField] private SceneCameraType sceneCamera = SceneCameraType.ThirdPersonControl;      // Camera Type for the Scene
@@ -30,6 +35,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
     //public GameObject UIFirstSelected;
 
     private Dictionary<InputDevice, PlayerInput> deviceSaver = new Dictionary<InputDevice, PlayerInput>(); // Dictionary that holds player devices in case of kicking enabled
+
+    private bool bringingPlayersOver = false;
 
     private void Awake()
     {
@@ -54,7 +61,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
         playerDataManager = FindAnyObjectByType<PlayerDataManager>();
         // If the player Data Manager Exists, Rely on that
         // Before spawning the players
-        if (playerDataManager != null)
+/*        if (playerDataManager != null)
         {
             // Player Data Manager
             playerDataManager.onPlayerAdded += AddPlayer;
@@ -63,24 +70,25 @@ public class ExperimentalPlayerManager : MonoBehaviour
         else
         {
             // Player Input Manager
-            playerInputManager.onPlayerJoined += AddPlayer;
             Debug.LogWarning("Using player Input Manager");
-        }
+        }*/
+        playerInputManager.onPlayerJoined += AddPlayer;
     }
 
     private void OnDisable()
     {
         gameController.startSystems -= LateStart;
 
-        if (playerDataManager != null)
+/*        if (playerDataManager != null)
         {
             playerDataManager.onPlayerAdded -= AddPlayer;
         }
         else
         {
             playerInputManager.onPlayerJoined -= AddPlayer;
-        }
+        }*/
 
+        playerInputManager.onPlayerJoined -= AddPlayer;
         playerInputManager.onPlayerLeft -= RemovePlayer;
     }
 
@@ -104,6 +112,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
         {
             //Debug.LogWarning("Player Data Manager was found using manual player join.");
 
+            bringingPlayersOver = true;
+
             // Spawn Players Already In the Player Data Manager
             int players = playerDataManager.players.Count;
             for (int i = 0; i < players; i++)
@@ -115,6 +125,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
                 playerInputManager.JoinPlayer(i, -i, playerControlScheme, playerDevice);
                 Debug.Log("Spawning a new Player " + i);
             }
+
+            bringingPlayersOver = false;
+            Debug.Log("Added all players brought");
+            //OnAllPlayersBroughtInSpawned?.Invoke();
         }
         else // Not Player Data Manager
         {
@@ -144,6 +158,13 @@ public class ExperimentalPlayerManager : MonoBehaviour
         playerDataManager = PlayerDataManager.Instance;
         if (playerDataManager != null)
         {
+            // Not spawning players from another Scene
+            if (!bringingPlayersOver)
+            {
+                // Add to data
+                playerDataManager.AddPlayer(player);
+            }
+
             playerDataManager.GetPlayerData(playerID).SetPlayerInput(player);
             playerDataManager.GetPlayerData(playerID).SetPlayerInScene(player.transform.gameObject);
 

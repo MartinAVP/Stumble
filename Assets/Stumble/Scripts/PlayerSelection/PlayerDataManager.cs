@@ -10,6 +10,8 @@ public class PlayerDataManager : MonoBehaviour
 {
     public List<PlayerData> players = new List<PlayerData>();
 
+    //public ExperimentalPlayerManager playerManager;
+
     private PlayerInputManager playerInputManager;
 
     // Subscribable Event
@@ -21,6 +23,7 @@ public class PlayerDataManager : MonoBehaviour
     // Scene Variables
     // Eliminate this variable ASAP
     public bool isLobby;
+    //private bool addOnJoin = true;
 
     public static PlayerDataManager Instance { get; private set; }
 
@@ -38,48 +41,77 @@ public class PlayerDataManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
-        SceneManager.sceneLoaded += OnSceneSwitch;
+        //SceneManager.sceneLoaded += OnSceneSwitch;
     }
 
     private void OnEnable()
     {
         /*        playerInputManager = FindObjectOfType<PlayerInputManager>();*/
         // Subscribe to the sceneLoaded event
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
+/*        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerManager = FindObjectOfType<ExperimentalPlayerManager>();
 
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
-        InputSystem.onDeviceChange += OnDeviceChange;
+        InputSystem.onDeviceChange += OnDeviceChange;*/
     }
 
     private void OnDestroy()
     {
-        SceneManager.sceneLoaded -= OnSceneSwitch;
+/*        SceneManager.sceneLoaded -= OnSceneSwitch;
 
         playerInputManager.onPlayerJoined -= AddPlayer;
         playerInputManager.onPlayerLeft -= RemovePlayer;
-        InputSystem.onDeviceChange -= OnDeviceChange;
+        InputSystem.onDeviceChange -= OnDeviceChange;*/
+/*
+        playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();*/
     }
 
-    private void OnDisable()
+/*    private void OnDisable()
     {
         playerInputManager.onPlayerJoined -= AddPlayer;
         playerInputManager.onPlayerLeft -= RemovePlayer;
         InputSystem.onDeviceChange -= OnDeviceChange;
-    }
+    }*/
 
     private void OnSceneSwitch(Scene scene, LoadSceneMode mode)
     {
+        //playerManager.OnAllPlayersBroughtInSpawned -= UnLockPlayerAdd;
+        /*
+                playerInputManager.onPlayerJoined -= AddPlayer;
+                playerInputManager.onPlayerLeft -= RemovePlayer;
+                InputSystem.onDeviceChange -= OnDeviceChange;*/
+
+        //playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();
+
+/*        LockPlayerAdd();
+
         Debug.Log("Scene Switched");
         playerInputManager = FindObjectOfType<PlayerInputManager>();
 
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
         InputSystem.onDeviceChange += OnDeviceChange;
+
+        playerManager = FindObjectOfType<ExperimentalPlayerManager>();
+        playerManager.OnAllPlayersBroughtInSpawned.AddListener(UnLockPlayerAdd);*/
     }
+
+/*    private void LockPlayerAdd()
+    {
+        addOnJoin = false;
+        Debug.Log("Locking Adding Players");
+    }
+
+    private void UnLockPlayerAdd()
+    {
+        addOnJoin = true;
+        Debug.Log("Unlocking Adding Players");
+    }*/
 
     public void AddPlayer(PlayerInput input)
     {
+        //if(!addOnJoin) { return; }
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData tempPlayerData;
@@ -150,7 +182,7 @@ public class PlayerDataManager : MonoBehaviour
     }
 
     // Device Reconnection System
-    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+/*    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
         int playerID = 0;
         switch (change)
@@ -167,7 +199,7 @@ public class PlayerDataManager : MonoBehaviour
                 onPlayerInputDeviceReconnect?.Invoke(players[findPlayer(device)]);
                 break;
         }
-    }
+    }*/
 
     // Find Player
     private int findPlayer(PlayerInput input)
