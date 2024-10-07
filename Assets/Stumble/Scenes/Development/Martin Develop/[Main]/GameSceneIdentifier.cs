@@ -12,11 +12,11 @@ public class GameSceneIdentifier : MonoBehaviour
         if( gameController != null)
         {
             gameController.SetGameState(gameScene);
-            Debug.Log("Scene Identifier Attached Correctly");
+            //Debug.Log("Scene Identifier Attached Correctly");
         }
         else
         {
-            Debug.LogError("There is no GameController in the current scene.");
+            //Debug.LogError("There is no GameController in the current scene.");
         }
     }
 }

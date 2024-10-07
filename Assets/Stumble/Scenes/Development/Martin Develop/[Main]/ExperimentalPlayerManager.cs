@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 
 public class ExperimentalPlayerManager : MonoBehaviour
 {
@@ -34,8 +35,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
     {
         // Get the Player Input Manager Unique tu each scene
         playerInputManager = GetComponent<PlayerInputManager>();
-        
-        playerDataManager = PlayerDataManager.Instance;
+        Debug.Log("================= " + SceneManager.GetActiveScene().name + " =================");
     }
 
     private void Start()
@@ -43,51 +43,82 @@ public class ExperimentalPlayerManager : MonoBehaviour
         // [!] Note: Anything using the gameController has to be
         // in start. If added to OnEnbale will give error
         gameController = GameController.Instance;
-        gameController.startSystems += initializePlayers;
+        gameController.startSystems += LateStart;
     }
 
     private void OnEnable()
     {
         // Events
-        playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
+
+        playerDataManager = FindAnyObjectByType<PlayerDataManager>();
+        // If the player Data Manager Exists, Rely on that
+        // Before spawning the players
+        if (playerDataManager != null)
+        {
+            // Player Data Manager
+            playerDataManager.onPlayerAdded += AddPlayer;
+            Debug.LogWarning("Subscribed to Data Manager");
+        }
+        else
+        {
+            // Player Input Manager
+            playerInputManager.onPlayerJoined += AddPlayer;
+            Debug.LogWarning("Using player Input Manager");
+        }
     }
 
     private void OnDisable()
     {
-        gameController.startSystems -= initializePlayers;
+        gameController.startSystems -= LateStart;
 
-        playerInputManager.onPlayerJoined -= AddPlayer;
+        if (playerDataManager != null)
+        {
+            playerDataManager.onPlayerAdded -= AddPlayer;
+        }
+        else
+        {
+            playerInputManager.onPlayerJoined -= AddPlayer;
+        }
+
         playerInputManager.onPlayerLeft -= RemovePlayer;
     }
 
-    private void initializePlayers()
+    private void LateStart()
+    {
+        InitializePlayers();
+    }
+
+    private void InitializePlayers()
     {
         if(GameController.Instance != null) {
-            Debug.Log(GameController.Instance.gameState);
+            //Debug.Log(GameController.Instance.gameState);
             if (gameController.gameState == GameState.Lobby || gameController.gameState == GameState.StartScreen)
             {
-                playerInputManager.joinBehavior = PlayerJoinBehavior.JoinPlayersWhenJoinActionIsTriggered;
+                playerInputManager.joinBehavior = PlayerJoinBehavior.JoinPlayersWhenButtonIsPressed;
             }
         }
 
         // If Player Data Manager Exists
         if(playerDataManager != null)
         {
-            Debug.LogWarning("Player Data Manager was found using manual player join.");
+            //Debug.LogWarning("Player Data Manager was found using manual player join.");
 
-            // Spawn Players in the Player Data Manager
-            for (int i = 0; i < playerDataManager.GetPlayers().Count; i++)
+            // Spawn Players Already In the Player Data Manager
+            int players = playerDataManager.players.Count;
+            for (int i = 0; i < players; i++)
             {
-                int playersInGame = playerInputManager.playerCount;
-                string playerControlScheme = playerDataManager.GetPlayerData(playersInGame).input.currentControlScheme;
-                InputDevice playerDevice = playerDataManager.GetPlayerData(playersInGame).device;
-                playerInputManager.JoinPlayer(playersInGame, playersInGame - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
+                int playersInGame = i;
+                string playerControlScheme = playerDataManager.GetPlayerData(i).input.currentControlScheme;
+                InputDevice playerDevice = playerDataManager.GetPlayerData(i).device;
+                //playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
+                playerInputManager.JoinPlayer(i, -i, playerControlScheme, playerDevice);
+                Debug.Log("Spawning a new Player " + i);
             }
         }
         else // Not Player Data Manager
         {
-            Debug.LogWarning("No player data manager was found, using automatic player join");
+            //Debug.LogWarning("No player data manager was found, using automatic player join");
             playerInputManager.joinBehavior = PlayerJoinBehavior.JoinPlayersWhenJoinActionIsTriggered;
         }
 
@@ -110,6 +141,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
         int playerID = player.playerIndex;
 
         // If there is a player Data Manager set the variables
+        playerDataManager = PlayerDataManager.Instance;
         if (playerDataManager != null)
         {
             playerDataManager.GetPlayerData(playerID).SetPlayerInput(player);
@@ -119,7 +151,15 @@ public class ExperimentalPlayerManager : MonoBehaviour
             if (player.gameObject.GetComponentInChildren<MeshRenderer>() != null)
             {
                 // Add Cosmetic [Prototype]
-                player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
+                if (GameController.Instance.gameState == GameState.Lobby) {
+                    // Set the default cosmetic if the scene is Lobby
+                    CosmeticManager.Instance.setDefaultCosmetic(playerDataManager.GetPlayerData(player));
+                }
+                else
+                {
+                    // Set the chosen cosmetic
+                    player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
+                }
             }
         }
 
@@ -129,6 +169,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
         playerParent.name = "Player #" + (playerID);
         playerObject.name = "Player #" + (playerID) + " controller";
         //Debug.Log("Setting player #" + (playerInputManager.playerCount - 1) + " to " + spawnPoints[playerInputManager.playerCount - 1].position);
+        //Debug.Log("Adding Player");
 
         switch (sceneCamera)
         {
@@ -165,18 +206,20 @@ public class ExperimentalPlayerManager : MonoBehaviour
         deviceSaver.Add(player.devices[0], player);
 
         // Disable Joining
-        if (playerInputManager.maxPlayerCount >= playerInputManager.playerCount)
+        if (playerInputManager.maxPlayerCount == playerInputManager.playerCount)
         {
             playerInputManager.DisableJoining();
+            //Debug.LogWarning("Disabled Joining");
         }
     }
 
     private void RemovePlayer(PlayerInput player)
     {
         // 4 - 1
-        if (playerInputManager.maxPlayerCount <= playerInputManager.playerCount)
+        if (playerInputManager.maxPlayerCount > playerInputManager.playerCount)
         {
             playerInputManager.EnableJoining();
+            //Debug.LogWarning("Enabled Joining");
         }
     }
 

@@ -63,7 +63,7 @@ public class MainMenuUIManager : MonoBehaviour
         // Disable the Transition
         StartCoroutine(disableUnityTransition());
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(); }
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
     }
 
     private void joinHostPlayer(PlayerInput player)
@@ -73,11 +73,11 @@ public class MainMenuUIManager : MonoBehaviour
 
     private IEnumerator changeToMainMenu()
     {
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(); }
-        yield return new WaitForSeconds(2f);
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(3f);
         mainMenuPanel.SetActive(true);
         startScreenPanel.SetActive(false);
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(); }
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
     }
 
     private IEnumerator disableUnityTransition()
@@ -93,7 +93,7 @@ public class MainMenuUIManager : MonoBehaviour
     private IEnumerator StartGame()
     {
         //Debug.Log("Start Game");
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(); }
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("Lobby");
     }

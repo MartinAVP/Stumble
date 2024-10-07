@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerDataManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerDataManager : MonoBehaviour
 
     // Subscribable Event
     public event Action<PlayerData> onPlayerConnect;
+    public event Action<PlayerInput> onPlayerAdded;
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
 
@@ -35,15 +37,28 @@ public class PlayerDataManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        SceneManager.sceneLoaded += OnSceneSwitch;
     }
 
     private void OnEnable()
     {
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        /*        playerInputManager = FindObjectOfType<PlayerInputManager>();*/
+        // Subscribe to the sceneLoaded event
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
 
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
         InputSystem.onDeviceChange += OnDeviceChange;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneSwitch;
+
+        playerInputManager.onPlayerJoined -= AddPlayer;
+        playerInputManager.onPlayerLeft -= RemovePlayer;
+        InputSystem.onDeviceChange -= OnDeviceChange;
     }
 
     private void OnDisable()
@@ -53,24 +68,34 @@ public class PlayerDataManager : MonoBehaviour
         InputSystem.onDeviceChange -= OnDeviceChange;
     }
 
+    private void OnSceneSwitch(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene Switched");
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
+
+        playerInputManager.onPlayerJoined += AddPlayer;
+        playerInputManager.onPlayerLeft += RemovePlayer;
+        InputSystem.onDeviceChange += OnDeviceChange;
+    }
+
     public void AddPlayer(PlayerInput input)
     {
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData tempPlayerData;
-        if(playerInputManager.playerCount == 1)
+        if(input.playerIndex == 0)
         {
             tempPlayerData = new PlayerData(input.playerIndex, player, input, input.devices[0], true, new CosmeticData());
         }
         else
         {
-            tempPlayerData = new PlayerData(players.Count, player, input, input.devices[0], false, new CosmeticData());
+            tempPlayerData = new PlayerData(input.playerIndex, player, input, input.devices[0], false, new CosmeticData());
         }
 
+        //Debug.Log("Added Player " + input.playerIndex + " to data manager");
         players.Add(tempPlayerData);
-
+        onPlayerAdded?.Invoke(tempPlayerData.GetInput());
         onPlayerConnect?.Invoke(tempPlayerData);
-
     }
     public void RemovePlayer(PlayerInput input)
     {

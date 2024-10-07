@@ -46,25 +46,30 @@ public class CosmeticManager : MonoBehaviour
         playerInputManager.onPlayerJoined -= AddPlayer;
     }
 
-    private void Start()
-    {
-        //canEdit = GameSceneManager.Instance.GetLobby();
-    }
-
     private void AddPlayer(PlayerInput player)
     {
         PlayerDataManager playerDataManager = PlayerDataManager.Instance; 
         // Player Data Manager Exists
         if (playerDataManager != null)
         {
-            setDefaultCosmetic(playerDataManager.GetPlayerData(player));
+/*            Debug.LogWarning("Applying default Color to " + player.playerIndex);
+            setDefaultCosmetic(playerDataManager.GetPlayerData(player));*/
         }
         else // No Data Manager
         {
             // Set Default color to all players
-            Debug.Log("No Player Data Manager, Using default Color");
+            Debug.LogWarning("No Player Data Manager, Using default Color");
             player.gameObject.transform.parent.GetComponentInChildren<MeshRenderer>().material = colors[0].colorMaterial;
         }
+
+
+/*        // Add Cosmetic Selection
+        // Get the action map and action
+        var actionMap = player.actions.FindActionMap("Player"); // Replace with your action map name
+        var moveCosmeticAction = actionMap.FindAction("Select"); // Replace with your action name
+
+        // Subscribe to the action
+        moveCosmeticAction.performed += MoveCosmetic;*/
     }
 
     public void ChangeCosmetic(Vector2 input, PlayerData data)
@@ -124,6 +129,7 @@ public class CosmeticManager : MonoBehaviour
             {
                 // Color is not in Use
                 data.GetCosmeticData().SetColorIndex(i);
+                //Debug.Log("Color with ID " + i + " " + colors[i].Title + " is not in use");
                 data.GetCosmeticData().SetMaterialPicked(colors[i].colorMaterial);
                 data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
                 return;
@@ -215,9 +221,28 @@ public class CosmeticManager : MonoBehaviour
         return index;
     }
 
+/*    private void AddPlayer(PlayerInput player)
+    {
+
+    }*/
+
+    public void MoveCosmetic(Vector2 value, PlayerInput device)
+    {
+        //Vector2 value = context.ReadValue<Vector2>();
+        //Debug.Log(context.action.activeControl.device);
+        //PlayerInput playerInput = this.GetComponent<PlayerInput>();
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(device);
+        if(data == null)
+        {
+            Debug.LogError("The Device is not finding a player attached");
+        }
+        ChangeCosmetic(value, data);
+    }
+
     // Enum for Selected Cosmetic
     public enum SelectedCosmetic
     {
-        Colors
+        Colors,
+        Hats,
     }
 }

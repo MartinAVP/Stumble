@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class LobbyManager : MonoBehaviour
     // Start is called before the first frame update
 
     private PlayerInputManager playerInputManager;
+    public static LobbyManager Instance;
 
     private void OnEnable()
     {
@@ -22,14 +24,24 @@ public class LobbyManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
         playerInputManager = FindAnyObjectByType<PlayerInputManager>();
     }
 
-    void Start()
+    public void StartGame()
     {
-        
+        SceneManager.LoadScene("Lobby");
     }
 
+    // Change Spawn
     private void AddPlayer(PlayerInput player)
     {
         GameObject playerObj = player.gameObject;

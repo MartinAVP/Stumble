@@ -213,6 +213,7 @@ GameObject:
   - component: {fileID: 6099063619695027666}
   - component: {fileID: 2957293266185199978}
   - component: {fileID: 8516523756351259845}
+  - component: {fileID: 7453461613912063939}
   m_Layer: 7
   m_Name: PlayerCapsule
   m_TagString: Player
@@ -391,7 +392,19 @@ MonoBehaviour:
     m_ActionId: 3aff67fd-3609-465f-a0f3-dedaf932e206
     m_ActionName: Player/Look[/XInputControllerWindows/rightStick,/Mouse/delta]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7453461613912063939}
+        m_TargetAssemblyTypeName: PlayerSelectAddon, Assembly-CSharp
+        m_MethodName: Select
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 4518f07f-15ae-46c7-83f3-b30873ee494d
     m_ActionName: Player/Select[/XInputControllerWindows/dpad/up,/XInputControllerWindows/dpad/down,/XInputControllerWindows/dpad/left,/XInputControllerWindows/dpad/right]
   - m_PersistentCalls:
@@ -461,6 +474,18 @@ MonoBehaviour:
   lockVeritcalMovement: 0
   isFloored: 0
   slantedSurfacePushbackMultiplier: 1
+--- !u!114 &7453461613912063939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4867914553740539868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04090fa5b6553ea44a897ee92ee41e25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4995286471882313037
 GameObject:
   m_ObjectHideFlags: 0

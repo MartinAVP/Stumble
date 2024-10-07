@@ -13,6 +13,7 @@ public class LoadingScreenManager : MonoBehaviour
     // Set the target Y position for the Loading Screen
     public float targetYPosition = 300f; // Change this to the desired Y position
     private RectTransform loadingScreenRectTransform;
+    private bool isLoadingScreen = true;
 
     private void Awake()
     {
@@ -37,15 +38,28 @@ public class LoadingScreenManager : MonoBehaviour
         }
     }
 
-    public void StartTransition()
+    public void StartTransition(bool goIn)
     {
         if (LoadingScreen == null) { Debug.LogError("No Loading Screen Defined"); return; }
-        LoadingScreen.SetActive(true);
-        StartCoroutine(TransitionToLoadingScreen());
+        if (isLoadingScreen) // Loading Screen is filling the Screen
+        {
+            // Screen is in and player wants it to go in
+            if (goIn) { return; }
+            LoadingScreen.SetActive(true);
+            StartCoroutine(TransitionToLoadingScreen());
+        }
+        else // Loading Screen is outside of the Screen
+        {
+            // Screen is out and player wants it to go out
+            if (!goIn) { return; }
+            LoadingScreen.SetActive(true);
+            StartCoroutine(TransitionToLoadingScreen());
+        }
     }
 
     public void EndTransition()
     {
+        isLoadingScreen = !isLoadingScreen;
         onLoadScreenFinishTransition?.Invoke();
         /*        if (LoadingScreen == null) { Debug.LogError("No Loading Screen Defined"); return; }
                 //StartCoroutine(TransitionFromLoadingScreen());*/
