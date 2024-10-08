@@ -35,9 +35,11 @@ public class ControllerForMenus : MonoBehaviour
 
         if (playerDataManager != null)
         {
-            if(playerDataManager.GetPlayers().Count != 0)
+            //Debug.Log(playerDataManager.GetPlayers().Count);
+            if(playerDataManager.GetPlayers().Count > 0)
             {
-                if(playerDataManager.GetPlayerData(0).GetInput().currentControlScheme == "Controller")
+                //PlayerInput player = playerDataManager.GetPlayerData(0).GetInput();
+                if (playerDataManager.GetPlayerData(0).GetInput().currentControlScheme == "Controller")
                 {
                     hostUsingController = true;
                 }
