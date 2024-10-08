@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -21,18 +22,19 @@ public class ExperimentalPlayerManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     private PlayerDataManager playerDataManager;
 
-    [HideInInspector]
+/*    [HideInInspector]*/
     //public UnityEvent OnAllPlayersBroughtInSpawned;
 
 
     [Header("Settings")]
-    [SerializeField] private SceneCameraType sceneCamera = SceneCameraType.ThirdPersonControl;      // Camera Type for the Scene
+    //[SerializeField] public SceneCameraType camType;
+    //[SerializeField] private SceneCameraType cameraType;
     [SerializeField] private bool cursorEnabled = false;                                            // Enable Cursor (Recommend to leave disabled)
     [SerializeField] private bool kickPlayerOnDisconntect = false;                                  // Kick players when they leave from the game
+    [SerializeField] private SceneCameraType sceneCameraType;
 
     // UI
     public InputSystemUIInputModule UIEventSystem;
-    //public GameObject UIFirstSelected;
 
     private Dictionary<InputDevice, PlayerInput> deviceSaver = new Dictionary<InputDevice, PlayerInput>(); // Dictionary that holds player devices in case of kicking enabled
 
@@ -49,13 +51,13 @@ public class ExperimentalPlayerManager : MonoBehaviour
     {
         // [!] Note: Anything using the gameController has to be
         // in start. If added to OnEnbale will give error
-        gameController = GameController.Instance;
         gameController.startSystems += LateStart;
     }
 
     private void OnEnable()
     {
         // Events
+        gameController = GameController.Instance;
         playerInputManager.onPlayerLeft += RemovePlayer;
 
         playerDataManager = FindAnyObjectByType<PlayerDataManager>();
@@ -116,13 +118,14 @@ public class ExperimentalPlayerManager : MonoBehaviour
 
             // Spawn Players Already In the Player Data Manager
             int players = playerDataManager.players.Count;
+            Debug.Log("Spawning" + players + " players in the scene");
             for (int i = 0; i < players; i++)
             {
                 int playersInGame = i;
                 string playerControlScheme = playerDataManager.GetPlayerData(i).input.currentControlScheme;
                 InputDevice playerDevice = playerDataManager.GetPlayerData(i).device;
                 //playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
-                playerInputManager.JoinPlayer(i, -i, playerControlScheme, playerDevice);
+                playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
                 Debug.Log("Spawning a new Player " + i);
             }
 
@@ -169,8 +172,9 @@ public class ExperimentalPlayerManager : MonoBehaviour
             playerDataManager.GetPlayerData(playerID).SetPlayerInScene(player.transform.gameObject);
 
             // Check if playerPrefab has a MeshRenderer - Meaning its a player with model
-            if (player.gameObject.GetComponentInChildren<MeshRenderer>() != null)
+            if (player.gameObject.GetComponent<PlayerCosmetics>() != null)
             {
+                //Debug.Log("Player has a PlayerCosmetics Item");
                 // Add Cosmetic [Prototype]
                 if (GameController.Instance.gameState == GameState.Lobby) {
                     // Set the default cosmetic if the scene is Lobby
@@ -179,8 +183,16 @@ public class ExperimentalPlayerManager : MonoBehaviour
                 else
                 {
                     // Set the chosen cosmetic
-                    player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
+                    //player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
+                    //Debug.LogWarning("Apply Cosmetic to Player");
+                    player.GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().GetMaterialPicked();
+                    player.GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().GetMaterialPicked();
+                    player.GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().GetMaterialPicked();
                 }
+            }
+            else
+            {
+                //Debug.LogWarning("No PlayerCosmetics Item Found");
             }
         }
 
@@ -192,15 +204,22 @@ public class ExperimentalPlayerManager : MonoBehaviour
         //Debug.Log("Setting player #" + (playerInputManager.playerCount - 1) + " to " + spawnPoints[playerInputManager.playerCount - 1].position);
         //Debug.Log("Adding Player");
 
-        switch (sceneCamera)
+        switch (sceneCameraType)
         {
             case SceneCameraType.ThirdPersonControl:
                 // Convert layer mask (bit) to an integer
                 int layerToAdd = (int)Mathf.Log(playerLayers[playerID].value, 2);
 
                 //set the layer
+                //player.camera = playerParent.GetComponentInChildren<Camera>();
                 playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
                 // add the layer
+/*                Transform CamPos = playerParent.GetComponentInChildren<Camera>().transform;
+                Camera cam = CamPos.GetComponent<Camera>();
+                Destroy(cam);
+                Camera newCam = CamPos.AddComponent<Camera>();
+                newCam = cam;*/
+
                 playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd;
 
                 // Add the Input Handler for camera controll
@@ -261,10 +280,13 @@ public class ExperimentalPlayerManager : MonoBehaviour
     }
 
 
-    /// Enums For Customization
-    private enum SceneCameraType
-    {
-        ThirdPersonControl,
-        StaticCamera
-    }
+    
+
+}
+
+/// Enums For Customization
+public enum SceneCameraType
+{
+    ThirdPersonControl,
+    StaticCamera
 }

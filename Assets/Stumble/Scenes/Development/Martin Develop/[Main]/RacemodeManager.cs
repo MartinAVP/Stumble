@@ -29,12 +29,24 @@ public class RacemodeManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        GameController.Instance.startSystems += LateStart;
+    }
+
+    private void OnDisable()
+    {
+        GameController.Instance.startSystems -= LateStart;
+        
+    }
+
+    private void LateStart()
+    {
+        UnityEngine.Debug.Log("Late Start Called on Race manager");
         stopwatch = new Stopwatch();
 
         // Lock all players in place
-        LockPlayersMovement(true);
+        //LockPlayersMovement(true);
 
         // Check if Cinematic Controler Exists
         if (CinematicController.Instance != null)
@@ -75,7 +87,7 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.LogWarning("Finalized Timer");
 
         // Unlock all Player Movement
-        LockPlayersMovement(false);
+        //LockPlayersMovement(false);
     }
 
     public void ReachFinishLine(PlayerData player)

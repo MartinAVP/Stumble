@@ -137,6 +137,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private void Awake()
     {
         freelookcam = camController.gameObject.GetComponent<CinemachineFreeLook>();
+        //this.GetComponent<PlayerInput>().camera = cam.GetComponent<Camera>();
     }
 
     private void Start()
@@ -497,7 +498,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                     Debug.DrawRay(hit.point, result * 5, Color.red);*/
                     _grounded = false;
                 }
-                Debug.Log(surfaceAngle);
+                //Debug.Log(surfaceAngle);
             }
         }
 

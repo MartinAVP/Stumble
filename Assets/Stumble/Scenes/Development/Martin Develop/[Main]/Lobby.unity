@@ -348,6 +348,7 @@ GameObject:
   - component: {fileID: 254751566}
   - component: {fileID: 254751565}
   - component: {fileID: 254751567}
+  - component: {fileID: 254751568}
   m_Layer: 0
   m_Name: UI Components
   m_TagString: Untagged
@@ -397,6 +398,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startGame: {fileID: 1486307872}
+--- !u!114 &254751568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254751563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540bd5164c12151459c7dd70aa53cad0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FirstSelectedItem: {fileID: 1486307870}
+  eventSystem: {fileID: 410982068}
 --- !u!1001 &348686954
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1136,10 +1151,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fab2a7d83c1e52844bd0ef72a9811b6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerLayers: []
-  sceneCamera: 1
+  playerLayers:
+  - serializedVersion: 2
+    m_Bits: 128
+  - serializedVersion: 2
+    m_Bits: 256
+  - serializedVersion: 2
+    m_Bits: 512
+  - serializedVersion: 2
+    m_Bits: 1024
   cursorEnabled: 1
   kickPlayerOnDisconntect: 1
+  sceneCameraType: 1
   UIEventSystem: {fileID: 410982067}
 --- !u!114 &1118158287
 MonoBehaviour:
@@ -2083,7 +2106,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 1, g: 0.97614264, b: 0.495283, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -2979,8 +3002,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 1189264203}
     m_Modifications:
     - target: {fileID: 6075242497914733497, guid: 5b156751637b1cb4395af6566f933fb3, type: 3}
+      propertyPath: m_Size.x
+      value: 5.0799985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6075242497914733497, guid: 5b156751637b1cb4395af6566f933fb3, type: 3}
+      propertyPath: m_Size.y
+      value: 89.67037
+      objectReference: {fileID: 0}
+    - target: {fileID: 6075242497914733497, guid: 5b156751637b1cb4395af6566f933fb3, type: 3}
       propertyPath: m_Center.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6075242497914733497, guid: 5b156751637b1cb4395af6566f933fb3, type: 3}
+      propertyPath: m_Center.y
+      value: -42.2952
       objectReference: {fileID: 0}
     - target: {fileID: 8104556995459031192, guid: 5b156751637b1cb4395af6566f933fb3, type: 3}
       propertyPath: m_Name

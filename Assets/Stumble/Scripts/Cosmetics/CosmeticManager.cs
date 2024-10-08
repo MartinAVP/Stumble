@@ -89,7 +89,10 @@ public class CosmeticManager : MonoBehaviour
                 data.GetCosmeticData().SetColorIndex(currentlyAt);
                 data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].colorMaterial);
                 // Set the Material to the Player
-                data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                //data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
 
             }
             else if (input.x < -0.5f)
@@ -101,7 +104,10 @@ public class CosmeticManager : MonoBehaviour
                 data.GetCosmeticData().SetColorIndex(currentlyAt);
                 data.GetCosmeticData().SetMaterialPicked(colors[currentlyAt].colorMaterial);
                 // Set the Material to the Player
-                data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                //data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
             }
         }
     }
@@ -131,7 +137,10 @@ public class CosmeticManager : MonoBehaviour
                 data.GetCosmeticData().SetColorIndex(i);
                 //Debug.Log("Color with ID " + i + " " + colors[i].Title + " is not in use");
                 data.GetCosmeticData().SetMaterialPicked(colors[i].colorMaterial);
-                data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                //data.GetPlayerInScene().GetComponentInChildren<MeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
+                data.GetPlayerInScene().GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = data.GetCosmeticData().GetMaterialPicked();
                 return;
             }
         }

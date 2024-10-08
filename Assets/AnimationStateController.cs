@@ -6,16 +6,35 @@ using UnityEngine;
 public class AnimationStateController : MonoBehaviour
 {
     Animator animator;
-    ThirdPersonMovement movement;
+    ThirdPersonMovement thirdPersonMovement;
+    StaticPlayerMovement staticPlayerMovement;
+
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();  
-        movement = this.transform.parent.GetComponent<ThirdPersonMovement>();
+        animator = this.GetComponent<Animator>();
+        if(this.transform.parent.GetComponent<ThirdPersonMovement>() != null)
+        {
+            thirdPersonMovement = this.transform.parent.GetComponent<ThirdPersonMovement>();
+            return;
+        }
+        else if(this.transform.parent.GetComponent<StaticPlayerMovement>() != null)
+        {
+            staticPlayerMovement = this.transform.parent.GetComponent<StaticPlayerMovement>();
+            return;
+        }
     }
 
     private void LateUpdate()
     {
-        animator.SetFloat("velocity", movement.horizontalVelocity);
+        if (thirdPersonMovement != null)
+        {
+            animator.SetFloat("velocity", thirdPersonMovement.horizontalVelocity);
+        }
+        if(staticPlayerMovement != null)
+        {
+            animator.SetFloat("velocity", staticPlayerMovement.horizontalVelocity);
+        }
+
     }
 }

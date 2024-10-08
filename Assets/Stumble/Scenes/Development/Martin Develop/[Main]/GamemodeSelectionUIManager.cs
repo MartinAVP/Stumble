@@ -15,6 +15,8 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     [SerializeField] private Button GrandprixButton;
     [SerializeField] private Button ArenaButton;
     [SerializeField] private Button SelectModes;
+    [Space]
+    [SerializeField] private Button Level1Button;
 
     [Header("Video Clips")]
     [SerializeField] private VideoClip grandPrixVideo;
@@ -54,6 +56,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     private void SelectGrandPrix()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(GamemodeSelectPanel, GrandPrixLevelSelectionPanel, GamemodeSelectScreenManager.Direction.Left);
+        ControllerForMenus.Instance.ChangeSelectedObject(Level1Button.gameObject);
     }
 
     private void SelectArena()
@@ -68,7 +71,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
 
     public void LoadGrandPrixLevel(string name)
     {
-        LoadingScreenManager.Instance.StartTransition(false);
+        LoadingScreenManager.Instance.StartTransition(true);
         StartCoroutine(loadLevelDelay(name));
     }
 
