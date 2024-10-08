@@ -24,7 +24,7 @@ public class JacknBox_Button : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (triggered)
+        while (triggered)
         {
             resetTimer += Time.deltaTime;
             if (resetTimer >= timeToReset)
