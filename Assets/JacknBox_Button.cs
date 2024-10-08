@@ -5,13 +5,13 @@ using UnityEngine;
 public class JacknBox_Button : MonoBehaviour
 {
     public CapsuleCollider jackInTheBox;
-    private CapsuleCollider jackInTheBoxControl;
+    private float jackInTheBoxControl;
 
-    public float expandedRadius = 4f;
+    public float expandedRadius = 3f;
     public float expansionMultiplier = 7;
     public int loopInterations = 10;
 
-    public float timeToReset = 4;
+    public float timeTillReset = 5f;
 
 
     private float resetTimer = 0;
@@ -19,25 +19,22 @@ public class JacknBox_Button : MonoBehaviour
 
     void Start()
     {
-        jackInTheBoxControl = jackInTheBox;   
+        jackInTheBoxControl = jackInTheBox.radius;
+        Debug.Log(jackInTheBoxControl);
     }
 
     void FixedUpdate()
     {
-        while (triggered)
+        if (triggered)
         {
-            resetTimer += Time.deltaTime;
-            if (resetTimer >= timeToReset)
-            {
-                jackInTheBox.radius = jackInTheBoxControl.radius; 
-            }
-
+            StartCoroutine(jackReset(triggered));
+            triggered = false;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" && triggered != true)
         {
             Debug.Log(jackInTheBox.radius);
 
@@ -45,14 +42,28 @@ public class JacknBox_Button : MonoBehaviour
             {
                 jackInTheBox.radius += jackInTheBox.radius * expansionMultiplier * Time.deltaTime;
             }
-                            
 
+            
             Debug.Log(jackInTheBox.radius);
 
             Debug.Log("radius complete");
+
+            triggered = true;
         }
 
 
+    }
+
+    private IEnumerator jackReset(bool triggered)
+    {
+        Debug.Log(timeTillReset);
+        yield return new WaitForSecondsRealtime(timeTillReset);
+        Debug.Log("timer complete");
+        jackInTheBox.radius = jackInTheBoxControl;
+
+        Debug.Log("control " + jackInTheBoxControl);
+        Debug.Log("modified rad: " + jackInTheBox.radius);
+        
     }
 
 }
