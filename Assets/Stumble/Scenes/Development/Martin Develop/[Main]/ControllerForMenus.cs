@@ -12,7 +12,7 @@ public class ControllerForMenus : MonoBehaviour
     [SerializeField] GameObject FirstSelectedItem;
     [SerializeField] MultiplayerEventSystem eventSystem;
 
-    private bool hostUsingController;
+    public bool hostUsingController;
     public static ControllerForMenus Instance { get; private set; }
 
     private void Awake()
@@ -32,6 +32,17 @@ public class ControllerForMenus : MonoBehaviour
     void Start()
     {
         playerDataManager = PlayerDataManager.Instance;
+
+        if (playerDataManager != null)
+        {
+            if(playerDataManager.GetPlayers().Count != 0)
+            {
+                if(playerDataManager.GetPlayerData(0).GetInput().currentControlScheme == "Controller")
+                {
+                    hostUsingController = true;
+                }
+            }
+        }
     }
 
     private void OnEnable()
@@ -64,6 +75,7 @@ public class ControllerForMenus : MonoBehaviour
         if (hostUsingController)
         {
             eventSystem.SetSelectedGameObject(selected);
+            Debug.Log("Changed Selected Item for " + selected.name);
         }
     }
 

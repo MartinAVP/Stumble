@@ -67,6 +67,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     private void GoBackToModeSelection()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(GrandPrixLevelSelectionPanel, GamemodeSelectPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeSelectedObject(GrandprixButton.gameObject);
     }
 
     public void LoadGrandPrixLevel(string name)
