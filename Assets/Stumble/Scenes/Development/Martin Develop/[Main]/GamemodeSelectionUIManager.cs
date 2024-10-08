@@ -1,13 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class GamemodeSelectionUIManager : MonoBehaviour
 {
+    [Header("Panels")]
+    [SerializeField] private GameObject GamemodeSelectPanel;
+    [SerializeField] private GameObject GrandPrixLevelSelectionPanel;
+
+    [Header("Buttons")]
     [SerializeField] private Button GrandprixButton;
     [SerializeField] private Button ArenaButton;
+    [SerializeField] private Button SelectModes;
 
     [Header("Video Clips")]
     [SerializeField] private VideoClip grandPrixVideo;
@@ -18,6 +25,10 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     {
         GrandprixButton.GetComponent<ButtonHoverEvent>().onHover.AddListener(HoverOverGrandPrix);
         ArenaButton.GetComponent<ButtonHoverEvent>().onHover.AddListener(HoverOverArena);
+
+        GrandprixButton.onClick.AddListener(SelectGrandPrix);
+        ArenaButton.onClick.AddListener(SelectArena);
+        SelectModes.onClick.AddListener(GoBackToModeSelection);
     }
 
 
@@ -38,6 +49,33 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     {
         backgroundVideo.clip = arenaVideo;
         backgroundVideo.Play();
+    }
+
+    private void SelectGrandPrix()
+    {
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(GamemodeSelectPanel, GrandPrixLevelSelectionPanel, GamemodeSelectScreenManager.Direction.Left);
+    }
+
+    private void SelectArena()
+    {
+
+    }
+
+    private void GoBackToModeSelection()
+    {
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(GrandPrixLevelSelectionPanel, GamemodeSelectPanel, GamemodeSelectScreenManager.Direction.Right);
+    }
+
+    public void LoadGrandPrixLevel(string name)
+    {
+        LoadingScreenManager.Instance.StartTransition(false);
+        StartCoroutine(loadLevelDelay(name));
+    }
+
+    private IEnumerator loadLevelDelay(string name)
+    {
+        yield return new WaitForSeconds(4f);
+        SceneManager.LoadScene(name);
     }
 
     private enum GamemodeSelected
