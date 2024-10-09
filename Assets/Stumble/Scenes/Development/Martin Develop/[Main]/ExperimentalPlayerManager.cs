@@ -185,9 +185,9 @@ public class ExperimentalPlayerManager : MonoBehaviour
                     // Set the chosen cosmetic
                     //player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
                     //Debug.LogWarning("Apply Cosmetic to Player");
-                    player.GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().GetMaterialPicked();
-                    player.GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().GetMaterialPicked();
-                    player.GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().GetMaterialPicked();
+                    player.GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().colorPicked;
+                    player.GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().colorPicked;
+                    player.GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().colorPicked;
                 }
             }
             else

@@ -103,7 +103,7 @@ public class PodiumPlayerManager : MonoBehaviour
         //playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
 
         // Add Cosmetic [Prototype]
-        player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.GetMaterialPicked();
+        player.gameObject.GetComponentInChildren<MeshRenderer>().material = playerDataManager.GetPlayerData(player).cosmeticData.colorPicked;
 
         //Check for player Count
         //Debug.Log(players.Count);

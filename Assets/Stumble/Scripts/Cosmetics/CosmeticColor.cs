@@ -8,4 +8,5 @@ public class CosmeticColor : ScriptableObject
 {
     public String Title;
     public Material colorMaterial;
+    public Sprite iconTexture;
 }
