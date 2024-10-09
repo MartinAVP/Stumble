@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class MovingPlatformData : MonoBehaviour
 {
-    [SerializeField] private Vector3 previousPosition;
-    [SerializeField] private Vector3 linearVelocity;
-    [SerializeField] private Quaternion previousRotation;
+    private Vector3 previousPosition;
+    private Vector3 linearVelocity;
+    private Quaternion previousRotation;
     
     private float deltaTime;
     private Vector3 previousFixedPosition;
-    private Vector3 changeInPosition;
-    private Vector3 changeInRotation;
+    [SerializeField] private Vector3 changeInPosition;
+    [SerializeField] private Vector3 changeInRotation;
 
     /*  Deprecated content is still being reference by StaticPlayerMovement.
      *  Once StaticPlayerMovement is deleted this code can be removed.
@@ -22,20 +22,28 @@ public class MovingPlatformData : MonoBehaviour
 
     private void LateUpdate()
     {
-        linearVelocity = (transform.position - previousPosition) / Time.deltaTime;
-        deltaTime = Time.deltaTime;
+
     }
 
     public void UpdatePreviousPosition()
     {
-        changeInPosition = transform.position - previousPosition;
+        //changeInPosition = transform.position - previousPosition;
         previousPosition = transform.position;
     }
 
     public void UpdatePreviousRotation()
     {
-        changeInRotation = (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles;
+        //changeInRotation = (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles;
         previousRotation = transform.rotation;
+    }
+
+    public void UpdateDeltas(float deltaTime)
+    {
+        changeInPosition = transform.position - previousPosition;
+        changeInRotation = (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles;
+
+        this.deltaTime = deltaTime;
+        linearVelocity = (transform.position - previousPosition) / deltaTime;
     }
 
     public Vector3 ChangeInPosition

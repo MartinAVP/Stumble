@@ -6,7 +6,18 @@ using UnityEngine;
 [RequireComponent (typeof (MovingPlatformData))]
 public abstract class MovingPlatform : MonoBehaviour
 {
-    [SerializeField] protected List<MovingPlatformData> movingPlatforms = new List<MovingPlatformData>();
+    [SerializeField] protected List<MovingPlatformData> movingPlatformsData = new List<MovingPlatformData>();
+
+    public delegate void OnPreMovePlatforms();
+    public OnPreMovePlatforms onPreMovePlatforms;
+
+    public delegate void OnMovePlatforms();
+    public OnMovePlatforms onMovePlatforms;
+    
+    public delegate void OnPostMovePlatforms();
+    public OnPostMovePlatforms onPostMovePlatforms;
+
+     [SerializeField] private MovingPlatform manager = null;
 
     protected void Start()
     {
@@ -24,7 +35,7 @@ public abstract class MovingPlatform : MonoBehaviour
                 movingPlatformData = checkForData.AddComponent<MovingPlatformData>();
             }
             movingPlatformData.parent = this;
-            movingPlatforms.Add(movingPlatformData);
+            movingPlatformsData.Add(movingPlatformData);
 
             foreach (Transform t in checkForData)
             {
@@ -33,17 +44,50 @@ public abstract class MovingPlatform : MonoBehaviour
                     stack.Push(t);
             }
         }
+
+        FindManager();
+    }
+
+    protected void FindManager()
+    {
+        Transform parent = transform.parent;
+        while (parent != null)
+        {
+            manager = parent.GetComponent<MovingPlatform>();
+
+            parent = parent.parent;
+        }
+
+        if(manager == null)
+            manager = this;
+
+        manager.onPreMovePlatforms += UpdatePreviousPositionRotations;
+        manager.onMovePlatforms += Move;
+        manager.onPostMovePlatforms += UpdateDeltas;
     }
 
     protected void Update()
     {
-        foreach (MovingPlatformData movingPlatformData in movingPlatforms)
-        {
-            movingPlatformData.UpdatePreviousPosition();
-            movingPlatformData.UpdatePreviousRotation();
-        }
+        onPreMovePlatforms?.Invoke();
+        onMovePlatforms?.Invoke();
+        onPostMovePlatforms?.Invoke();
+    }
 
-        Move();
+    protected void UpdatePreviousPositionRotations()
+    {
+        foreach (var data in movingPlatformsData)
+        {
+            data.UpdatePreviousPosition();
+            data.UpdatePreviousRotation();
+        }
+    }
+
+    protected void UpdateDeltas()
+    {
+        foreach (var data in movingPlatformsData)
+        {
+            data.UpdateDeltas(Time.deltaTime);
+        }
     }
 
     public abstract void Move();

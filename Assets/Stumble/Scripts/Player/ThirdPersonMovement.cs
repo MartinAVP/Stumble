@@ -304,12 +304,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
 
         horizontalVelocity -= actualBraking;
-        _bumpHorizontalVelocity -= actualBraking * _bumpHorizontalVelocity.normalized;
 
-        if(_bumpHorizontalVelocity.magnitude < 0.05f)
+        if (actualBraking > _bumpHorizontalVelocity.magnitude)
         {
             _bumpHorizontalVelocity = Vector3.zero;
         }
+        else
+            _bumpHorizontalVelocity -= actualBraking * _bumpHorizontalVelocity.normalized;
 
         if (horizontalVelocity <= 0.05f)
         {
@@ -381,12 +382,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
         }
 
-        _bumpHorizontalVelocity -= actualBraking * _bumpHorizontalVelocity.normalized;
-
-        if (_bumpHorizontalVelocity.magnitude < 0.05f)
+        if(actualBraking > _bumpHorizontalVelocity.magnitude)
         {
             _bumpHorizontalVelocity = Vector3.zero;
         }
+        else
+            _bumpHorizontalVelocity -= actualBraking * _bumpHorizontalVelocity.normalized;
 
         inputVelocity = moveDir * horizontalVelocity;
         finalVelocity = inputVelocity + _bumpHorizontalVelocity;
