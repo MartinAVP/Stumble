@@ -553,8 +553,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                         baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
 
                     _bumpHorizontalVelocity -= baseVelocity;
-
-                    //print("Removing base velocity " + _bumpHorizontalVelocity + " " + baseVelocity);
                 }
             }
 
@@ -565,9 +563,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             {
                 Vector3 baseVelocity = currentBase.LinearVelocity;
                 _bumpHorizontalVelocity += baseVelocity;
-
-                print("Imparting base velocity " + _bumpHorizontalVelocity + " " + baseVelocity + "\n");
-                //    + currentBase.ChangeInPosition + " " + Time.deltaTime);
             }
 
             currentBase = null;
