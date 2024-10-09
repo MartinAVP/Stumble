@@ -561,7 +561,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             if(currentBase != null)
             {
-                Vector3 baseVelocity = currentBase.LinearVelocity;
+                //Vector3 baseVelocity = currentBase.LinearVelocity;
                 _bumpHorizontalVelocity += baseVelocity;
             }
 
@@ -574,6 +574,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private Vector3 groundedVector = Vector3.zero;
     public float slantedSurfacePushbackMultiplier = 1;
 
+    Vector3 baseVelocity;
     /// <summary>
     /// Stick the player to moving platforms.
     /// </summary>
@@ -582,6 +583,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (currentBase == null) return;
 
         controller.enabled = false;
+        Vector3 startPos = transform.position;
 
         transform.position += currentBase.ChangeInPosition;
 
@@ -595,6 +597,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         transform.RotateAround(currentBase.transform.position, Vector3.up, currentBase.ChangeInRotation.y);
 
         controller.enabled = true;
+
+        baseVelocity = (transform.position - startPos) / Time.deltaTime;
     }
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
