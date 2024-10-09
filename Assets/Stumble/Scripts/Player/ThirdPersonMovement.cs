@@ -535,10 +535,31 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             MovingPlatformData newBase = hit.transform.GetComponent<MovingPlatformData>();
             if(newBase != null)
+            {
+                bool cancelVelocity = currentBase == null;
+
                 currentBase = newBase;
+
+                if (cancelVelocity)
+                {
+                    Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
+                    
+                    if(baseVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
+                        baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
+
+                    _bumpHorizontalVelocity -= baseVelocity;
+                }
+            }
+
         }
         else
         {
+            if(currentBase != null)
+            {
+                Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
+                _bumpHorizontalVelocity += baseVelocity;
+            }
+
             currentBase = null;
         }
         
