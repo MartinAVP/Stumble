@@ -37,16 +37,13 @@ public abstract class MovingPlatform : MonoBehaviour
 
     protected void Update()
     {
-        Move();
-    }
-
-    protected void LateUpdate()
-    {
         foreach (MovingPlatformData movingPlatformData in movingPlatforms)
         {
             movingPlatformData.UpdatePreviousPosition();
             movingPlatformData.UpdatePreviousRotation();
         }
+
+        Move();
     }
 
     public abstract void Move();

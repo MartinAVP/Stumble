@@ -159,18 +159,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
     }
 
-
     private void Update()
     {
         Movement();
         ApplyGravity();
         ApplyVerticalMovement();
         MoveWithBase();
-    }
-
-    private void LateUpdate()
-    {
-
     }
 
     private void FixedUpdate()
@@ -584,8 +578,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         transform.position += currentPlatform.ChangeInPosition;
 
-        print(currentPlatform.ChangeInRotation);
-
         Quaternion orientation = transform.rotation;
 
         transform.RotateAround(currentPlatform.transform.position, Vector3.right, currentPlatform.ChangeInRotation.x);
@@ -597,7 +589,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         controller.enabled = true;
 
-        platformVelocity = (transform.position - startPos) / Time.deltaTime;
+        platformVelocity = (transform.position - startPos) / currentPlatform.DeltaTime;
+        platformVelocity.y = 0;
     }
 
 
