@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class MovingPlatformData : MonoBehaviour
 {
+    [SerializeField] private Vector3 previousPosition;
+    [SerializeField]  private Vector3 linearVelocity;
+    [SerializeField]  private Quaternion previousRotation;
+
+    /*  Deprecated content is still being reference by StaticPlayerMovement.
+     *  Once StaticPlayerMovement is deleted this code can be removed.
+     */
+    #region Deprecated
     [SerializeField] public MovingPlatform parent;
-
-    private Vector3 previousPosition;
-    private Vector3 linearVelocity;
-    private Quaternion previousRotation;
-
-    private void Update()
-    {
-        UpdatePreviousPosition();
-        UpdatePreviousRotation();
-    }
+    #endregion
 
     private void LateUpdate()
     {

@@ -27,6 +27,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private bool _grounded = false;
     #endregion
 
+    private Vector3 groundedVector = Vector3.zero;
+
     #region Bumping
     [Header("Bumping")]
     private float bumpForce = 20f;
@@ -81,8 +83,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private bool diveWasCanceled = false;
     #endregion
 
-    #region Base
-    private MovingPlatformData currentBase;
+    #region Platform
+    private MovingPlatformData currentPlatform;
+    private Vector3 platformVelocity;
     #endregion
 
     [Header("Debug")]
@@ -162,14 +165,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Movement();
         ApplyGravity();
         ApplyVerticalMovement();
-
-
-
+        MoveWithBase();
     }
 
     private void LateUpdate()
     {
-        MoveWithBase();
+
     }
 
     private void FixedUpdate()
@@ -541,65 +542,64 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             MovingPlatformData newBase = hit.transform.GetComponent<MovingPlatformData>();
             if(newBase != null)
             {
-                bool cancelVelocity = currentBase == null;
+                bool cancelVelocity = currentPlatform == null;
 
-                currentBase = newBase;
+                currentPlatform = newBase;
 
                 if (cancelVelocity)
                 {
-                    Vector3 baseVelocity = currentBase.LinearVelocity;
+                    Vector3 platformVelocity = currentPlatform.LinearVelocity;
                     
-                    if(baseVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
-                        baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
+                    if(platformVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
+                        platformVelocity = platformVelocity.normalized * _bumpHorizontalVelocity.magnitude;
 
-                    _bumpHorizontalVelocity -= baseVelocity;
+                    _bumpHorizontalVelocity -= platformVelocity;
                 }
             }
 
         }
         else
         {
-            if(currentBase != null)
+            if(currentPlatform != null)
             {
-                //Vector3 baseVelocity = currentBase.LinearVelocity;
-                _bumpHorizontalVelocity += baseVelocity;
+                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
+                _bumpHorizontalVelocity += platformVelocity;
             }
 
-            currentBase = null;
+            currentPlatform = null;
         }
         
         return _grounded;
     }
 
-    private Vector3 groundedVector = Vector3.zero;
-    public float slantedSurfacePushbackMultiplier = 1;
-
-    Vector3 baseVelocity;
     /// <summary>
     /// Stick the player to moving platforms.
     /// </summary>
     private void MoveWithBase()
     {
-        if (currentBase == null) return;
+        if (currentPlatform == null) return;
 
         controller.enabled = false;
         Vector3 startPos = transform.position;
 
-        transform.position += currentBase.ChangeInPosition;
+        transform.position += currentPlatform.ChangeInPosition;
+
+        print(currentPlatform.ChangeInRotation);
 
         Quaternion orientation = transform.rotation;
 
-        transform.RotateAround(currentBase.transform.position, Vector3.right, currentBase.ChangeInRotation.x);
-        transform.RotateAround(currentBase.transform.position, Vector3.forward, currentBase.ChangeInRotation.z);
+        transform.RotateAround(currentPlatform.transform.position, Vector3.right, currentPlatform.ChangeInRotation.x);
+        transform.RotateAround(currentPlatform.transform.position, Vector3.forward, currentPlatform.ChangeInRotation.z);
 
         transform.rotation = orientation;
 
-        transform.RotateAround(currentBase.transform.position, Vector3.up, currentBase.ChangeInRotation.y);
+        transform.RotateAround(currentPlatform.transform.position, Vector3.up, currentPlatform.ChangeInRotation.y);
 
         controller.enabled = true;
 
-        baseVelocity = (transform.position - startPos) / Time.deltaTime;
+        platformVelocity = (transform.position - startPos) / Time.deltaTime;
     }
+
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
     {
@@ -616,12 +616,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             // Prevent Diving when Diving was canceled midair
             if (diveWasCanceled) { return; }
-
-            //horizontalVelocity += diveForce;
-            //if(horizontalVelocity > maxSpeed + diveForce)
-            //{
-            //    horizontalVelocity = maxSpeed + diveForce;
-            //}
 
             _bumpHorizontalVelocity += diveForce * transform.forward;
 
