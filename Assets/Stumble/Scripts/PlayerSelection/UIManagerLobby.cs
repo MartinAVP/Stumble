@@ -23,7 +23,7 @@ public class UIManagerLobby : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _startControllerConnection;
 
     [SerializeField] private TextMeshProUGUI _targetPlayerCount;
-    private int targetPlayers = 1;
+    public int targetPlayers { get; private set; } = 1;
 
     [Header("Controller Connection Screen")]
     [SerializeField] private Transform _playerCardsPanel;
@@ -259,4 +259,8 @@ public class UIManagerLobby : MonoBehaviour
     }
 
     // Device Reconnection System
+/*    public int GetTargetPlayers()
+    {
+        return targetPlayers;
+    }*/
 }

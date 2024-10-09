@@ -14,7 +14,7 @@ public class CosmeticData
 
     public CosmeticData()
     {
-        this.colorIndex = 0;
+        this.colorIndex = -1;
         this.picked = null;
     }
 

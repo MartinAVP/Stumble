@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MovingBase))]
-public class PatrolMovement : MonoBehaviour
+public class PatrolMovement : MovingPlatform
 {
     // public int NodeCount = 4;
     private int CurrentNode = 0;
@@ -21,13 +20,7 @@ public class PatrolMovement : MonoBehaviour
 
     private Quaternion nodeRotation;
 
-    private void Start()
-    {
-        MovingBase movingBase = GetComponent<MovingBase>();
-        movingBase.PropagateToChildren();
-    }
-
-    void FixedUpdate()
+    public override void Move()
     {
         if (delayed == true)
         {
