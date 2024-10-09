@@ -162,6 +162,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Movement();
         ApplyGravity();
         ApplyVerticalMovement();
+
+
+        MoveWithBase();
     }
 
     private void FixedUpdate()
@@ -175,9 +178,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
         }
 
-        MoveWithBase();
         isFloored = isGrounded();
-
     }
 
     public bool isFloored;
@@ -524,7 +525,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void MoveWithBase()
     {
+        print(name + " moving with base... ");
+
         if (currentBase == null) return;
+
+        print(currentBase.name + " with delta " + currentBase.parent.ChangeInPosition + " and rotation " + currentBase.parent.ChangeInRotation);
 
         controller.enabled = false;
 
