@@ -631,7 +631,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Vector3 bumpVelocity = direction * magnitude;
 
         _bumpHorizontalVelocity = new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
-        _verticalVelocity += bumpVelocity.y;
+
+        // If vertical velocity of the bumper is acting against this, then cancel this vertical velocity. Otherwise sum the velocities.
+        if(bumpVelocity.y * _verticalVelocity <= 0)
+        {
+            _verticalVelocity = bumpVelocity.y;
+        }
+        else
+        {
+            _verticalVelocity += bumpVelocity.y;
+        }
     }
     #endregion
 
