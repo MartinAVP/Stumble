@@ -525,11 +525,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void MoveWithBase()
     {
-        print(name + " moving with base... ");
-
         if (currentBase == null) return;
-
-        print(currentBase.name + " with delta " + currentBase.parent.ChangeInPosition + " and rotation " + currentBase.parent.ChangeInRotation);
 
         controller.enabled = false;
 
@@ -563,11 +559,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Prevent Diving when Diving was canceled midair
             if (diveWasCanceled) { return; }
 
-            horizontalVelocity += diveForce;
-            if(horizontalVelocity > maxSpeed + diveForce)
-            {
-                horizontalVelocity = maxSpeed + diveForce;
-            }
+            //horizontalVelocity += diveForce;
+            //if(horizontalVelocity > maxSpeed + diveForce)
+            //{
+            //    horizontalVelocity = maxSpeed + diveForce;
+            //}
+
+            _bumpHorizontalVelocity += diveForce * transform.forward;
 
             isProne = true;
             if (rotateModelonDive)
