@@ -20,11 +20,6 @@ public class MovingPlatformData : MonoBehaviour
     [SerializeField] public MovingPlatform parent;
     #endregion
 
-    private void LateUpdate()
-    {
-
-    }
-
     public void UpdatePreviousPosition()
     {
         //changeInPosition = transform.position - previousPosition;

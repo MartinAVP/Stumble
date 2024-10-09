@@ -97,6 +97,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void OnEnable()
     {
+        Application.targetFrameRate = 30;
+
         if(playerMovementSettings == null)
         {
             Debug.LogError("All the variables were changed to default due to the third person controller not having a player card attached");

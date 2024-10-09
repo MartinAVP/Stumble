@@ -29,6 +29,17 @@ public abstract class MovingPlatform : MonoBehaviour
         {
             Transform checkForData = stack.Pop();
 
+            foreach (Transform t in checkForData)
+            {
+                // Won't search branches that have another moving platform component since the data component is required with this.
+                if (t.GetComponent<MovingPlatform>() == null)
+                    stack.Push(t);
+            }
+
+            if (checkForData.GetComponent<Collider>() == null)
+            {
+                continue;
+            }
             MovingPlatformData movingPlatformData = checkForData.GetComponent<MovingPlatformData>();
             if (movingPlatformData == null)
             {
@@ -36,13 +47,6 @@ public abstract class MovingPlatform : MonoBehaviour
             }
             movingPlatformData.parent = this;
             movingPlatformsData.Add(movingPlatformData);
-
-            foreach (Transform t in checkForData)
-            {
-                // Won't search branches that have another moving platform component since the data component is required with this.
-                if (t.GetComponent<MovingPlatform>() == null)
-                    stack.Push(t);
-            }
         }
 
         FindManager();
@@ -99,7 +103,6 @@ public abstract class MovingPlatform : MonoBehaviour
 
     private Vector3 previousPosition;
     private Quaternion previousRotation;
-
 
     public void UpdatePreviousPosition()
     {
