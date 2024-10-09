@@ -7,7 +7,12 @@ using UnityEngine;
 public class CosmeticBoots : ScriptableObject
 {
     public String Title;
-    public Vector3 offset;
-    public GameObject hatPrefab;
+
+    public Vector3 leftOffset;
+    public Vector3 rightOffset;
+
+    public GameObject leftBootPrefab;
+    public GameObject rightBootPrefab;
+
     public Sprite iconTexture;
 }

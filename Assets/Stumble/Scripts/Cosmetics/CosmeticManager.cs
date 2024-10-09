@@ -12,6 +12,7 @@ public class CosmeticManager : MonoBehaviour
 
     public List<CosmeticHat> hats = new List<CosmeticHat>();
     public List<CosmeticColor> colors = new List<CosmeticColor>();
+    public List<CosmeticBoots> boots = new List<CosmeticBoots>();
 
     public IDictionary<int, SelectedCosmetic> selectedCosmetic = new Dictionary<int, SelectedCosmetic>();
     public IDictionary<int, bool> playerCooldown = new Dictionary<int, bool>();
@@ -158,6 +159,11 @@ public class CosmeticManager : MonoBehaviour
 
                 GameObject newHat = Instantiate(hats[currentlyAt].hatPrefab, hatpos.transform);
                 newHat.transform.SetParent(hatpos.transform);
+
+                if (CosmeticUI.Instance != null)
+                {
+                    CosmeticUI.Instance.ChangeImage(CosmeticUI.Direction.Right, hats[currentlyAt].iconTexture, data.GetInput().playerIndex, 0);
+                }
             }
             else if (input.x < -0.5f)
             {
@@ -182,6 +188,105 @@ public class CosmeticManager : MonoBehaviour
 
                 GameObject newHat = Instantiate(hats[currentlyAt].hatPrefab, hatpos.transform);
                 newHat.transform.SetParent(hatpos.transform);
+
+                if (CosmeticUI.Instance != null)
+                {
+                    CosmeticUI.Instance.ChangeImage(CosmeticUI.Direction.Left, hats[currentlyAt].iconTexture, data.GetInput().playerIndex, 0);
+                }
+            }
+        }
+    }
+
+    public void ChangeBoots(Vector2 input, PlayerData data)
+    {
+        if (GameController.Instance.gameState == GameState.Lobby)
+        {
+            // Handle Change Category
+
+            // Player moves right
+            if (input.x > 0.5f)
+            {
+                // Get The current Selected Color
+                int currentlyAt = data.GetCosmeticData().bootsIndex;
+                currentlyAt = GetNextAvailableIndexBoots(currentlyAt);
+
+                // Check if there is more colors available
+                // Set the Material to Cosmetic Data
+                data.GetCosmeticData().SetBootsIndex(currentlyAt);
+                data.GetCosmeticData().SetRightBootPrefab(boots[currentlyAt].rightBootPrefab);
+                data.GetCosmeticData().SetLeftBootPrefab(boots[currentlyAt].leftBootPrefab);
+
+                Transform rightBootPos = data.GetPlayerInScene().GetComponent<PlayerCosmetics>().rightFoot;
+                Transform leftBootPos = data.GetPlayerInScene().GetComponent<PlayerCosmetics>().leftFoot;
+                // Remove Any Right Boot if Exist
+                if (rightBootPos.childCount > 0)
+                {
+                    foreach (Transform child in rightBootPos)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+                // Remove Any Left Boot if Exist
+                if (leftBootPos.childCount > 0)
+                {
+                    foreach (Transform child in leftBootPos)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+
+                GameObject newRightBoot = Instantiate(boots[currentlyAt].rightBootPrefab, rightBootPos.transform);
+                newRightBoot.transform.SetParent(rightBootPos.transform);
+
+                GameObject newLeftBoot = Instantiate(boots[currentlyAt].leftBootPrefab, leftBootPos.transform);
+                newLeftBoot.transform.SetParent(leftBootPos.transform);
+
+                if (CosmeticUI.Instance != null)
+                {
+                    CosmeticUI.Instance.ChangeImage(CosmeticUI.Direction.Right, boots[currentlyAt].iconTexture, data.GetInput().playerIndex, 2);
+                }
+            }
+            else if (input.x < -0.5f)
+            {
+                // Get The current Selected Color
+                int currentlyAt = data.GetCosmeticData().bootsIndex;
+                currentlyAt = GetPreviousAvailableIndexBoots(currentlyAt);
+
+                // Check if there is more colors available
+                // Set the Material to Cosmetic Data
+                data.GetCosmeticData().SetBootsIndex(currentlyAt);
+                data.GetCosmeticData().SetRightBootPrefab(boots[currentlyAt].rightBootPrefab);
+                data.GetCosmeticData().SetLeftBootPrefab(boots[currentlyAt].leftBootPrefab);
+
+                Transform rightBootPos = data.GetPlayerInScene().GetComponent<PlayerCosmetics>().rightFoot;
+                Transform leftBootPos = data.GetPlayerInScene().GetComponent<PlayerCosmetics>().leftFoot;
+                // Remove Any Right Boot if Exist
+                if (rightBootPos.childCount > 0)
+                {
+                    foreach (Transform child in rightBootPos)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+                // Remove Any Left Boot if Exist
+                if (leftBootPos.childCount > 0)
+                {
+                    foreach (Transform child in leftBootPos)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+
+                GameObject newRightBoot = Instantiate(boots[currentlyAt].rightBootPrefab, rightBootPos.transform);
+                newRightBoot.transform.SetParent(rightBootPos.transform);
+
+                GameObject newLeftBoot = Instantiate(boots[currentlyAt].leftBootPrefab, leftBootPos.transform);
+                newLeftBoot.transform.SetParent(leftBootPos.transform);
+
+                if (CosmeticUI.Instance != null)
+                {
+                    CosmeticUI.Instance.ChangeImage(CosmeticUI.Direction.Left, boots[currentlyAt].iconTexture, data.GetInput().playerIndex, 2);
+                }
             }
         }
     }
@@ -220,6 +325,9 @@ public class CosmeticManager : MonoBehaviour
                 {
                     CosmeticUI.Instance.SetDefaultImage(colors[i].iconTexture, data.GetInput().playerIndex, 1);
                 }
+
+                Debug.Log("Color set to #" + data.GetInput().playerIndex + " to " + colors[i].Title);
+                break;
             }
 
         }
@@ -227,6 +335,12 @@ public class CosmeticManager : MonoBehaviour
         // Apply Non Variable Cosmetics
         data.GetCosmeticData().SetHatIndex(0);
         data.GetCosmeticData().SetHatPrefab(hats[0].hatPrefab);
+
+        if (CosmeticUI.Instance != null)
+        {
+            CosmeticUI.Instance.SetDefaultImage(hats[0].iconTexture, data.GetInput().playerIndex, 0);
+            CosmeticUI.Instance.SetDefaultImage(boots[0].iconTexture, data.GetInput().playerIndex, 2);
+        }
 
         // Default Color 0
         /*        data.GetCosmeticData().SetColorIndex(0);
@@ -282,6 +396,32 @@ public class CosmeticManager : MonoBehaviour
         if (index < 0)
         {
             index = hats.Count - 1;
+        }
+
+        return index;
+    }
+
+    private int GetNextAvailableIndexBoots(int currentlyAt)
+    {
+        // Add one to currently At
+        int index = currentlyAt + 1;
+        // Loop through list
+        if (index >= boots.Count)
+        {
+            index = 0;
+        }
+
+        return index;
+    }
+
+    private int GetPreviousAvailableIndexBoots(int currentlyAt)
+    {
+        // Add one to currently At
+        int index = currentlyAt - 1;
+        // Loop through list
+        if (index < 0)
+        {
+            index = boots.Count - 1;
         }
 
         return index;
@@ -392,9 +532,7 @@ public class CosmeticManager : MonoBehaviour
 
     public void MoveCosmetic(Vector2 value, PlayerInput device)
     {
-        //Vector2 value = context.ReadValue<Vector2>();
-        //Debug.Log(context.action.activeControl.device);
-        //PlayerInput playerInput = this.GetComponent<PlayerInput>();
+        //while(value != Vector2.zero) { Debug.Log("Diablo"); }
         PlayerData data = PlayerDataManager.Instance.GetPlayerData(device);
         if(data == null)
         {

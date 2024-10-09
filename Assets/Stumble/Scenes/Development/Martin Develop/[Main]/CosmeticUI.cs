@@ -34,17 +34,25 @@ public class CosmeticUI : MonoBehaviour
 
     /*    private bool isMoving = false;*/
 
+    private void Start()
+    {
+        transitionDuration = CosmeticManager.Instance.inputDelay / 1.2f;
+    }
+
     public void SetDefaultImage(Sprite sprite, int playerID, int cosmeticCategoryID)
     {
         switch (cosmeticCategoryID)
         {
             case 0:
+                visuals[playerID].currentHatImage.color = Color.white;
                 visuals[playerID].currentHatImage.sprite = sprite;
                 break;
             case 1:
+                visuals[playerID].currentColorImage.color = Color.white;
                 visuals[playerID].currentColorImage.sprite = sprite;
                 break;
             case 2:
+                visuals[playerID].currentBootsImage.color = Color.white;
                 visuals[playerID].currentBootsImage.sprite = sprite;
                 break;
             default:
