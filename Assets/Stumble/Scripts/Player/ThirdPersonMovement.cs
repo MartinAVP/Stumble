@@ -164,6 +164,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         ApplyVerticalMovement();
 
 
+
+    }
+
+    private void LateUpdate()
+    {
         MoveWithBase();
     }
 
@@ -540,25 +545,30 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
                 currentBase = newBase;
 
-                //if (cancelVelocity)
-                //{
-                //    Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
+                if (cancelVelocity)
+                {
+                    Vector3 baseVelocity = currentBase.LinearVelocity;
                     
-                //    if(baseVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
-                //        baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
+                    if(baseVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
+                        baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
 
-                //    _bumpHorizontalVelocity -= baseVelocity;
-                //}
+                    _bumpHorizontalVelocity -= baseVelocity;
+
+                    //print("Removing base velocity " + _bumpHorizontalVelocity + " " + baseVelocity);
+                }
             }
 
         }
         else
         {
-            //if(currentBase != null)
-            //{
-            //    Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
-            //    _bumpHorizontalVelocity += baseVelocity;
-            //}
+            if(currentBase != null)
+            {
+                Vector3 baseVelocity = currentBase.LinearVelocity;
+                _bumpHorizontalVelocity += baseVelocity;
+
+                print("Imparting base velocity " + _bumpHorizontalVelocity + " " + baseVelocity + "\n");
+                //    + currentBase.ChangeInPosition + " " + Time.deltaTime);
+            }
 
             currentBase = null;
         }
@@ -578,16 +588,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         controller.enabled = false;
 
-        transform.position += currentBase.parent.ChangeInPosition;
+        transform.position += currentBase.ChangeInPosition;
 
         Quaternion orientation = transform.rotation;
 
-        transform.RotateAround(currentBase.parent.transform.position, Vector3.right, currentBase.parent.ChangeInRotation.x);
-        transform.RotateAround(currentBase.parent.transform.position, Vector3.forward, currentBase.parent.ChangeInRotation.z);
+        transform.RotateAround(currentBase.transform.position, Vector3.right, currentBase.ChangeInRotation.x);
+        transform.RotateAround(currentBase.transform.position, Vector3.forward, currentBase.ChangeInRotation.z);
 
         transform.rotation = orientation;
 
-        transform.RotateAround(currentBase.parent.transform.position, Vector3.up, currentBase.parent.ChangeInRotation.y);
+        transform.RotateAround(currentBase.transform.position, Vector3.up, currentBase.ChangeInRotation.y);
 
         controller.enabled = true;
     }
