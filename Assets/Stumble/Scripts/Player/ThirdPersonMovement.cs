@@ -540,25 +540,25 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
                 currentBase = newBase;
 
-                if (cancelVelocity)
-                {
-                    Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
+                //if (cancelVelocity)
+                //{
+                //    Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
                     
-                    if(baseVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
-                        baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
+                //    if(baseVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
+                //        baseVelocity = baseVelocity.normalized * _bumpHorizontalVelocity.magnitude;
 
-                    _bumpHorizontalVelocity -= baseVelocity;
-                }
+                //    _bumpHorizontalVelocity -= baseVelocity;
+                //}
             }
 
         }
         else
         {
-            if(currentBase != null)
-            {
-                Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
-                _bumpHorizontalVelocity += baseVelocity;
-            }
+            //if(currentBase != null)
+            //{
+            //    Vector3 baseVelocity = currentBase.parent.ChangeInPosition / Time.deltaTime;
+            //    _bumpHorizontalVelocity += baseVelocity;
+            //}
 
             currentBase = null;
         }
