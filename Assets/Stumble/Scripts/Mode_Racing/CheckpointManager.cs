@@ -11,6 +11,9 @@ public class CheckpointManager : MonoBehaviour
     public static CheckpointManager Instance { get; private set; }
 
     // Singleton
+    [Header("Debug")]
+    [SerializeField] private bool debug = false;
+    [SerializeField] private Material checkPointVisualizerMaterial;
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.

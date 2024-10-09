@@ -80,7 +80,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
     private void OnDisable()
     {
         gameController.startSystems -= LateStart;
-
+        //fuck michael - Angel 10/09/2024
 /*        if (playerDataManager != null)
         {
             playerDataManager.onPlayerAdded -= AddPlayer;
@@ -188,6 +188,24 @@ public class ExperimentalPlayerManager : MonoBehaviour
                     player.GetComponent<PlayerCosmetics>().body.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().colorPicked;
                     player.GetComponent<PlayerCosmetics>().eyes.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().colorPicked;
                     player.GetComponent<PlayerCosmetics>().fins.GetComponent<SkinnedMeshRenderer>().material = playerDataManager.GetPlayerData(playerID).GetCosmeticData().colorPicked;
+
+                    // Spawn Hat
+                    if(playerDataManager.GetPlayerData(playerID).GetCosmeticData().hatPrefab != null)
+                    {
+                        Instantiate(playerDataManager.GetPlayerData(playerID).GetCosmeticData().hatPrefab, player.GetComponent<PlayerCosmetics>().hatPos);
+                    }
+
+                    // Spawn Boots
+                    // Right Boot
+                    if(playerDataManager.GetPlayerData(playerID).GetCosmeticData().rightBootPrefab != null)
+                    {
+                        Instantiate(playerDataManager.GetPlayerData(playerID).GetCosmeticData().rightBootPrefab, player.GetComponent<PlayerCosmetics>().rightFoot);
+                    }
+                    // Left Boot
+                    if(playerDataManager.GetPlayerData(playerID).GetCosmeticData().leftBootPrefab != null)
+                    {
+                        Instantiate(playerDataManager.GetPlayerData(playerID).GetCosmeticData().leftBootPrefab, player.GetComponent<PlayerCosmetics>().leftFoot);
+                    }
                 }
             }
             else
