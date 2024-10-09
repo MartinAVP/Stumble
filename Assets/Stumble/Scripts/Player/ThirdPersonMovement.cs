@@ -245,8 +245,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void Movement()
     {
-        Debug.Log("Bumper Velocity: " + _bumpHorizontalVelocity + " " + _bumpHorizontalVelocity.magnitude);
-
         // Check for proning state, prevents horizontal movement and character rotation
         if (isProne)
         {
@@ -321,12 +319,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         inputVelocity = moveDir * horizontalVelocity;
         finalVelocity = inputVelocity + _bumpHorizontalVelocity;
 
-        //if (finalVelocity.magnitude < maxSpeed)
-        //{
-        //    _bumpHorizontalVelocity = Vector3.zero;
-        //    horizontalVelocity = finalVelocity.magnitude;
-        //}
-
         controller.Move(finalVelocity * Time.deltaTime);
 
     }
@@ -345,12 +337,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Braking 
         float actualBraking = 0;
-
-        // Reduce bump velocity
-        //if (_bumpHorizontalVelocity.magnitude > 0.05f)
-        //    _bumpHorizontalVelocity -= (deccelerationSpeed * 2) * _bumpHorizontalVelocity.normalized * Time.deltaTime;
-        //else
-        //     _bumpHorizontalVelocity = Vector3.zero;
 
         // Camera Angle Logic Calculation
         float targetAngle = Mathf.Atan2(rawDirection.x, rawDirection.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
@@ -404,12 +390,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         inputVelocity = moveDir * horizontalVelocity;
         finalVelocity = inputVelocity + _bumpHorizontalVelocity;
-
-        //if (finalVelocity.magnitude < maxSpeed)
-        //{
-        //    _bumpHorizontalVelocity = Vector3.zero;
-        //    horizontalVelocity = finalVelocity.magnitude;
-        //}
 
         controller.Move(finalVelocity * Time.deltaTime);
     }
@@ -635,6 +615,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         else // Stand Up
         {
+            _bumpHorizontalVelocity = Vector3.zero;
+            horizontalVelocity = 0;
+
             // Check if the player is already Diving and Prevent from Diving Again;
             if (isProne)
             {
