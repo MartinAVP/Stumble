@@ -10,6 +10,7 @@ using Unity.VisualScripting;
 [RequireComponent(typeof(CharacterController))]
 public class StaticPlayerMovement : MonoBehaviour, IBumper
 {
+
     // Requierements
     public CharacterController controller;
     //public Transform camController;
@@ -102,7 +103,7 @@ public class StaticPlayerMovement : MonoBehaviour, IBumper
         // Horizontal Movement
         accelerationSpeed = playerMovementSettings.accelerationSpeed;
         deccelerationSpeed = playerMovementSettings.deccelerationSpeed;
-        groundDragMultiplier = playerMovementSettings.groundDragMultiplier;
+        groundDragMultiplier = playerMovementSettings.airDragMultiplier;
         maxSpeed = playerMovementSettings.maxSpeed;
 
         // Bumping
@@ -130,7 +131,7 @@ public class StaticPlayerMovement : MonoBehaviour, IBumper
         // Diving
         diveForce = playerMovementSettings.diveForce;
         diveDragMultiplier = playerMovementSettings.diveDragMultiplier;
-        diveGroundDragMultiplier = playerMovementSettings.diveGroundDragMultiplier;
+        diveGroundDragMultiplier = playerMovementSettings.diveAirDragMultiplier;
 
     }
 

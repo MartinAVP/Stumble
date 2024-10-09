@@ -20,12 +20,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Movement")]
     private float accelerationSpeed = 10f;
     private float deccelerationSpeed = 4f;
-    private float groundDragMultiplier = 1f;
+    private float airDragMultiplier = 1f;
     private float maxSpeed = 10;
     private Vector3 rawDirection;
     [HideInInspector]public float horizontalVelocity = 0;
     private bool _grounded = false;
     #endregion
+
+    private Vector3 groundedVector = Vector3.zero;
 
     #region Bumping
     [Header("Bumping")]
@@ -74,15 +76,16 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Diving")]
     private float diveForce = 2;
     private float diveDragMultiplier = 1f;
-    private float diveGroundDragMultiplier = 1f;
+    private float diveAirDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
     private float playerRadius = 0.5f;
     private bool diveWasCanceled = false;
     #endregion
 
-    #region Base
-    private MovingPlatformData currentBase;
+    #region Platform
+    private MovingPlatformData currentPlatform;
+    private Vector3 platformVelocity;
     #endregion
 
     [Header("Debug")]
@@ -102,7 +105,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Horizontal Movement
         accelerationSpeed = playerMovementSettings.accelerationSpeed;
         deccelerationSpeed = playerMovementSettings.deccelerationSpeed;
-        groundDragMultiplier = playerMovementSettings.groundDragMultiplier;
+        airDragMultiplier = playerMovementSettings.airDragMultiplier;
         maxSpeed = playerMovementSettings.maxSpeed;
 
         // Bumping
@@ -130,7 +133,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Diving
         diveForce = playerMovementSettings.diveForce;
         diveDragMultiplier = playerMovementSettings.diveDragMultiplier;
-        diveGroundDragMultiplier = playerMovementSettings.diveGroundDragMultiplier;
+        diveAirDragMultiplier = playerMovementSettings.diveAirDragMultiplier;
 
     }
 
@@ -156,12 +159,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
     }
 
-
     private void Update()
     {
         Movement();
         ApplyGravity();
         ApplyVerticalMovement();
+        MoveWithBase();
     }
 
     private void FixedUpdate()
@@ -175,9 +178,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
         }
 
-        MoveWithBase();
         isFloored = isGrounded();
-
     }
 
     public bool isFloored;
@@ -240,9 +241,42 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     // ===========================================================================================
     #region Constantly Updating Functions
     /// <summary>
-    /// Applies movement to the player horizontally in relation to the camera orientation.
+    /// Selects and updates the current movement state.
     /// </summary>
     private void Movement()
+    {
+        // Check for proning state, prevents horizontal movement and character rotation
+        if (isProne)
+        {
+            ProneMovementState();
+        }
+        else
+        {
+            WalkingMovementState();
+        }
+
+        // Slide Prototype Logic - Not Working.
+/*        Vector3 slideVector = groundedVector;
+        // Not on a surface
+        if (slideVector == Vector3.zero)
+        {
+
+            slideVelocity -= (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
+            Debug.Log(slideVelocity);
+        }
+        else // Is not on a slanted surface
+        {
+            slideVelocity += (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
+        }
+        slideVector = slideVector * currentSlideVelocity;
+
+        controller.Move(slideVelocity * Time.deltaTime);*/
+    }
+
+    /// <summary>
+    /// Applies movement fixed to the direction the player dived in.
+    /// </summary>
+    private void ProneMovementState()
     {
         // Direction Vector
         Vector3 moveDir = transform.forward.normalized;
@@ -251,53 +285,76 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Vector3 inputVelocity;
         Vector3 finalVelocity;
 
-        // Reduce bump velocity
-        if (_bumpHorizontalVelocity.magnitude > 0.05f)
-            _bumpHorizontalVelocity -= (deccelerationSpeed * 2) * _bumpHorizontalVelocity.normalized * Time.deltaTime;
-        else
-            _bumpHorizontalVelocity = Vector3.zero;
+        // Braking 
+        float actualBraking;
 
-        // Check for proning state, prevents horizontal movement and character rotation
-        if (isProne)
+        moveDir = transform.forward.normalized;
+        Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized * 2, Color.yellow);
+
+        // Apply Extra Drag Multiplier if the player is grounded
+        if (isGrounded())
         {
-            moveDir = transform.forward.normalized;
-            Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized * 2, Color.yellow);
-
-            // Apply Extra Drag Multiplier if the player is grounded
-            if (isGrounded())
-            {
-                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * diveGroundDragMultiplier * Time.deltaTime;
-                //Debug.Log("Extra Dive Drag");
-            }
-            else
-            {
-                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * diveDragMultiplier * Time.deltaTime;
-                //Debug.Log("Normal Dive Drag");
-            }
-
-
-            if (horizontalVelocity <= 0.05f)
-            {
-                horizontalVelocity = 0;
-            }
-
-            inputVelocity = moveDir * horizontalVelocity;
-            finalVelocity = inputVelocity + _bumpHorizontalVelocity;
-
-            if (finalVelocity.magnitude < 0.05f)
-            {
-                _bumpHorizontalVelocity = Vector3.zero;
-                horizontalVelocity = finalVelocity.magnitude;
-            }
-
-            controller.Move(finalVelocity * Time.deltaTime);
-
-            return;
+            actualBraking = (deccelerationSpeed * 2) * diveDragMultiplier * Time.deltaTime;
+            //Debug.Log("Extra Dive Drag");
         }
+        else
+        {
+            actualBraking = (deccelerationSpeed * 2) * diveDragMultiplier * diveAirDragMultiplier * Time.deltaTime;
+            //Debug.Log("Normal Dive Drag");
+        }
+
+        horizontalVelocity -= actualBraking;
+
+        if (actualBraking > _bumpHorizontalVelocity.magnitude)
+        {
+            _bumpHorizontalVelocity = Vector3.zero;
+        }
+        else
+            _bumpHorizontalVelocity -= actualBraking * _bumpHorizontalVelocity.normalized;
+
+        if (horizontalVelocity <= 0.05f)
+        {
+            horizontalVelocity = 0;
+        }
+
+        inputVelocity = moveDir * horizontalVelocity;
+        finalVelocity = inputVelocity + _bumpHorizontalVelocity;
+
+        controller.Move(finalVelocity * Time.deltaTime);
+
+    }
+
+    /// <summary>
+    /// Applies movement to the player horizontally in relation to the camera orientation.
+    /// </summary>
+    private void WalkingMovementState()
+    {
+        // Direction Vector
+        Vector3 moveDir = transform.forward.normalized;
+
+        // Composite movement
+        Vector3 inputVelocity;
+        Vector3 finalVelocity;
+
+        // Braking 
+        float actualBraking = 0;
 
         // Camera Angle Logic Calculation
         float targetAngle = Mathf.Atan2(rawDirection.x, rawDirection.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
         float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+
+        moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
+
+        // Extra Drag Force if the player is Grounded
+        if (isGrounded())
+        {
+            actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
+            //Debug.Log("Using Extra Ground Force");
+        }
+        else
+        {
+            actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * airDragMultiplier * Time.deltaTime;
+        }
 
         // Player input detected, move player
         if (rawDirection.magnitude >= 0.1f)
@@ -317,18 +374,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Decellerate the player based on multiplier
         else
         {
-            moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
-
-            // Extra Drag Force if the player is Grounded
-            if (isGrounded())
-            {
-                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * groundDragMultiplier * Time.deltaTime;
-                //Debug.Log("Using Extra Ground Force");
-            }
-            else
-            {
-                horizontalVelocity -= (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
-            }
+            horizontalVelocity -= actualBraking;
 
             if (horizontalVelocity <= 0.05f)
             {
@@ -336,33 +382,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
         }
 
+        if(actualBraking > _bumpHorizontalVelocity.magnitude)
+        {
+            _bumpHorizontalVelocity = Vector3.zero;
+        }
+        else
+            _bumpHorizontalVelocity -= actualBraking * _bumpHorizontalVelocity.normalized;
+
         inputVelocity = moveDir * horizontalVelocity;
         finalVelocity = inputVelocity + _bumpHorizontalVelocity;
 
-        if (finalVelocity.magnitude < maxSpeed)
-        {
-            _bumpHorizontalVelocity = Vector3.zero;
-            horizontalVelocity = finalVelocity.magnitude;
-        }
-
         controller.Move(finalVelocity * Time.deltaTime);
-
-        // Slide Prototype Logic - Not Working.
-/*        Vector3 slideVector = groundedVector;
-        // Not on a surface
-        if (slideVector == Vector3.zero)
-        {
-
-            slideVelocity -= (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
-            Debug.Log(slideVelocity);
-        }
-        else // Is not on a slanted surface
-        {
-            slideVelocity += (accelerationSpeed / 2) * slideVector.normalized * Time.deltaTime;
-        }
-        slideVector = slideVector * currentSlideVelocity;
-
-        controller.Move(slideVelocity * Time.deltaTime);*/
     }
 
 /*    private Vector3 slideVelocity = Vector3.zero;
@@ -506,41 +536,64 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             MovingPlatformData newBase = hit.transform.GetComponent<MovingPlatformData>();
             if(newBase != null)
-                currentBase = newBase;
+            {
+                bool cancelVelocity = currentPlatform == null;
+
+                currentPlatform = newBase;
+
+                if (cancelVelocity)
+                {
+                    Vector3 platformVelocity = currentPlatform.LinearVelocity;
+                    
+                    if(platformVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
+                        platformVelocity = platformVelocity.normalized * _bumpHorizontalVelocity.magnitude;
+
+                    _bumpHorizontalVelocity -= platformVelocity;
+                }
+            }
+
         }
         else
         {
-            currentBase = null;
+            if(currentPlatform != null)
+            {
+                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
+                _bumpHorizontalVelocity += platformVelocity;
+            }
+
+            currentPlatform = null;
         }
         
         return _grounded;
     }
-
-    private Vector3 groundedVector = Vector3.zero;
-    public float slantedSurfacePushbackMultiplier = 1;
 
     /// <summary>
     /// Stick the player to moving platforms.
     /// </summary>
     private void MoveWithBase()
     {
-        if (currentBase == null) return;
+        if (currentPlatform == null) return;
 
         controller.enabled = false;
+        Vector3 startPos = transform.position;
 
-        transform.position += currentBase.parent.ChangeInPosition;
+        transform.position += currentPlatform.ChangeInPosition;
 
         Quaternion orientation = transform.rotation;
 
-        transform.RotateAround(currentBase.parent.transform.position, Vector3.right, currentBase.parent.ChangeInRotation.x);
-        transform.RotateAround(currentBase.parent.transform.position, Vector3.forward, currentBase.parent.ChangeInRotation.z);
+        transform.RotateAround(currentPlatform.transform.position, Vector3.right, currentPlatform.ChangeInRotation.x);
+        transform.RotateAround(currentPlatform.transform.position, Vector3.forward, currentPlatform.ChangeInRotation.z);
 
         transform.rotation = orientation;
 
-        transform.RotateAround(currentBase.parent.transform.position, Vector3.up, currentBase.parent.ChangeInRotation.y);
+        transform.RotateAround(currentPlatform.transform.position, Vector3.up, currentPlatform.ChangeInRotation.y);
 
         controller.enabled = true;
+
+        platformVelocity = (transform.position - startPos) / currentPlatform.DeltaTime;
+        platformVelocity.y = 0;
     }
+
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
     {
@@ -558,11 +611,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Prevent Diving when Diving was canceled midair
             if (diveWasCanceled) { return; }
 
-            horizontalVelocity += diveForce;
-            if(horizontalVelocity > maxSpeed + diveForce)
-            {
-                horizontalVelocity = maxSpeed + diveForce;
-            }
+            _bumpHorizontalVelocity += diveForce * transform.forward;
 
             isProne = true;
             if (rotateModelonDive)
@@ -584,6 +633,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         else // Stand Up
         {
+            _bumpHorizontalVelocity = Vector3.zero;
+            horizontalVelocity = 0;
+
             // Check if the player is already Diving and Prevent from Diving Again;
             if (isProne)
             {
@@ -625,8 +677,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         Vector3 bumpVelocity = direction * magnitude;
 
-        _bumpHorizontalVelocity = new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
-        _verticalVelocity += bumpVelocity.y;
+        _bumpHorizontalVelocity += new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
+
+        // If vertical velocity of the bumper is acting against this, then cancel this vertical velocity. Otherwise sum the velocities.
+        if(bumpVelocity.y * _verticalVelocity <= 0)
+        {
+            _verticalVelocity = bumpVelocity.y;
+        }
+        else
+        {
+            _verticalVelocity += bumpVelocity.y;
+        }
     }
     #endregion
 
