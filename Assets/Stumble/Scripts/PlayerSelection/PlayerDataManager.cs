@@ -2,27 +2,28 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
+using UnityEngine.SceneManagement;
 
 public class PlayerDataManager : MonoBehaviour
 {
     public List<PlayerData> players = new List<PlayerData>();
 
-    [Header("Player Layers")]
-    [SerializeField] private List<LayerMask> playerLayers;
+    //public ExperimentalPlayerManager playerManager;
+
     private PlayerInputManager playerInputManager;
 
     // Subscribable Event
     public event Action<PlayerData> onPlayerConnect;
-    public event Action<PlayerData> onPlayerDisconnect;
+    public event Action<PlayerInput> onPlayerAdded;
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
 
     // Scene Variables
+    // Eliminate this variable ASAP
     public bool isLobby;
+    //private bool addOnJoin = true;
 
     public static PlayerDataManager Instance { get; private set; }
 
@@ -39,66 +40,104 @@ public class PlayerDataManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        //SceneManager.sceneLoaded += OnSceneSwitch;
     }
 
     private void OnEnable()
     {
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        /*        playerInputManager = FindObjectOfType<PlayerInputManager>();*/
+        // Subscribe to the sceneLoaded event
+/*        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerManager = FindObjectOfType<ExperimentalPlayerManager>();
 
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
-        InputSystem.onDeviceChange += OnDeviceChange;
+        InputSystem.onDeviceChange += OnDeviceChange;*/
     }
 
-    private void OnDisable()
+    private void OnDestroy()
+    {
+/*        SceneManager.sceneLoaded -= OnSceneSwitch;
+
+        playerInputManager.onPlayerJoined -= AddPlayer;
+        playerInputManager.onPlayerLeft -= RemovePlayer;
+        InputSystem.onDeviceChange -= OnDeviceChange;*/
+/*
+        playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();*/
+    }
+
+/*    private void OnDisable()
     {
         playerInputManager.onPlayerJoined -= AddPlayer;
         playerInputManager.onPlayerLeft -= RemovePlayer;
         InputSystem.onDeviceChange -= OnDeviceChange;
+    }*/
+
+    private void OnSceneSwitch(Scene scene, LoadSceneMode mode)
+    {
+        //playerManager.OnAllPlayersBroughtInSpawned -= UnLockPlayerAdd;
+        /*
+                playerInputManager.onPlayerJoined -= AddPlayer;
+                playerInputManager.onPlayerLeft -= RemovePlayer;
+                InputSystem.onDeviceChange -= OnDeviceChange;*/
+
+        //playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();
+
+/*        LockPlayerAdd();
+
+        Debug.Log("Scene Switched");
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
+
+        playerInputManager.onPlayerJoined += AddPlayer;
+        playerInputManager.onPlayerLeft += RemovePlayer;
+        InputSystem.onDeviceChange += OnDeviceChange;
+
+        playerManager = FindObjectOfType<ExperimentalPlayerManager>();
+        playerManager.OnAllPlayersBroughtInSpawned.AddListener(UnLockPlayerAdd);*/
     }
+
+/*    private void LockPlayerAdd()
+    {
+        addOnJoin = false;
+        Debug.Log("Locking Adding Players");
+    }
+
+    private void UnLockPlayerAdd()
+    {
+        addOnJoin = true;
+        Debug.Log("Unlocking Adding Players");
+    }*/
 
     public void AddPlayer(PlayerInput input)
     {
-        if (!isLobby) { return; }
+        //if(!addOnJoin) { return; }
         GameObject player = input.transform.parent.gameObject;
 
-        PlayerData newList;
-        if(playerInputManager.playerCount == 1)
+        PlayerData tempPlayerData;
+        if(input.playerIndex == 0)
         {
-            newList = new PlayerData(players.Count, player, input, input.devices[0], true, new CosmeticData());
+            tempPlayerData = new PlayerData(input.playerIndex, player, input, input.devices[0], true, new CosmeticData());
         }
         else
         {
-            newList = new PlayerData(players.Count, player, input, input.devices[0], false, new CosmeticData());
+            tempPlayerData = new PlayerData(input.playerIndex, player, input, input.devices[0], false, new CosmeticData());
         }
 
-        players.Add(newList);
-
-        // Need to use the paren due to the structure of the prefab
-        Transform playerParent = input.transform.parent;
-        //playerParent.position = spawnPoints[players.Count - 1].position;
-
-        // Convert layer mask (bit) to an integer
-        int layerToAdd = (int)Mathf.Log(playerLayers[players.Count - 1].value, 2);
-
-        //set the layer
-        //playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
-        // add the layer
-        //playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd;
-
-        // set the action in the custom cinemachine Input handler
-        //playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
-
-        //Check for player Count
-        //Debug.Log(players.Count);
-        //Player3ScreenToggle(players.Count);
-        onPlayerConnect?.Invoke(newList);
-
+        //Debug.Log("Added Player " + input.playerIndex + " to data manager");
+        players.Add(tempPlayerData);
+        onPlayerAdded?.Invoke(tempPlayerData.GetInput());
+        onPlayerConnect?.Invoke(tempPlayerData);
     }
     public void RemovePlayer(PlayerInput input)
     {
+        GameState state = GameController.Instance.gameState;
+        if(state != GameState.Lobby)
+        {
+            return;
+        }
         //Debug.Log("PlayerDataManager isLobby" + isLobby.ToString());
-        if (!isLobby) { return; }
+/*        if (!isLobby) { return; }*/
         int playerID = findPlayer(input);
 /*        List<PlayerData> tempPlayers = new List<PlayerData>();
         tempPlayers = players;
@@ -124,16 +163,6 @@ public class PlayerDataManager : MonoBehaviour
             players[0].SetHost(true);
         }
 
-        // players = tempPlayers;
-
-        // Re-orgnize players
-        //players[playerID].GetID();
-        // Start from the player Left ID and move up
-        /*        List<PlayerData> tempOverPlayers = new List<PlayerData>();
-                for (int i = playerID; i < players.Count; i++)
-                {
-                    tempOverPlayers.Add(players[i]);
-                }*/
     }
     public void RemovePlayer(InputDevice device)
     {
@@ -153,7 +182,7 @@ public class PlayerDataManager : MonoBehaviour
     }
 
     // Device Reconnection System
-    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+/*    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {
         int playerID = 0;
         switch (change)
@@ -170,7 +199,7 @@ public class PlayerDataManager : MonoBehaviour
                 onPlayerInputDeviceReconnect?.Invoke(players[findPlayer(device)]);
                 break;
         }
-    }
+    }*/
 
     // Find Player
     private int findPlayer(PlayerInput input)
@@ -248,21 +277,4 @@ public class PlayerDataManager : MonoBehaviour
 
         return count;
     }
-
-/*    public bool isHost(PlayerInput input)
-    {
-        int playerID = findPlayer(input);
-        if (playerID != -1)
-        {
-            if (players[playerID].CheckIsHost())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return false;
-    }*/
 }

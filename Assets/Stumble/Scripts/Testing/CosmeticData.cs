@@ -9,17 +9,45 @@ public class CosmeticData
     public CosmeticData(int colorIndex, Material picked)
     {
         this.colorIndex = colorIndex;
-        this.picked = picked;
+        this.colorPicked = picked;
     }
 
     public CosmeticData()
     {
+        // Hat
+        this.hatIndex = -1;
+        this.hatPrefab = null;
+
+        // Color
         this.colorIndex = -1;
-        this.picked = null;
+        this.colorPicked = null;
+
+        // Boots
+        this.bootsIndex = -1;
+        this.rightBootPrefab = null;
+        this.leftBootPrefab = null;
     }
 
-    private int colorIndex;
-    private Material picked;
+    // Hat
+    public int hatIndex { private set; get; }
+    public GameObject hatPrefab { private set; get; }
+    // Color
+    public int colorIndex { private set; get; }
+    public Material colorPicked { private set; get; }
+    // Boots
+    public int bootsIndex { private set; get; }
+    public GameObject rightBootPrefab { private set; get; }
+    public GameObject leftBootPrefab { private set; get; }
+
+    public void SetHatIndex(int hatIndex)
+    {
+        this.hatIndex = hatIndex;
+    }
+
+    public void SetHatPrefab(GameObject hatPrefab)
+    {
+        this.hatPrefab = hatPrefab;
+    }
 
     public void SetColorIndex(int colorIndex)
     {
@@ -28,17 +56,22 @@ public class CosmeticData
 
     public void SetMaterialPicked(Material materialpicked)
     {
-        this.picked = materialpicked;
+        this.colorPicked = materialpicked;
     }
 
-    public int GetColorIndex()
+    public void SetBootsIndex(int bootsIndex)
     {
-        return this.colorIndex;
+        this.bootsIndex = bootsIndex;
     }
 
-    public Material GetMaterialPicked()
+    public void SetRightBootPrefab(GameObject bootPrefab)
     {
-        return this.picked;
+        this.rightBootPrefab = bootPrefab;
+    }
+
+    public void SetLeftBootPrefab(GameObject bootPrefab)
+    {
+        this.leftBootPrefab = bootPrefab;
     }
 }
 

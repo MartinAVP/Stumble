@@ -23,7 +23,7 @@ public class Announcer : MonoBehaviour
         //Debug.Log(value);
         PlayerInput playerInput = this.GetComponent<PlayerInput>();
         PlayerData data = PlayerDataManager.Instance.GetPlayerData(playerInput);
-        CosmeticManager.Instance.ChangeCosmetic(value, data);
+        CosmeticManager.Instance.ChangeColor(value, data);
     }
 
     private enum SelectedChange
