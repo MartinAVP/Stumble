@@ -72,6 +72,9 @@ public class SpectatorManager : MonoBehaviour
         data.GetPlayerInScene().GetComponent<CapsuleCollider>().enabled = false;
         data.GetPlayerInScene().transform.GetChild(0).gameObject.SetActive(false);
 
+        // turn off the third person movenet - Test
+        data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().enabled = false;
+        data.GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
     }
 
     private int GetNextAvailableIndex(int currentlyAt)
