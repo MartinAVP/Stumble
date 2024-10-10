@@ -257,7 +257,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
                 playerParent.GetComponentInChildren<Camera>().cullingMask |= 1 << layerToAdd;
 
                 // Add the Input Handler for camera controll
-                playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
+                // NOTE: This line was moved inside the ThirdPersonMovemen script
+                //playerParent.GetComponentInChildren<InputHandler>().horizontal = player.actions.FindAction("Look");
 
                 break;
             case SceneCameraType.StaticCamera:
