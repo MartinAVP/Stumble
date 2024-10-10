@@ -157,6 +157,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Remove Player from Calculating Physics with the world
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
+
+        // Add look action to cam
+        this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
     }
 
     private void Update()
