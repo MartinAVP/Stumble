@@ -156,6 +156,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
             cursorEnabled = true;
             Cursor.lockState = CursorLockMode.None;
         }
+
+        Debug.Log("Finished Experimental Player manager");
     }
 
     public void AddPlayer(PlayerInput player)
@@ -262,7 +264,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
 
                 break;
             case SceneCameraType.StaticCamera:
-                player.camera = Camera.main;
+                //player.camera = Camera.main;
+                player.GetComponent<ThirdPersonMovement>().cam = Camera.main.transform;
+                break;
+            case SceneCameraType.None:
                 break;
             default:
                 break;
@@ -324,7 +329,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
     }
 
 
-    
+    public SceneCameraType GetCameraType()
+    {
+        return sceneCameraType;
+    }
 
 }
 
@@ -332,5 +340,6 @@ public class ExperimentalPlayerManager : MonoBehaviour
 public enum SceneCameraType
 {
     ThirdPersonControl,
-    StaticCamera
+    StaticCamera,
+    None
 }

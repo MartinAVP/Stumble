@@ -139,7 +139,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Awake()
     {
-        freelookcam = camController.gameObject.GetComponent<CinemachineFreeLook>();
+        if(camController != null)
+        {
+            freelookcam = camController.gameObject.GetComponent<CinemachineFreeLook>();
+        }
         //this.GetComponent<PlayerInput>().camera = cam.GetComponent<Camera>();
     }
 
@@ -159,7 +162,37 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
 
         // Add look action to cam
-        this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+
+        if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
+        {
+            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            return;
+        }
+
+        if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.ThirdPersonControl)
+        {
+            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+        }
+        else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
+        {
+            this.transform.GetComponent<PlayerInput>().camera = Camera.main;
+        }
+
+        Debug.Log("I got here 2");
+    }
+
+    private Transform hasCamera()
+    {
+        foreach(Transform child in this.transform.parent)
+        {
+            if(child.GetComponent<CinemachineFreeLook>() != null)
+            {
+                return child;
+            }
+        }
+        return null;
     }
 
     private void Update()
@@ -600,11 +633,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
     {
-        freelookcam.m_YAxis.m_MaxSpeed = vertical;
-        freelookcam.m_XAxis.m_MaxSpeed = horizontal;
+        if(camController != null)
+        {
+            freelookcam.m_YAxis.m_MaxSpeed = vertical;
+            freelookcam.m_XAxis.m_MaxSpeed = horizontal;
 
-        freelookcam.m_YAxis.m_InvertInput = invertVertical;
-        freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
+            freelookcam.m_YAxis.m_InvertInput = invertVertical;
+            freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
+        }
     }
 
     public void toggleProne(bool activate)
