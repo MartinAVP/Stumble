@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class RacemodeManager : MonoBehaviour
 {
@@ -48,10 +50,21 @@ public class RacemodeManager : MonoBehaviour
         // Lock all players in place
         //LockPlayersMovement(true);
 
-        // Check if Cinematic Controler Exists
-        if (CinematicController.Instance != null)
+        // Note: In order to have a cinematic or countdown at the start,
+        // Both the RacemodeUIManager and the CinematicController have to be in
+        // in the scene, if one of them is missing the race will start without these.
+        if (CinematicController.Instance != null && RacemodeUIManager.Instance != null)
         {
-            StartCoroutine(StartCinematic());
+            // Note: If The Countdown values are not assigned in the UI Manager, then it will
+            // skip the cinematic and the countdown.
+            if (RacemodeUIManager.Instance.HasAllCountDownValues())
+            {
+                StartCoroutine(StartCinematic());
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("RaceUIManager does not have all the countdown values, skipping countdown and cinematic.");
+            }
         }
         // No Cinematic Controller in Scene
         else
@@ -84,7 +97,7 @@ public class RacemodeManager : MonoBehaviour
 
         // Start the Timer
         stopwatch.Start();
-        UnityEngine.Debug.LogWarning("Finalized Timer");
+        UnityEngine.Debug.LogWarning("Race has been initialized");
 
         // Unlock all Player Movement
         //LockPlayersMovement(false);
@@ -104,10 +117,56 @@ public class RacemodeManager : MonoBehaviour
         positions.Add(GetElapsedTime(), player);
         UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
 
+        // Freeze player position
+        // Unprone
+        if (player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().isProne)
+        {
+            player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().toggleProne(false);
+        }
+        // Lock Movement
+        player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+
         // Check if the last player reached the checkpoint
         if (positions.Count == PlayerDataManager.Instance.GetPlayers().Count)
         {
+            StartCoroutine(EndGameDelay());
             onCompleteFinish?.Invoke(positions);
+        }
+
+        // Add a Listener to when the player wants to start spectating
+        player.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(startSpectating);
+    }
+
+    private IEnumerator EndGameDelay()
+    {
+        yield return new WaitForSeconds(4f);
+        if (LoadingScreenManager.Instance != null)
+        {
+            LoadingScreenManager.Instance.StartTransition(true);
+        }
+        // Start the brough Overs to the next scene
+        GameObject ranking = new GameObject("Ranking");
+        ranking.AddComponent(typeof(PodiumRanking));
+        ranking.AddComponent<PodiumRanking>().positions = this.positions;
+        DontDestroyOnLoad(ranking);
+
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene("Podium");
+    }
+
+    private void startSpectating(Vector2 value, PlayerInput input)
+    {
+        if(value.x != 0)
+        {
+            UnityEngine.Debug.Log("Player wants to start spectating");
+            PlayerData data = PlayerDataManager.Instance.GetPlayerData(input);
+            if (data == null)
+            {
+                UnityEngine.Debug.LogError("The Device is not finding a player attached");
+            }
+
+            data.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.RemoveListener(startSpectating);
+            SpectatorManager.Instance.AddToSpectator(data);
         }
     }
 

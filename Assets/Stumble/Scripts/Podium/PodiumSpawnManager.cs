@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 public class PodiumSpawnManager : MonoBehaviour
 {
     public List<Transform> spawns;
+    List<PlayerData> tempPlayerList = new List<PlayerData>();
 
     public static PodiumSpawnManager Instance { get; private set; }
 
@@ -23,33 +25,69 @@ public class PodiumSpawnManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    //
+    private void OnEnable()
     {
+        GameController.Instance.startSecondarySystems += LateStart;
+    }
+
+    private void OnDisable()
+    {
+        GameController.Instance.startSecondarySystems -= LateStart;
+    }
+
+    // Start is called before the first frame update
+    void LateStart()
+    {
+        if(PodiumRanking.Instance != null)
+        {
+            // Order player spawn based on podium
+            foreach (float key in PodiumRanking.Instance.positions.Keys)
+            {
+                PlayerData value;
+                if (PodiumRanking.Instance.positions.TryGetValue(key, out value))
+                {
+                    tempPlayerList.Add(value);
+                }
+                else
+                {
+                    //Console.WriteLine("Key " + key + " not found in the dictionary.");
+                }
+            }
+
+        }
+        else
+        {
+            tempPlayerList = PlayerDataManager.Instance.GetPlayers();
+        }
+
         InitializePlayers();
+        if (LoadingScreenManager.Instance != null)
+        {
+            LoadingScreenManager.Instance.StartTransition(false);
+        }
     }
 
     public void InitializePlayers()
     {
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
-        List<PlayerData> tempPlayerList = PlayerDataManager.Instance.GetPlayers();
 
         for (int i = 0; i < tempPlayerList.Count; i++)
         {
             Transform spawn = spawns[i].transform;
             // Parent Becomes spawn
-            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
-            tempPlayerList[i].GetPlayerInScene().transform.position = spawn.position;
-            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
-            tempPlayerList[i].GetPlayerInScene().transform.rotation = spawn.rotation;
+            PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
+            PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.position = spawn.position;
+            PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
+            PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.rotation = spawn.rotation;
 
             Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
             //tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
         }
     }
 
-    public void RespawnPlayer(GameObject ob)
+/*    public void RespawnPlayer(GameObject ob)
     {
         int index = UnityEngine.Random.Range(0, spawns.Count);
         Transform spawn = spawns[index].transform;
@@ -58,5 +96,5 @@ public class PodiumSpawnManager : MonoBehaviour
         ob.transform.position = spawn.position;
         ob.GetComponent<CharacterController>().enabled = true;
         ob.transform.rotation = spawn.rotation;
-    }
+    }*/
 }

@@ -530,10 +530,10 @@ public class CosmeticManager : MonoBehaviour
     }
 
 
-    public void MoveCosmetic(Vector2 value, PlayerInput device)
+    public void MoveCosmetic(Vector2 value, PlayerInput input)
     {
         //while(value != Vector2.zero) { Debug.Log("Diablo"); }
-        PlayerData data = PlayerDataManager.Instance.GetPlayerData(device);
+        PlayerData data = PlayerDataManager.Instance.GetPlayerData(input);
         if(data == null)
         {
             Debug.LogError("The Device is not finding a player attached");

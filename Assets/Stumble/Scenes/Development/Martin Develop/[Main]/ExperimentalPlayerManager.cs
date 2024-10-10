@@ -60,7 +60,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
         gameController = GameController.Instance;
         playerInputManager.onPlayerLeft += RemovePlayer;
 
-        playerDataManager = FindAnyObjectByType<PlayerDataManager>();
+        playerDataManager = PlayerDataManager.Instance;
         // If the player Data Manager Exists, Rely on that
         // Before spawning the players
 /*        if (playerDataManager != null)
@@ -109,12 +109,19 @@ public class ExperimentalPlayerManager : MonoBehaviour
             }
         }
 
+        playerDataManager = PlayerDataManager.Instance;
+
         // If Player Data Manager Exists
         if(playerDataManager != null)
         {
             //Debug.LogWarning("Player Data Manager was found using manual player join.");
 
             bringingPlayersOver = true;
+
+            if(GameController.Instance.gameState == GameState.Podium)
+            {
+                Debug.Log("Podium Starter");
+            }
 
             // Spawn Players Already In the Player Data Manager
             int players = playerDataManager.players.Count;
@@ -222,14 +229,23 @@ public class ExperimentalPlayerManager : MonoBehaviour
         //Debug.Log("Setting player #" + (playerInputManager.playerCount - 1) + " to " + spawnPoints[playerInputManager.playerCount - 1].position);
         //Debug.Log("Adding Player");
 
+        //int layerToAdd = (int)Mathf.Log(playerLayers[playerID].value, 2);
+        /*        foreach(Transform child in playerParent.transform)
+                {
+                    child.gameObject.layer = layerToAdd;
+                }*/
+
+        //SetPlayerLayersToEachChild(playerParent.transform, layerToAdd);
+
+        int layerToAdd = (int)Mathf.Log(playerLayers[playerID].value, 2);
+
         switch (sceneCameraType)
         {
             case SceneCameraType.ThirdPersonControl:
                 // Convert layer mask (bit) to an integer
-                int layerToAdd = (int)Mathf.Log(playerLayers[playerID].value, 2);
-
                 //set the layer
                 //player.camera = playerParent.GetComponentInChildren<Camera>();
+
                 playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
                 // add the layer
 /*                Transform CamPos = playerParent.GetComponentInChildren<Camera>().transform;
@@ -268,6 +284,15 @@ public class ExperimentalPlayerManager : MonoBehaviour
         {
             playerInputManager.DisableJoining();
             //Debug.LogWarning("Disabled Joining");
+        }
+    }
+
+    private void SetPlayerLayersToEachChild(Transform parent, int layer)
+    {
+        transform.gameObject.layer = layer;
+        foreach (Transform child in transform)
+        {
+            SetPlayerLayersToEachChild(child, layer);
         }
     }
 

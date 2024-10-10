@@ -62,11 +62,12 @@ public class CosmeticUI : MonoBehaviour
     }
 
     // Call this method to change the image
+    private int index = 0;
     public void ChangeImage(Direction direction, Sprite newSprite, int playerID, int cosmeticCategoryID)
     {
         /*        if (isMoving) { return; }
                 isMoving = true;*/
-
+        Debug.Log("Called" + index++);
         this.playerID = playerID;
         switch (cosmeticCategoryID)
         {
@@ -93,14 +94,19 @@ public class CosmeticUI : MonoBehaviour
         if (currentImage == null)
         {
             // Initialize currentImage if it's null
-            currentImage = Instantiate(new GameObject("CurrentImage"), container).AddComponent<Image>();
+/*            currentImage = Instantiate(new GameObject("CurrentImage"), container).AddComponent<Image>();
             currentImage.sprite = newSprite;
-            currentImage.rectTransform.localPosition = Vector3.zero; // Center it in the container
+            currentImage.rectTransform.localPosition = Vector3.zero; // Center it in the container*/
         }
         else
         {
             // Create a new image for the transition
-            Image newImage = Instantiate(new GameObject("NewImage"), container).AddComponent<Image>();
+            Debug.Log("Calling Changing");
+            Image newImage = new GameObject("New Image").AddComponent<Image>();
+            //Image newImage = currentImage;
+            //Debug.Log($"Instantiated new image: {newImage.name} at position: {newImage.transform.position}");
+            newImage.transform.SetParent(container, false);
+
             newImage.sprite = newSprite;
             newImage.GetComponent<RectTransform>().sizeDelta = currentImage.GetComponent<RectTransform>().sizeDelta;
 
@@ -139,8 +145,6 @@ public class CosmeticUI : MonoBehaviour
 
             // Normalize time
             float t = Mathf.Clamp01(elapsedTime / transitionDuration);
-
-            // Speed factor for outgoing image (e.g., 1.5 makes it 1.5x faster)
             float outgoingSpeedFactor = 3f;
             float outgoingT = Mathf.Clamp01(t * outgoingSpeedFactor);
 
@@ -171,8 +175,6 @@ public class CosmeticUI : MonoBehaviour
         }
 
         Destroy(outgoingImage.gameObject); // Clean up the outgoing image
-
-/*        isMoving = false;*/
     }
 
 
@@ -182,22 +184,20 @@ public class CosmeticUI : MonoBehaviour
         Right
     }
 
-    void OnGUI()
+/*    void OnGUI()
     {
         // Create the first button
-        if (GUI.Button(new Rect(10, 10, 150, 50), "Function 1"))
+        if (GUI.Button(new Rect(10, 10, 150, 50), "Testing 1"))
         {
-            //Function1();
             //MoveImage(test, Direction.Left);
             //ChangeImage(Direction.Left, test);
         }
 
         // Create the second button
-        if (GUI.Button(new Rect(10, 70, 150, 50), "Function 2"))
+        if (GUI.Button(new Rect(10, 70, 150, 50), "Testing 2"))
         {
-            //Function2();
             //MoveImage(test, Direction.Right);
             //ChangeImage(Direction.Right, test);
         }
-    }
+    }*/
 }

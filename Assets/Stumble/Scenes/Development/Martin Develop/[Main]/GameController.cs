@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     public GameState viewer;
 
     public event Action startSystems; 
+    public event Action startSecondarySystems; 
 
     // Singleton
     private void Awake()
@@ -46,5 +47,12 @@ public class GameController : MonoBehaviour
         
         // Initialize Systems after the Game State is Inherited from the Scene
         startSystems?.Invoke();
+        StartCoroutine(secondarySystemStarter());
+    }
+
+    public IEnumerator secondarySystemStarter()
+    {
+        yield return new WaitForEndOfFrame();
+        startSecondarySystems?.Invoke();
     }
 }

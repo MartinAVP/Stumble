@@ -55,7 +55,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Space]
     private float gravityMultiplier = 3.0f;
     private float _gravity = -9.81f;
-    private float _verticalVelocity = 0;
+    [HideInInspector] public float verticalVelocity = 0;
     #endregion
 
     #region Camera Controls
@@ -215,8 +215,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (!isGrounded()) return;
 
         // Add to the Vertical Velocity Value
-        _verticalVelocity = 0;
-        _verticalVelocity += jumpPower;
+        verticalVelocity = 0;
+        verticalVelocity += jumpPower;
     }
 
     public void Dive(InputAction.CallbackContext context)
@@ -430,19 +430,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             if (!isGrounded())
             {
-                _verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
+                verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
             }
 
             return;
         }
 
-        if (isGrounded() && _verticalVelocity < -5f)
+        if (isGrounded() && verticalVelocity < -5f)
         {
-            _verticalVelocity = -5.0f;  // Prevents the character from sinking into the ground
+            verticalVelocity = -5.0f;  // Prevents the character from sinking into the ground
         }
         else
         {
-            _verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
+            verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
         }
     }
 
@@ -452,7 +452,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private void ApplyVerticalMovement()
     {
         if (lockVeritcalMovement) { return; }
-        Vector3 fallVector = new Vector3(0, _verticalVelocity, 0);
+        Vector3 fallVector = new Vector3(0, verticalVelocity, 0);
         controller.Move(fallVector * Time.deltaTime);
     }
     #endregion
@@ -604,7 +604,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
     }
 
-    private void toggleProne(bool activate)
+    public void toggleProne(bool activate)
     {
         if (activate)
         {
@@ -680,13 +680,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         _bumpHorizontalVelocity += new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
 
         // If vertical velocity of the bumper is acting against this, then cancel this vertical velocity. Otherwise sum the velocities.
-        if(bumpVelocity.y * _verticalVelocity <= 0)
+        if(bumpVelocity.y * verticalVelocity <= 0)
         {
-            _verticalVelocity = bumpVelocity.y;
+            verticalVelocity = bumpVelocity.y;
         }
         else
         {
-            _verticalVelocity += bumpVelocity.y;
+            verticalVelocity += bumpVelocity.y;
         }
     }
     #endregion
