@@ -11,6 +11,9 @@ public class CheckpointManager : MonoBehaviour
     public static CheckpointManager Instance { get; private set; }
 
     // Singleton
+    [Header("Debug")]
+    [SerializeField] private bool debug = false;
+    [SerializeField] private Material checkPointVisualizerMaterial;
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -24,18 +27,37 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (GameController.Instance != null)
+        {
+            GameController.Instance.startSecondarySystems += LateStart;
+        }
+    }
+
     private void OnDisable()
     {
         Checkpoints.Clear();
+
+        if (GameController.Instance != null)
+        {
+            GameController.Instance.startSecondarySystems -= LateStart;
+        }
     }
 
     private void Start()
     {
         initializeCheckpoints();
-        InitializePlayers();
+        if (GameController.Instance == null)
+        {
+            InitializePlayers();
+        }
     }
 
-
+    private void LateStart()
+    {
+        InitializePlayers();
+    }
     
     public void initializeCheckpoints()
     {
@@ -94,7 +116,8 @@ public class CheckpointManager : MonoBehaviour
         // Check if the checkpoint reached is the last one.
         if(targetCheckpoint == Checkpoints.Count - 1)
         {
-            RaceManager.Instance.ReachFinishLine(data);
+            Debug.Log("Player " + data.GetInput().playerIndex + " has reached the finish line");
+            RacemodeManager.Instance.ReachFinishLine(data);
         }
 
     }
@@ -119,6 +142,15 @@ public class CheckpointManager : MonoBehaviour
         playerObject.transform.position = spawn.position;
         playerObject.GetComponent<CharacterController>().enabled = true;
 
+        // Loose all momentum on Respawn & Unprone
+        if (playerObject.GetComponent<ThirdPersonMovement>().isProne)
+        {
+            playerObject.GetComponent<ThirdPersonMovement>().toggleProne(false);
+        }
+        playerObject.GetComponent<ThirdPersonMovement>().horizontalVelocity = 0;
+        playerObject.GetComponent<ThirdPersonMovement>().verticalVelocity = 0;
+
+        // Adjust the rotation to the spawn rotation
         playerObject.transform.rotation = spawn.rotation;
         playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().m_YAxis.Value = .5f;
 /*        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().m_XAxis.Value = spawn.rotation.y;*/

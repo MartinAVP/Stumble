@@ -6,8 +6,18 @@ using UnityEngine;
 [RequireComponent (typeof (MovingPlatformData))]
 public abstract class MovingPlatform : MonoBehaviour
 {
-    private Vector3 previousPosition;
-    private Quaternion previousRotation;
+    [SerializeField] protected List<MovingPlatformData> movingPlatformsData = new List<MovingPlatformData>();
+
+    public delegate void OnPreMovePlatforms();
+    public OnPreMovePlatforms onPreMovePlatforms;
+
+    public delegate void OnMovePlatforms();
+    public OnMovePlatforms onMovePlatforms;
+    
+    public delegate void OnPostMovePlatforms();
+    public OnPostMovePlatforms onPostMovePlatforms;
+
+     [SerializeField] private MovingPlatform manager = null;
 
     protected void Start()
     {
@@ -19,18 +29,24 @@ public abstract class MovingPlatform : MonoBehaviour
         {
             Transform checkForData = stack.Pop();
 
+            foreach (Transform t in checkForData)
+            {
+                // Won't search branches that have another moving platform component since the data component is required with this.
+                if (t.GetComponent<MovingPlatform>() == null)
+                    stack.Push(t);
+            }
+
+            if (checkForData.GetComponent<Collider>() == null)
+            {
+                continue;
+            }
             MovingPlatformData movingPlatformData = checkForData.GetComponent<MovingPlatformData>();
             if (movingPlatformData == null)
             {
                 movingPlatformData = checkForData.AddComponent<MovingPlatformData>();
             }
             movingPlatformData.parent = this;
-
-            foreach (Transform t in checkForData)
-            {
-                if (t.GetComponent<MovingPlatform>() == null)
-                    stack.Push(t);
-            }
+            movingPlatformsData.Add(movingPlatformData);
         }
 
         FindManager();
@@ -38,55 +54,55 @@ public abstract class MovingPlatform : MonoBehaviour
 
     protected void FindManager()
     {
-        MovingPlatformManager manager = null;   
         Transform parent = transform.parent;
         while (parent != null)
         {
-            manager = parent.GetComponent<MovingPlatformManager>();
-            if (manager != null)
-            {
-                break;
-            }
+            manager = parent.GetComponent<MovingPlatform>();
 
             parent = parent.parent;
         }
 
-        if (manager == null)
-        {
-            manager = gameObject.AddComponent<MovingPlatformManager>();
-            print("manger = " + manager.name);  
-        }
+        if(manager == null)
+            manager = this;
 
-        manager.AddMovingPlatform(this);
+        manager.onPreMovePlatforms += UpdatePreviousPositionRotations;
+        manager.onMovePlatforms += Move;
+        manager.onPostMovePlatforms += UpdateDeltas;
     }
 
-    protected void OnDestroy()
+    protected void Update()
     {
-        print(gameObject);
+        onPreMovePlatforms?.Invoke();
+        onMovePlatforms?.Invoke();
+        onPostMovePlatforms?.Invoke();
+    }
 
-        Stack<Transform> stack = new Stack<Transform>();
-        stack.Push(transform);
-
-        // Remove moving platform data from children
-        while (stack.Count > 0)
+    protected void UpdatePreviousPositionRotations()
+    {
+        foreach (var data in movingPlatformsData)
         {
-            Transform checkForData = stack.Pop();
-
-            print(checkForData.gameObject);
-
-            MovingPlatformData movingPlatformData = checkForData.GetComponent<MovingPlatformData>();
-            if (movingPlatformData != null)
-            {
-                Destroy(movingPlatformData);
-            }
-
-            foreach (Transform t in checkForData)
-            {
-                if (t.GetComponent<MovingPlatform>() == null)
-                    stack.Push(t);
-            }
+            data.UpdatePreviousPosition();
+            data.UpdatePreviousRotation();
         }
     }
+
+    protected void UpdateDeltas()
+    {
+        foreach (var data in movingPlatformsData)
+        {
+            data.UpdateDeltas(Time.deltaTime);
+        }
+    }
+
+    public abstract void Move();
+
+    /*  Deprecated content is still being reference by StaticPlayerMovement.
+     *  Once StaticPlayerMovement is deleted this code can be removed.
+     */
+    #region Deprecated
+
+    private Vector3 previousPosition;
+    private Quaternion previousRotation;
 
     public void UpdatePreviousPosition()
     {
@@ -98,8 +114,6 @@ public abstract class MovingPlatform : MonoBehaviour
         previousRotation = transform.rotation;
     }
 
-    public abstract void Move();
-
     public Vector3 ChangeInPosition
     {
         get { return transform.position - previousPosition; }
@@ -110,4 +124,5 @@ public abstract class MovingPlatform : MonoBehaviour
         get { return (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles; }
     }
 
+    #endregion
 }

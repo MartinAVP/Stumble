@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class ArenaSpawnManager : MonoBehaviour
 {
+
     public List<Transform> spawns;
 
     public static ArenaSpawnManager Instance { get; private set; }
