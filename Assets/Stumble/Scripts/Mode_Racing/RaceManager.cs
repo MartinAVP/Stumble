@@ -95,7 +95,7 @@ public class RaceManager : MonoBehaviour
         // Check if the last player reached the checkpoint
         if(positions.Count == PlayerDataManager.Instance.GetPlayers().Count)
         {
-            onCompleteFinish.Invoke(positions);
+            onCompleteFinish?.Invoke(positions);
         }
     }
 

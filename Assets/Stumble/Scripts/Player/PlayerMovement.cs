@@ -11,7 +11,7 @@ public class PlayerMovement : ScriptableObject
     [Header("Movement")]
     public float accelerationSpeed = 10f;
     public float deccelerationSpeed = 4f;
-    public float groundDragMultiplier = 1.0f;
+    public float airDragMultiplier = 1.0f;
     public float maxSpeed = 10;
     #endregion
 
@@ -56,6 +56,6 @@ public class PlayerMovement : ScriptableObject
     [Header("Diving")]
     public float diveForce = 2;
     public float diveDragMultiplier = 1f;
-    public float diveGroundDragMultiplier = 1f;
+    public float diveAirDragMultiplier = 1f;
     #endregion
 }
