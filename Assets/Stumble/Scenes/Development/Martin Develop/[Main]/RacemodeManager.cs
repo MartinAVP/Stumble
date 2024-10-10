@@ -146,8 +146,10 @@ public class RacemodeManager : MonoBehaviour
         }
         // Start the brough Overs to the next scene
         GameObject ranking = new GameObject("Ranking");
-        ranking.AddComponent(typeof(PodiumRanking));
-        ranking.AddComponent<PodiumRanking>().positions = this.positions;
+        //ranking.AddComponent(typeof(PodiumRanking));
+        PodiumRanking rank = ranking.AddComponent<PodiumRanking>();
+        rank.UpdatePositions(this.positions);
+
         DontDestroyOnLoad(ranking);
 
         yield return new WaitForSeconds(1.5f);

@@ -6,6 +6,7 @@ public class PodiumRanking : MonoBehaviour
 {
     [HideInInspector]
     public SortedDictionary<float, PlayerData> positions = new SortedDictionary<float, PlayerData>();
+    public int count = 0;
 
     public static PodiumRanking Instance { get; private set; }
 
@@ -21,5 +22,13 @@ public class PodiumRanking : MonoBehaviour
         {
             Instance = this;
         }
+    }
+
+    public void UpdatePositions(SortedDictionary<float, PlayerData> positions)
+    {
+        this.positions.Clear();
+        this.positions = positions;
+        
+        count = this.positions.Count;
     }
 }

@@ -69,6 +69,11 @@ public class ControllerForMenus : MonoBehaviour
                 //eventSystem.firstSelectedGameObject = FirstSelectedItem;
                 eventSystem.SetSelectedGameObject(FirstSelectedItem);
             }
+            else
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
         }
     }
 

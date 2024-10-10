@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PodiumManager : MonoBehaviour
 {
@@ -36,6 +37,16 @@ public class PodiumManager : MonoBehaviour
         if (CinematicController.Instance != null) { 
             CinematicController.Instance.StartTimeline();
         }
+
+        StartCoroutine(returnToMenuCooldown());
+    }
+
+    private IEnumerator returnToMenuCooldown()
+    {
+        yield return new WaitForSeconds(12f);
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("GamemodeSelect");
     }
 
     /*    private void OnEnable()

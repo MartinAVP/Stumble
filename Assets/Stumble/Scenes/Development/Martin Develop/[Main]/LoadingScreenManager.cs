@@ -11,7 +11,7 @@ public class LoadingScreenManager : MonoBehaviour
     public GameObject LoadingScreen;
 
     // Set the target Y position for the Loading Screen
-    public float targetYPosition = 300f; // Change this to the desired Y position
+    public float targetYPosition = 1200f; // Change this to the desired Y position
     private RectTransform loadingScreenRectTransform;
     private bool isLoadingScreen = true;
 

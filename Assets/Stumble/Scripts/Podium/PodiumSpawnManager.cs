@@ -42,7 +42,8 @@ public class PodiumSpawnManager : MonoBehaviour
         if(PodiumRanking.Instance != null)
         {
             // Order player spawn based on podium
-            foreach (float key in PodiumRanking.Instance.positions.Keys)
+            Debug.Log("Bringing over" +  PodiumRanking.Instance.positions.Count);
+/*            foreach (float key in PodiumRanking.Instance.positions.Keys)
             {
                 PlayerData value;
                 if (PodiumRanking.Instance.positions.TryGetValue(key, out value))
@@ -53,6 +54,11 @@ public class PodiumSpawnManager : MonoBehaviour
                 {
                     //Console.WriteLine("Key " + key + " not found in the dictionary.");
                 }
+            }*/
+
+            foreach(PlayerData data in PodiumRanking.Instance.positions.Values)
+            {
+                tempPlayerList.Add(data);
             }
 
         }
@@ -73,6 +79,8 @@ public class PodiumSpawnManager : MonoBehaviour
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
 
+        Debug.Log("Changing Spawns");
+        Debug.Log("There are " + tempPlayerList.Count);
         for (int i = 0; i < tempPlayerList.Count; i++)
         {
             Transform spawn = spawns[i].transform;
@@ -82,7 +90,9 @@ public class PodiumSpawnManager : MonoBehaviour
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.rotation = spawn.rotation;
 
-            Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
+            Debug.Log("Player #" + i + " has been spawned by the manager");
+
+            //Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
             //tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
         }
     }
