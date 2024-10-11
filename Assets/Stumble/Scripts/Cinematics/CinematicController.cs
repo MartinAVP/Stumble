@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,17 +44,36 @@ public class CinematicController : MonoBehaviour
     {
         timeline.Play();
         StartCoroutine(TurnOffAllCameras());
+
+/*        foreach(PlayerData data in PlayerDataManager.Instance.GetPlayers())
+        {
+            data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().camController.transform.GetComponent<CinemachineFreeLook>().enabled = false;
+        }*/
     }
 
     private IEnumerator TurnOffAllCameras()
     {
-        yield return new WaitForSeconds(GetTimelineLenght);
+        yield return new WaitForSeconds(GetTimelineLenght - 1);
+        //timeline.Pause();
+        Debug.Log("Paused");
+
         foreach (var point in points)
         {
             point.camera.gameObject.SetActive(false);
         }
-        
+
+        /*        for (int i = 0; i < points.Count - 1; i++)
+                {
+                    points[i].camera.enabled = false;
+                }*/
+
+
         this.GetComponentInChildren<Camera>().gameObject.SetActive(false);
+
+        /*        foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+                {
+                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().camController.transform.GetComponent<CinemachineFreeLook>().enabled = true;
+                }*/
     }
 
     public float GetTimelineLenght => (float)timeline.duration;

@@ -32,6 +32,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
     [SerializeField] private bool cursorEnabled = false;                                            // Enable Cursor (Recommend to leave disabled)
     [SerializeField] private bool kickPlayerOnDisconntect = false;                                  // Kick players when they leave from the game
     [SerializeField] private SceneCameraType sceneCameraType;
+    [SerializeField] public bool lockMovementOnSpawn = false;
 
     // UI
     public InputSystemUIInputModule UIEventSystem;
