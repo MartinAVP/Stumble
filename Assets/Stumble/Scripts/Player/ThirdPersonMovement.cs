@@ -562,10 +562,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (_grounded == false) { _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start2; };
         if (_grounded == false) { _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start3; };
         if (_grounded == false) { _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start4; };
+
         // ==========================================================================================================================================================
         //                                                      Extra Ground Check
         // ==========================================================================================================================================================
         // Not Grounded with initial checks, add two more front checks
+        /*
         if (!_grounded)
         {
             //float degree = 15f;
@@ -597,8 +599,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             foundGroundCheck = false;
         }
+        */
 
         // Slidding Test - Not Efficient
+        /*
         if (_grounded)
         {
             if (Physics.Raycast(groundedVector, delta, out hit, delta.magnitude, jumpableLayers))
@@ -609,12 +613,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 /*                    Vector3 result = new Vector3(hit.normal.x, 0, hit.normal.z);
                     this.GetComponent<CharacterController>().Move(result * Time.deltaTime * slantedSurfacePushbackMultiplier);
                     groundedVector = Vector3.zero;
-                    Debug.DrawRay(hit.point, result * 5, Color.red);*/
+                    Debug.DrawRay(hit.point, result * 5, Color.red);
                     _grounded = false;
                 }
                 //Debug.Log(surfaceAngle);
             }
         }
+        */
 
         if (_grounded)
         {
@@ -647,7 +652,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
             currentPlatform = null;
         }
-        
+
+        if (_grounded == false) { _grounded = controller.isGrounded; };
+
         //return _grounded;
     }
 
