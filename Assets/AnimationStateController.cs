@@ -9,32 +9,50 @@ public class AnimationStateController : MonoBehaviour
     ThirdPersonMovement thirdPersonMovement;
     StaticPlayerMovement staticPlayerMovement;
 
+    public float horizontalSpeed;
+    public float verticalSpeed;
+    public bool isGrounded;
+    public bool isProne;
+
+    public float slideFactor;
+
     // Start is called before the first frame update
     void Start()
     {
         animator = this.GetComponent<Animator>();
-        if(this.transform.parent.GetComponent<ThirdPersonMovement>() != null)
+
+        thirdPersonMovement = this.transform.parent.GetComponent<ThirdPersonMovement>();
+        //return;
+/*        if (this.transform.parent.GetComponent<ThirdPersonMovement>() != null)
         {
-            thirdPersonMovement = this.transform.parent.GetComponent<ThirdPersonMovement>();
-            return;
-        }
-        else if(this.transform.parent.GetComponent<StaticPlayerMovement>() != null)
+
+        }*/
+/*        else if(this.transform.parent.GetComponent<StaticPlayerMovement>() != null)
         {
             staticPlayerMovement = this.transform.parent.GetComponent<StaticPlayerMovement>();
             return;
-        }
+        }*/
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
-        if (thirdPersonMovement != null)
+        horizontalSpeed = thirdPersonMovement.horizontalVelocity;
+        verticalSpeed = thirdPersonMovement.verticalVelocity;
+        isGrounded = thirdPersonMovement.isFloored;
+        isProne = thirdPersonMovement.isProne;
+
+        animator.SetFloat("horizontalVelocity", horizontalSpeed);
+        animator.SetFloat("verticalVelocity", verticalSpeed);
+        animator.SetBool("proning", isProne); 
+        animator.SetBool("grounded", isGrounded); 
+/*        if (thirdPersonMovement != null)
         {
-            animator.SetFloat("velocity", thirdPersonMovement.horizontalVelocity);
-        }
-        if(staticPlayerMovement != null)
+            
+        }*/
+/*        if(staticPlayerMovement != null)
         {
             animator.SetFloat("velocity", staticPlayerMovement.horizontalVelocity);
-        }
+        }*/
 
     }
 }
