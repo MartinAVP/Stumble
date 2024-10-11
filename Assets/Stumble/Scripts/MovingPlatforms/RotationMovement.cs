@@ -16,15 +16,13 @@ public class RotationMovement : MovingPlatform
 
     public override void Move()
     {
-        Vector3 axis;
+        Vector3 axis = transform.up;
 
-        if (rotateAroundAxis == RotationAxis.Up)
-            axis = transform.up;
-        else if (rotateAroundAxis == RotationAxis.Right)
+        if (rotateAroundAxis == RotationAxis.Right)
             axis = transform.right;
         else if (rotateAroundAxis == RotationAxis.Forward)
             axis = transform.forward;
 
-        transform.RotateAround(transform.position, transform.up, rotationSpeed * Time.deltaTime);
+        transform.RotateAround(transform.position, axis, rotationSpeed * Time.deltaTime);
     }
 }
