@@ -150,7 +150,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Start()
     {
-        // Movement needs to happen after platforms have been moved so that the character doesn't lag a frame behind platforms - Michael
+        // Movement needs to happen after platforms have been moved so that the character doesn't lag a frame behind platforms 
+        // To achieve this a moving platform manager publishes events in order
+        // To ensure that platforms always move, and the player always moves, both platforms and the players access then discard the manager instance to spawn a manger. - Michael
+        MovingPlatformManager manager = MovingPlatformManager.Instance;
         MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Final, Movement);
 
         // Update Sensitivity

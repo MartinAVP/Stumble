@@ -17,8 +17,6 @@ public abstract class MovingPlatform : MonoBehaviour
     public delegate void OnPostMovePlatforms();
     public OnPostMovePlatforms onPostMovePlatforms;
 
-    private static MovingPlatformManager manager;
-
     protected void Start()
     {
         Stack<Transform> stack = new Stack<Transform>();
@@ -49,21 +47,11 @@ public abstract class MovingPlatform : MonoBehaviour
             movingPlatformsData.Add(movingPlatformData);
         }
 
-        FindManager();
+        MovingPlatformManager manager = MovingPlatformManager.Instance;
 
         MovingPlatformEventBus.Subscribe(MovingPlatformEvent.PreMove, UpdatePreviousPositionRotations);
         MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Move, Move);
         MovingPlatformEventBus.Subscribe(MovingPlatformEvent.PostMove, UpdateDeltas);
-    }
-
-    protected void FindManager()
-    {
-        if(manager == null)
-        {
-            GameObject newManagerObject = new GameObject();
-            newManagerObject.name = "MovingPlatformManager";
-            manager = newManagerObject.AddComponent<MovingPlatformManager>();
-        }
     }
 
     protected void Update()
