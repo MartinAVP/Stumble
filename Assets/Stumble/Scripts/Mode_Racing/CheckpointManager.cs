@@ -73,7 +73,10 @@ public class CheckpointManager : MonoBehaviour
             // Each Checkpoint Spawn
             for (int j = 0; j < checkpoint.transform.childCount; j++)
             {
-                spawns.Add(checkpoint.transform.GetChild(j).transform);
+                if(checkpoint.transform.GetChild(j).GetComponent<CheckpointSpawn>() != null)
+                {
+                    spawns.Add(checkpoint.transform.GetChild(j).transform);
+                }
             }
             CheckpointData data = new CheckpointData(i, checkpoint, spawns, new List<int>());
             Checkpoints.Add(data);
