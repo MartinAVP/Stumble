@@ -75,7 +75,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     #region Diving
     [Header("Diving")]
     private float diveForce = 2;
-    private float diveDragMultiplier = 1f;
+    [HideInInspector]public float diveDragMultiplier = 1f;
     private float diveAirDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;

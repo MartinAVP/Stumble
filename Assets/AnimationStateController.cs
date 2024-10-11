@@ -9,12 +9,19 @@ public class AnimationStateController : MonoBehaviour
     ThirdPersonMovement thirdPersonMovement;
     StaticPlayerMovement staticPlayerMovement;
 
+    // Updating Variables
     public float horizontalSpeed;
     public float verticalSpeed;
     public bool isGrounded;
     public bool isProne;
+    public bool isFalling;
+    public bool isSliding;
 
-    public float slideFactor;
+    // Static Variables
+    public float slideFactor = 3;
+
+    [Header("Settings")]
+    [SerializeField] private float slideTreshold;
 
     // Start is called before the first frame update
     void Start()
@@ -23,15 +30,18 @@ public class AnimationStateController : MonoBehaviour
 
         thirdPersonMovement = this.transform.parent.GetComponent<ThirdPersonMovement>();
         //return;
-/*        if (this.transform.parent.GetComponent<ThirdPersonMovement>() != null)
-        {
+        /*        if (this.transform.parent.GetComponent<ThirdPersonMovement>() != null)
+                {
 
-        }*/
-/*        else if(this.transform.parent.GetComponent<StaticPlayerMovement>() != null)
-        {
-            staticPlayerMovement = this.transform.parent.GetComponent<StaticPlayerMovement>();
-            return;
-        }*/
+                }*/
+        /*        else if(this.transform.parent.GetComponent<StaticPlayerMovement>() != null)
+                {
+                    staticPlayerMovement = this.transform.parent.GetComponent<StaticPlayerMovement>();
+                    return;
+                }*/
+
+        slideFactor = thirdPersonMovement.diveDragMultiplier;
+        animator.SetFloat("slideFactor", slideFactor);
     }
 
     private void FixedUpdate()
@@ -41,10 +51,15 @@ public class AnimationStateController : MonoBehaviour
         isGrounded = thirdPersonMovement.isFloored;
         isProne = thirdPersonMovement.isProne;
 
+        CalculateExtraFactors();
+
         animator.SetFloat("horizontalVelocity", horizontalSpeed);
         animator.SetFloat("verticalVelocity", verticalSpeed);
         animator.SetBool("proning", isProne); 
-        animator.SetBool("grounded", isGrounded); 
+        animator.SetBool("grounded", isGrounded);
+
+        animator.SetBool("falling", isFalling); 
+        animator.SetBool("sliding", isSliding); 
 /*        if (thirdPersonMovement != null)
         {
             
@@ -54,5 +69,31 @@ public class AnimationStateController : MonoBehaviour
             animator.SetFloat("velocity", staticPlayerMovement.horizontalVelocity);
         }*/
 
+    }
+
+    private void CalculateExtraFactors()
+    {
+        bool tempFall = false;
+        if (!isGrounded)
+        {
+            if (verticalSpeed < 0)
+            {
+                tempFall = true;
+            }
+        }
+        isFalling = tempFall;
+
+        bool tempSliding = false;
+        if (isGrounded)
+        {
+            if (isProne)
+            {
+                if(horizontalSpeed > slideTreshold)
+                {
+                    tempSliding = true;
+                }
+            }
+        }
+        isSliding = tempSliding;
     }
 }
