@@ -15,6 +15,7 @@ public class AnimationStateController : MonoBehaviour
     public bool isGrounded;
     public bool isProne;
     public bool isFalling;
+    public bool isAscending;
     public bool isSliding;
 
     // Static Variables
@@ -44,7 +45,12 @@ public class AnimationStateController : MonoBehaviour
         animator.SetFloat("slideFactor", slideFactor);
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
+    {
+        
+    }
+
+    private void Update()
     {
         horizontalSpeed = thirdPersonMovement.horizontalVelocity;
         verticalSpeed = thirdPersonMovement.verticalVelocity;
@@ -60,6 +66,7 @@ public class AnimationStateController : MonoBehaviour
 
         animator.SetBool("falling", isFalling); 
         animator.SetBool("sliding", isSliding); 
+        animator.SetBool("ascending", isAscending); 
 /*        if (thirdPersonMovement != null)
         {
             
@@ -95,5 +102,15 @@ public class AnimationStateController : MonoBehaviour
             }
         }
         isSliding = tempSliding;
+
+        bool tempAscending = false;
+        if (!isGrounded) 
+        {
+            if (verticalSpeed > 0)
+            {
+                tempAscending = true;
+            }
+        }
+        isAscending = tempAscending;
     }
 }
