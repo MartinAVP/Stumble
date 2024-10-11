@@ -22,8 +22,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float deccelerationSpeed = 4f;
     private float airDragMultiplier = 1f;
     private float maxSpeed = 10;
-    private Vector3 rawDirection;
-    [HideInInspector]public float horizontalVelocity = 0;
+    [HideInInspector] public Vector3 rawDirection;
+    [HideInInspector] public float horizontalVelocity = 0;
     private bool _grounded = false;
     #endregion
 
@@ -514,7 +514,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void isGrounded()
     {
-        Vector3 start1, start2, start3, start4 = Vector3.zero;
+        Vector3 start1, start2, start3, start4, extra1, extra2 = Vector3.zero;
         //Vector3 start5, start6, start7, start8 = Vector3.zero;
 
         // Player not proning
@@ -562,6 +562,41 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (_grounded == false) { _grounded = Physics.Linecast(start2, start2 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start2; };
         if (_grounded == false) { _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start3; };
         if (_grounded == false) { _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start4; };
+        // ==========================================================================================================================================================
+        //                                                      Extra Ground Check
+        // ==========================================================================================================================================================
+        // Not Grounded with initial checks, add two more front checks
+        if (!_grounded)
+        {
+            //float degree = 15f;
+            //if(foundGroundCheck)
+            float degree = extraGroundCheck();
+
+            Quaternion rotate1 = Quaternion.Euler(0, degree, 0);
+            Quaternion rotate2 = Quaternion.Euler(0, -degree, 0);
+
+            extra1 = (rotate1 * this.transform.forward) * playerRadius;
+            extra2 = (rotate2 * this.transform.forward) * playerRadius;
+
+            extra1 += this.transform.position;
+            extra2 += this.transform.position;
+
+            //extra2 += this.transform.right;
+            Debug.DrawRay(extra1, Vector3.down, Color.cyan);
+            Debug.DrawRay(extra2, Vector3.down, Color.cyan);
+            //extra2 -= this.transform.right;
+            //Debug.DrawRay(this.transform.position, extra2 * 6, Color.blue);
+
+            if (_grounded == false) { _grounded = Physics.Linecast(extra1, extra1 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = extra1; };
+            if (_grounded == false) { _grounded = Physics.Linecast(extra2, extra2 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = extra2; };
+
+            if(_grounded) { foundGroundCheck = true; }
+            else { foundGroundCheck = false; }
+        }
+        else
+        {
+            foundGroundCheck = false;
+        }
 
         // Slidding Test - Not Efficient
         if (_grounded)
@@ -614,6 +649,21 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         
         //return _grounded;
+    }
+
+    // Extra Ground Functions
+    private bool foundGroundCheck = false;
+    private float foundGroundCheckAngle = 0f;
+
+    private float extraGroundCheck()
+    {
+        float t = Time.time / .1f;
+
+        float pingPongValue = Mathf.PingPong(t, 1f);
+        float smoothT = Mathf.Sin(pingPongValue * Mathf.PI * 0.5f);
+        float angle = Mathf.Lerp(0f, 90f, smoothT);
+
+        return angle;
     }
 
     /// <summary>

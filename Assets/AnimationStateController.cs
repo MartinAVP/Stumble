@@ -12,6 +12,8 @@ public class AnimationStateController : MonoBehaviour
     // Updating Variables
     public float horizontalSpeed;
     public float verticalSpeed;
+    public Vector3 rawHorizontal;
+    public bool isMoving;
     public bool isGrounded;
     public bool isProne;
     public bool isFalling;
@@ -57,10 +59,13 @@ public class AnimationStateController : MonoBehaviour
         isGrounded = thirdPersonMovement.isFloored;
         isProne = thirdPersonMovement.isProne;
 
+        rawHorizontal = thirdPersonMovement.rawDirection;
+
         CalculateExtraFactors();
 
         animator.SetFloat("horizontalVelocity", horizontalSpeed);
         animator.SetFloat("verticalVelocity", verticalSpeed);
+        animator.SetBool("moving", isMoving);
         animator.SetBool("proning", isProne); 
         animator.SetBool("grounded", isGrounded);
 
@@ -80,6 +85,13 @@ public class AnimationStateController : MonoBehaviour
 
     private void CalculateExtraFactors()
     {
+        bool tempMoving = false;
+        if (rawHorizontal != Vector3.zero)
+        {
+            tempMoving = true;
+        }
+        isMoving = tempMoving;
+
         bool tempFall = false;
         if (!isGrounded)
         {
