@@ -17,7 +17,7 @@ public abstract class MovingPlatform : MonoBehaviour
     public delegate void OnPostMovePlatforms();
     public OnPostMovePlatforms onPostMovePlatforms;
 
-     [SerializeField] private MovingPlatform manager = null;
+    private static MovingPlatformManager manager;
 
     protected void Start()
     {
@@ -50,24 +50,20 @@ public abstract class MovingPlatform : MonoBehaviour
         }
 
         FindManager();
+
+        MovingPlatformEventBus.Subscribe(MovingPlatformEvent.PreMove, UpdatePreviousPositionRotations);
+        MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Move, Move);
+        MovingPlatformEventBus.Subscribe(MovingPlatformEvent.PostMove, UpdateDeltas);
     }
 
     protected void FindManager()
     {
-        Transform parent = transform.parent;
-        while (parent != null)
-        {
-            manager = parent.GetComponent<MovingPlatform>();
-
-            parent = parent.parent;
-        }
-
         if(manager == null)
-            manager = this;
-
-        manager.onPreMovePlatforms += UpdatePreviousPositionRotations;
-        manager.onMovePlatforms += Move;
-        manager.onPostMovePlatforms += UpdateDeltas;
+        {
+            GameObject newManagerObject = new GameObject();
+            newManagerObject.name = "MovingPlatformManager";
+            manager = newManagerObject.AddComponent<MovingPlatformManager>();
+        }
     }
 
     protected void Update()
@@ -95,6 +91,13 @@ public abstract class MovingPlatform : MonoBehaviour
     }
 
     public abstract void Move();
+
+    private void OnDestroy()
+    {
+        MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.PreMove, UpdatePreviousPositionRotations);
+        MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.Move, Move);
+        MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.PostMove, UpdateDeltas);
+    }
 
     /*  Deprecated content is still being reference by StaticPlayerMovement.
      *  Once StaticPlayerMovement is deleted this code can be removed.

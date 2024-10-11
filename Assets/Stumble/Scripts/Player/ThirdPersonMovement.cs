@@ -148,6 +148,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Start()
     {
+        MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Final, MoveWithBase);
+
         // Update Sensitivity
         updateSensitivity(baseVerticalViewSensitivity, baseInvertVerticalInput, baseHorizontalViewSensitivity, baseInvertHorizontalInput);
 
@@ -200,7 +202,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Movement();
         ApplyGravity();
         ApplyVerticalMovement();
-        MoveWithBase();
+        //MoveWithBase();
     }
 
     private void FixedUpdate()
@@ -215,6 +217,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
 
         isFloored = isGrounded();
+    }
+
+    private void OnDestroy()
+    {
+        MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.Final, MoveWithBase);
     }
 
     public bool isFloored;
@@ -628,6 +635,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         platformVelocity = (transform.position - startPos) / currentPlatform.DeltaTime;
         platformVelocity.y = 0;
+
+        print(name + " move " + currentPlatform.ChangeInPosition);
     }
 
 
