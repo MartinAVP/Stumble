@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class MenuMusicController : MonoBehaviour
+public class PodiumMusicController : MonoBehaviour
 {
-
-    public static MenuMusicController Instance { get; private set; }
+    public static PodiumMusicController Instance { get; private set; }
 
     [SerializeField] private float delay;
     [SerializeField] private AudioSource source;
+    [SerializeField] private AudioClip winning;
+    [SerializeField] private AudioClip winningLoop;
 
     private float timeElapsed;
     private float lerpDuration;
@@ -19,7 +21,7 @@ public class MenuMusicController : MonoBehaviour
     void Start()
     {
         Singleton();
-        StartCoroutine(StartMenuMusic());
+        StartCoroutine(StartPodiumMusic());
     }
 
     private void Singleton()
@@ -31,14 +33,20 @@ public class MenuMusicController : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(this);
         }
     }
 
-    private IEnumerator StartMenuMusic()
+    private IEnumerator StartPodiumMusic()
     {
         yield return new WaitForSeconds(delay);
+        source.clip = winning;
         source.Play();
+        yield return new WaitForSeconds(winning.length - .5f);
+        AudioSource newSource = this.AddComponent<AudioSource>();
+        newSource.clip = winningLoop;
+        newSource.Play();
+        yield return new WaitForSeconds(.5f);
+        source.Pause();
     }
 
     public void EndMusic(float time)

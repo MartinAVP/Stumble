@@ -43,7 +43,7 @@ public class PodiumManager : MonoBehaviour
 
     private IEnumerator returnToMenuCooldown()
     {
-        yield return new WaitForSeconds(12f);
+        yield return new WaitForSeconds(20f);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("GamemodeSelect");

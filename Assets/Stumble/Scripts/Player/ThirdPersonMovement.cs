@@ -97,7 +97,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void OnEnable()
     {
-        Application.targetFrameRate = 30;
+        // Michael 10/12/2024
+        //Application.targetFrameRate = 30;
 
         if(playerMovementSettings == null)
         {
