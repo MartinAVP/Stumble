@@ -32,6 +32,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
     [SerializeField] private bool cursorEnabled = false;                                            // Enable Cursor (Recommend to leave disabled)
     [SerializeField] private bool kickPlayerOnDisconntect = false;                                  // Kick players when they leave from the game
     [SerializeField] private SceneCameraType sceneCameraType;
+    [SerializeField] public bool lockMovementOnSpawn = false;
 
     // UI
     public InputSystemUIInputModule UIEventSystem;
@@ -156,6 +157,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
             cursorEnabled = true;
             Cursor.lockState = CursorLockMode.None;
         }
+
+        Debug.Log("Finished Experimental Player manager");
     }
 
     public void AddPlayer(PlayerInput player)
@@ -262,7 +265,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
 
                 break;
             case SceneCameraType.StaticCamera:
-                player.camera = Camera.main;
+                //player.camera = Camera.main;
+                player.GetComponent<ThirdPersonMovement>().cam = Camera.main.transform;
+                break;
+            case SceneCameraType.None:
                 break;
             default:
                 break;
@@ -324,7 +330,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
     }
 
 
-    
+    public SceneCameraType GetCameraType()
+    {
+        return sceneCameraType;
+    }
 
 }
 
@@ -332,5 +341,6 @@ public class ExperimentalPlayerManager : MonoBehaviour
 public enum SceneCameraType
 {
     ThirdPersonControl,
-    StaticCamera
+    StaticCamera,
+    None
 }

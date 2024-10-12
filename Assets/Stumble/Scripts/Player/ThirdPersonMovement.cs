@@ -22,8 +22,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float deccelerationSpeed = 4f;
     private float airDragMultiplier = 1f;
     private float maxSpeed = 10;
-    private Vector3 rawDirection;
-    [HideInInspector]public float horizontalVelocity = 0;
+    [HideInInspector] public Vector3 rawDirection;
+    [HideInInspector] public float horizontalVelocity = 0;
     private bool _grounded = false;
     #endregion
 
@@ -75,7 +75,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     #region Diving
     [Header("Diving")]
     private float diveForce = 2;
-    private float diveDragMultiplier = 1f;
+    [HideInInspector]public float diveDragMultiplier = 1f;
     private float diveAirDragMultiplier = 1f;
     [HideInInspector]public bool isProne = false;
     private float playerHeight = 2;
@@ -97,6 +97,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void OnEnable()
     {
+        Application.targetFrameRate = 30;
+
         if(playerMovementSettings == null)
         {
             Debug.LogError("All the variables were changed to default due to the third person controller not having a player card attached");
@@ -139,12 +141,21 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void Awake()
     {
-        freelookcam = camController.gameObject.GetComponent<CinemachineFreeLook>();
+        if(camController != null)
+        {
+            freelookcam = camController.gameObject.GetComponent<CinemachineFreeLook>();
+        }
         //this.GetComponent<PlayerInput>().camera = cam.GetComponent<Camera>();
     }
 
     private void Start()
     {
+        // Movement needs to happen after platforms have been moved so that the character doesn't lag a frame behind platforms 
+        // To achieve this a moving platform manager publishes events in order
+        // To ensure that platforms always move, and the player always moves, both platforms and the players access then discard the manager instance to spawn a manger. - Michael
+        MovingPlatformManager manager = MovingPlatformManager.Instance;
+        MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Final, Movement);
+
         // Update Sensitivity
         updateSensitivity(baseVerticalViewSensitivity, baseInvertVerticalInput, baseHorizontalViewSensitivity, baseInvertHorizontalInput);
 
@@ -159,29 +170,55 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
 
         // Add look action to cam
-        this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+
+        if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
+        {
+            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            return;
+        }
+
+        if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.ThirdPersonControl)
+        {
+            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+        }
+        else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
+        {
+            this.transform.GetComponent<PlayerInput>().camera = Camera.main;
+        }
+
+        Debug.Log("I got here 2");
+    }
+
+    private Transform hasCamera()
+    {
+        foreach(Transform child in this.transform.parent)
+        {
+            if(child.GetComponent<CinemachineFreeLook>() != null)
+            {
+                return child;
+            }
+        }
+        return null;
     }
 
     private void Update()
     {
-        Movement();
-        ApplyGravity();
-        ApplyVerticalMovement();
-        MoveWithBase();
-    }
-
-    private void FixedUpdate()
-    {
-        isGrounded();
         if (diveWasCanceled)
         {
-            if (isGrounded())
+            if (_grounded)
             {
                 diveWasCanceled = false;
             }
         }
 
-        isFloored = isGrounded();
+        isFloored = _grounded;
+    }
+
+    private void OnDestroy()
+    {
+        MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.Final, Movement);
     }
 
     public bool isFloored;
@@ -215,7 +252,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
 
         // Check if player is on the air
-        if (!isGrounded()) return;
+        if (!_grounded) return;
 
         // Add to the Vertical Velocity Value
         verticalVelocity = 0;
@@ -227,7 +264,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if(lockMovement) return;
 
         // Prevent Diving when on the ground
-        //if (isGrounded()) return;
+        //if (_grounded) return;
 
         //Debug.Log("Dive");
         // Change Model
@@ -248,6 +285,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void Movement()
     {
+        ApplyGravity();
+        ApplyVerticalMovement();
+        isGrounded();
+
         // Check for proning state, prevents horizontal movement and character rotation
         if (isProne)
         {
@@ -257,6 +298,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             WalkingMovementState();
         }
+
+        // Move with base after all other movement seems to yield a slightly smoother result? - Michael
+        MoveWithBase();
 
         // Slide Prototype Logic - Not Working.
 /*        Vector3 slideVector = groundedVector;
@@ -295,7 +339,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         Debug.DrawRay(this.transform.position, Quaternion.Euler(0, this.transform.rotation.z, 0) * transform.forward.normalized * 2, Color.yellow);
 
         // Apply Extra Drag Multiplier if the player is grounded
-        if (isGrounded())
+        if (_grounded)
         {
             actualBraking = (deccelerationSpeed * 2) * diveDragMultiplier * Time.deltaTime;
             //Debug.Log("Extra Dive Drag");
@@ -349,7 +393,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         moveDir = Quaternion.Euler(0, angle, 0) * Vector3.forward;
 
         // Extra Drag Force if the player is Grounded
-        if (isGrounded())
+        if (_grounded)
         {
             actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * Time.deltaTime;
             //Debug.Log("Using Extra Ground Force");
@@ -357,6 +401,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         else
         {
             actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * airDragMultiplier * Time.deltaTime;
+
+            print(_bumpHorizontalVelocity);
         }
 
         // Player input detected, move player
@@ -431,7 +477,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Prone Logic
         if (isProne)
         {
-            if (!isGrounded())
+            if (!_grounded)
             {
                 verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
             }
@@ -439,7 +485,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             return;
         }
 
-        if (isGrounded() && verticalVelocity < -5f)
+        if (_grounded && verticalVelocity < -5f)
         {
             verticalVelocity = -5.0f;  // Prevents the character from sinking into the ground
         }
@@ -466,9 +512,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// <summary>
     /// Checks if the player is Grounded depending on the minimum jump distance.
     /// </summary>
-    private bool isGrounded()
+    private void isGrounded()
     {
-        Vector3 start1, start2, start3, start4 = Vector3.zero;
+        Vector3 start1, start2, start3, start4, extra1, extra2 = Vector3.zero;
         //Vector3 start5, start6, start7, start8 = Vector3.zero;
 
         // Player not proning
@@ -498,7 +544,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // 
         }
 
-        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
+        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .1f);
 
         Debug.DrawLine(start1, start1 + delta, Color.red);
         Debug.DrawLine(start2, start2 + delta, Color.blue);
@@ -517,7 +563,46 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (_grounded == false) { _grounded = Physics.Linecast(start3, start3 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start3; };
         if (_grounded == false) { _grounded = Physics.Linecast(start4, start4 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = start4; };
 
+        // ==========================================================================================================================================================
+        //                                                      Extra Ground Check
+        // ==========================================================================================================================================================
+        // Not Grounded with initial checks, add two more front checks
+        /*
+        if (!_grounded)
+        {
+            //float degree = 15f;
+            //if(foundGroundCheck)
+            float degree = extraGroundCheck();
+
+            Quaternion rotate1 = Quaternion.Euler(0, degree, 0);
+            Quaternion rotate2 = Quaternion.Euler(0, -degree, 0);
+
+            extra1 = (rotate1 * this.transform.forward) * playerRadius;
+            extra2 = (rotate2 * this.transform.forward) * playerRadius;
+
+            extra1 += this.transform.position;
+            extra2 += this.transform.position;
+
+            //extra2 += this.transform.right;
+            Debug.DrawRay(extra1, Vector3.down, Color.cyan);
+            Debug.DrawRay(extra2, Vector3.down, Color.cyan);
+            //extra2 -= this.transform.right;
+            //Debug.DrawRay(this.transform.position, extra2 * 6, Color.blue);
+
+            if (_grounded == false) { _grounded = Physics.Linecast(extra1, extra1 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = extra1; };
+            if (_grounded == false) { _grounded = Physics.Linecast(extra2, extra2 + delta, out hit, jumpableLayersMinusPlayer); groundedVector = extra2; };
+
+            if(_grounded) { foundGroundCheck = true; }
+            else { foundGroundCheck = false; }
+        }
+        else
+        {
+            foundGroundCheck = false;
+        }
+        */
+
         // Slidding Test - Not Efficient
+        /*
         if (_grounded)
         {
             if (Physics.Raycast(groundedVector, delta, out hit, delta.magnitude, jumpableLayers))
@@ -528,12 +613,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 /*                    Vector3 result = new Vector3(hit.normal.x, 0, hit.normal.z);
                     this.GetComponent<CharacterController>().Move(result * Time.deltaTime * slantedSurfacePushbackMultiplier);
                     groundedVector = Vector3.zero;
-                    Debug.DrawRay(hit.point, result * 5, Color.red);*/
+                    Debug.DrawRay(hit.point, result * 5, Color.red);
                     _grounded = false;
                 }
                 //Debug.Log(surfaceAngle);
             }
         }
+        */
 
         if (_grounded)
         {
@@ -549,7 +635,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                     Vector3 platformVelocity = currentPlatform.LinearVelocity;
                     
                     if(platformVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
-                        platformVelocity = platformVelocity.normalized * _bumpHorizontalVelocity.magnitude;
+                        platformVelocity = platformVelocity.normalized * Vector3.Dot(_bumpHorizontalVelocity.normalized, platformVelocity);
 
                     _bumpHorizontalVelocity -= platformVelocity;
                 }
@@ -566,8 +652,25 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
             currentPlatform = null;
         }
-        
-        return _grounded;
+
+        if (_grounded == false) { _grounded = controller.isGrounded; };
+
+        //return _grounded;
+    }
+
+    // Extra Ground Functions
+    private bool foundGroundCheck = false;
+    private float foundGroundCheckAngle = 0f;
+
+    private float extraGroundCheck()
+    {
+        float t = Time.time / .1f;
+
+        float pingPongValue = Mathf.PingPong(t, 1f);
+        float smoothT = Mathf.Sin(pingPongValue * Mathf.PI * 0.5f);
+        float angle = Mathf.Lerp(0f, 90f, smoothT);
+
+        return angle;
     }
 
     /// <summary>
@@ -600,11 +703,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void updateSensitivity(float vertical, bool invertVertical, float horizontal, bool invertHorizontal)
     {
-        freelookcam.m_YAxis.m_MaxSpeed = vertical;
-        freelookcam.m_XAxis.m_MaxSpeed = horizontal;
+        if(camController != null)
+        {
+            freelookcam.m_YAxis.m_MaxSpeed = vertical;
+            freelookcam.m_XAxis.m_MaxSpeed = horizontal;
 
-        freelookcam.m_YAxis.m_InvertInput = invertVertical;
-        freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
+            freelookcam.m_YAxis.m_InvertInput = invertVertical;
+            freelookcam.m_XAxis.m_InvertInput = invertHorizontal;
+        }
     }
 
     public void toggleProne(bool activate)
@@ -642,7 +748,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Check if the player is already Diving and Prevent from Diving Again;
             if (isProne)
             {
-                if (!isGrounded())
+                if (!_grounded)
                 {
                     diveWasCanceled = true;
                 }

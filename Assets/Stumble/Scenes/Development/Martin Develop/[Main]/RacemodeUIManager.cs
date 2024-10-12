@@ -36,13 +36,13 @@ public class RacemodeUIManager : MonoBehaviour
     private void OnEnable()
     {
         //RaceManager.Instance.onCompleteFinish += DisplayEndScores;
-        //RaceManager.Instance.onCountdownStart += StartRace;
+        RacemodeManager.Instance.onCountdownStart += StartRace;
     }
 
     private void OnDisable()
     {
         //RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        //RaceManager.Instance.onCountdownStart -= StartRace;
+        RacemodeManager.Instance.onCountdownStart -= StartRace;
     }
 
 

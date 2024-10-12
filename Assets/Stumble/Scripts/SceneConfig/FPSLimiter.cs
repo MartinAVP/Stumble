@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FPSLimiter : MonoBehaviour
 {
-    private void Awake()
+    private void Start()
     {
         QualitySettings.vSyncCount = 0;  // VSync must be disabled
         Application.targetFrameRate = 120;

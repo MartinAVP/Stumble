@@ -5,6 +5,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 public class RacemodeManager : MonoBehaviour
 {
@@ -47,9 +48,6 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.Log("Late Start Called on Race manager");
         stopwatch = new Stopwatch();
 
-        // Lock all players in place
-        //LockPlayersMovement(true);
-
         // Note: In order to have a cinematic or countdown at the start,
         // Both the RacemodeUIManager and the CinematicController have to be in
         // in the scene, if one of them is missing the race will start without these.
@@ -72,6 +70,9 @@ public class RacemodeManager : MonoBehaviour
             // Start the Race Directly
             StartRace();
         }
+
+/*        // Lock all players in place
+        LockPlayersMovement(true);*/
     }
 
     public IEnumerator StartCinematic()
@@ -100,7 +101,7 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.LogWarning("Race has been initialized");
 
         // Unlock all Player Movement
-        //LockPlayersMovement(false);
+/*        LockPlayersMovement(false);*/
     }
 
     public void ReachFinishLine(PlayerData player)
@@ -183,8 +184,9 @@ public class RacemodeManager : MonoBehaviour
 
     private void LockPlayersMovement(bool value)
     {
-        if (PlayerDataManager.Instance == null) { return; }
+        if (PlayerDataManager.Instance == null) { Debug.LogWarning("Could not find the PlayerData Manager"); return; }
 
+        Debug.Log("Locking in " + PlayerDataManager.Instance.GetPlayers().Count);
         if (value)
         {
             foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())

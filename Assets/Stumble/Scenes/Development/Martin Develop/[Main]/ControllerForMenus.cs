@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
@@ -10,7 +11,7 @@ public class ControllerForMenus : MonoBehaviour
     private PlayerInputManager playerInputManager;
 
     [SerializeField] GameObject FirstSelectedItem;
-    [SerializeField] MultiplayerEventSystem eventSystem;
+    [SerializeField] public MultiplayerEventSystem eventSystem;
 
     public bool hostUsingController;
     public static ControllerForMenus Instance { get; private set; }

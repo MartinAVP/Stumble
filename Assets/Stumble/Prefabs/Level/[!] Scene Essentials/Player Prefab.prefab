@@ -4073,6 +4073,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa43baf051225004484157d8416fe817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  horizontalSpeed: 0
+  verticalSpeed: 0
+  isGrounded: 0
+  isProne: 0
+  isFalling: 0
+  isSliding: 0
+  slideFactor: 3
+  slideTreshold: 0
 --- !u!1 &7388015240651224438
 GameObject:
   m_ObjectHideFlags: 0
@@ -4963,6 +4971,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa43baf051225004484157d8416fe817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  horizontalSpeed: 0
+  verticalSpeed: 0
+  isGrounded: 0
+  isProne: 0
+  isFalling: 0
+  isSliding: 0
+  slideFactor: 3
+  slideTreshold: 0
 --- !u!1 &8424607697202932065
 GameObject:
   m_ObjectHideFlags: 0
@@ -5425,7 +5441,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.2
+  m_StepOffset: 0.04
   m_SkinWidth: 0.01
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -5635,6 +5651,7 @@ MonoBehaviour:
   playerMovementSettings: {fileID: 11400000, guid: 2090dde63f0671e4d994ae82a23c5d03, type: 2}
   horizontalVelocity: 0
   verticalVelocity: 0
+  diveDragMultiplier: 1
   isProne: 0
   rotateModelonDive: 1
   lockMovement: 0
