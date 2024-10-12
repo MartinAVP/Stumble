@@ -1048,7 +1048,7 @@ Transform:
   m_GameObject: {fileID: 1576963165516167826}
   serializedVersion: 2
   m_LocalRotation: {x: 0.038102806, y: 0.0000000037225858, z: -1.4194403e-10, w: 0.9992739}
-  m_LocalPosition: {x: 0, y: 2.8200002, z: -17.381}
+  m_LocalPosition: {x: 0, y: 2.82, z: -17.381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2461,7 +2461,7 @@ Transform:
   m_GameObject: {fileID: 4277512581799906133}
   serializedVersion: 2
   m_LocalRotation: {x: -0.07256661, y: -0.00000001716102, z: -0.0000000012486089, w: 0.9973636}
-  m_LocalPosition: {x: 0, y: 2.8200002, z: -17.381}
+  m_LocalPosition: {x: 0, y: 2.82, z: -17.381}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4075,9 +4075,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontalSpeed: 0
   verticalSpeed: 0
+  rawHorizontal: {x: 0, y: 0, z: 0}
+  isMoving: 0
   isGrounded: 0
   isProne: 0
   isFalling: 0
+  isAscending: 0
   isSliding: 0
   slideFactor: 3
   slideTreshold: 0
@@ -4973,9 +4976,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontalSpeed: 0
   verticalSpeed: 0
+  rawHorizontal: {x: 0, y: 0, z: 0}
+  isMoving: 0
   isGrounded: 0
   isProne: 0
   isFalling: 0
+  isAscending: 0
   isSliding: 0
   slideFactor: 3
   slideTreshold: 0
@@ -5649,11 +5655,12 @@ MonoBehaviour:
   camController: {fileID: 1389962876889350260}
   cam: {fileID: 133963800316115594}
   playerMovementSettings: {fileID: 11400000, guid: 2090dde63f0671e4d994ae82a23c5d03, type: 2}
+  rawDirection: {x: 0, y: 0, z: 0}
   horizontalVelocity: 0
   verticalVelocity: 0
   diveDragMultiplier: 1
   isProne: 0
-  rotateModelonDive: 1
+  rotateModelonDive: 0
   lockMovement: 0
   lockVeritcalMovement: 0
   isFloored: 0

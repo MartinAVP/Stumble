@@ -1685,6 +1685,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa43baf051225004484157d8416fe817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  horizontalSpeed: 0
+  verticalSpeed: 0
+  rawHorizontal: {x: 0, y: 0, z: 0}
+  isMoving: 0
+  isGrounded: 0
+  isProne: 0
+  isFalling: 0
+  isAscending: 0
+  isSliding: 0
+  slideFactor: 3
+  slideTreshold: 0
 --- !u!1 &5171360652869370317
 GameObject:
   m_ObjectHideFlags: 0
@@ -1983,6 +1994,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa43baf051225004484157d8416fe817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  horizontalSpeed: 0
+  verticalSpeed: 0
+  rawHorizontal: {x: 0, y: 0, z: 0}
+  isMoving: 0
+  isGrounded: 0
+  isProne: 0
+  isFalling: 0
+  isAscending: 0
+  isSliding: 0
+  slideFactor: 3
+  slideTreshold: 0
 --- !u!1 &5757491888044426494
 GameObject:
   m_ObjectHideFlags: 0
@@ -2352,10 +2374,12 @@ MonoBehaviour:
   camController: {fileID: 0}
   cam: {fileID: 0}
   playerMovementSettings: {fileID: 11400000, guid: 2090dde63f0671e4d994ae82a23c5d03, type: 2}
+  rawDirection: {x: 0, y: 0, z: 0}
   horizontalVelocity: 0
   verticalVelocity: 0
+  diveDragMultiplier: 1
   isProne: 0
-  rotateModelonDive: 1
+  rotateModelonDive: 0
   lockMovement: 0
   lockVeritcalMovement: 0
   isFloored: 0
