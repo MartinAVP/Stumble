@@ -9,6 +9,7 @@ public class CinematicController : MonoBehaviour
     [SerializeField] private List<CinematicPoint> points;
 
     public PlayableDirector timeline;
+    public Camera cinematicCamera;
 
     public static CinematicController Instance { get; private set; }
 
@@ -42,6 +43,8 @@ public class CinematicController : MonoBehaviour
 
     public void StartTimeline()
     {
+        initializeCameras();
+
         timeline.Play();
         StartCoroutine(TurnOffAllCameras());
 
@@ -49,6 +52,18 @@ public class CinematicController : MonoBehaviour
         {
             data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().camController.transform.GetComponent<CinemachineFreeLook>().enabled = false;
         }*/
+    }
+
+    private void initializeCameras()
+    {
+        foreach (var point in points)
+        {
+            point.camera.gameObject.SetActive(true);
+        }
+
+
+        cinematicCamera.gameObject.SetActive(true);
+        //this.transform.GetComponentInChildren<CinemachineBrain>().gameObject.SetActive(true);
     }
 
     private IEnumerator TurnOffAllCameras()

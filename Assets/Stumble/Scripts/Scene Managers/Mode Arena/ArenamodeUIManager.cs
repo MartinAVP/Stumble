@@ -4,12 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RacemodeUIManager : MonoBehaviour
+public class ArenamodeUIManager : MonoBehaviour
 {
-    [Header("End Screen")]
-/*    [SerializeField] private GameObject EndScoreScreen;
-    public GameObject playerWinCardPrefab;
-    public Transform playerScores;*/
+    public static ArenamodeUIManager Instance;
 
     [Header("Start Counter")]
     [SerializeField] private GameObject countdownPanel;
@@ -19,7 +16,9 @@ public class RacemodeUIManager : MonoBehaviour
     [SerializeField] private Sprite countdownOne;
     [SerializeField] private Sprite countdownGo;
 
-    public static RacemodeUIManager Instance { get; private set; }
+    [Header("Players Alive")]
+    [SerializeField] private TextMeshProUGUI playersAlive;
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -32,34 +31,16 @@ public class RacemodeUIManager : MonoBehaviour
             Instance = this;
         }
     }
-
     private void OnEnable()
     {
         //RaceManager.Instance.onCompleteFinish += DisplayEndScores;
-        RacemodeManager.Instance.onCountdownStart += StartRace;
+        ArenamodeManager.Instance.onCountdownStart += StartArena;
     }
 
     private void OnDisable()
     {
         //RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        RacemodeManager.Instance.onCountdownStart -= StartRace;
-    }
-
-
-
-    private void Start()
-    {
-        if (LoadingScreenManager.Instance != null)
-        {
-            LoadingScreenManager.Instance.StartTransition(false);
-        }
-
-        //EndScoreScreen?.SetActive(false);
-        if(countdownPanel != null)
-        {
-            countdownPanel?.SetActive(false);
-        }
-
+        ArenamodeManager.Instance.onCountdownStart -= StartArena;
     }
 
     public bool HasAllCountDownValues()
@@ -72,12 +53,21 @@ public class RacemodeUIManager : MonoBehaviour
         return false;
     }
 
-    private void StartRace()
+    // Start is called before the first frame update
+    void Start()
     {
-        StartCoroutine(StartRaceCountdown());
+        if(LoadingScreenManager.Instance != null)
+        {
+            LoadingScreenManager.Instance.StartTransition(false);
+        }
     }
 
-    public IEnumerator StartRaceCountdown()
+    private void StartArena()
+    {
+        StartCoroutine(StartArenaCountdown());
+    }
+
+    public IEnumerator StartArenaCountdown()
     {
         float waitTime = 1.2f;
 
@@ -101,21 +91,14 @@ public class RacemodeUIManager : MonoBehaviour
 
     }
 
-/*    public void DisplayEndScores(SortedDictionary<float, PlayerData> players)
+    public void UpdatePlayersAlive(string quantity)
     {
+        playersAlive.text = quantity;
+    }
 
-        Transform content = playerScores.GetComponent<ScrollRect>().content;
-
-        EndScoreScreen.SetActive(true);
-        int index = 1;
-        foreach (var item in players)
-        {
-            GameObject card = Instantiate(playerWinCardPrefab, content);
-            card.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = index.ToString("D2");
-            card.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Player #" + item.Value.GetID();
-            card.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = item.Key.ToString("F3");
-            index++;
-        }
-        index = 0;
-    }*/
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }

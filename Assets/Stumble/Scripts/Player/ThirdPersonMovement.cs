@@ -403,7 +403,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * airDragMultiplier * Time.deltaTime;
 
-            print(_bumpHorizontalVelocity);
+            //print(_bumpHorizontalVelocity);
         }
 
         // Player input detected, move player

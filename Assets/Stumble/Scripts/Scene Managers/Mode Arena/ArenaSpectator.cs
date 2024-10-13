@@ -54,7 +54,7 @@ public class ArenaSpectator : MonoBehaviour
 
         // Player already an spectator
         if (spectators.Contains(data.GetID())) { return; }
-        if (playerCount - spectating.Count <= 1) { ArenaSpawnManager.Instance.RespawnPlayer(player); return; }
+        //if (playerCount - spectating.Count <= 1) { ArenaSpawnManager.Instance.RespawnPlayer(player); return; }
 
         spectators.Add(data.GetID());
         spectating.Add(data.GetID(), -1);

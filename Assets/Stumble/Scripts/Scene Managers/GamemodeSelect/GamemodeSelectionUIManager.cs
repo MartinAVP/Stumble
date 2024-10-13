@@ -62,7 +62,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
 
     private void SelectArena()
     {
-
+        SceneManager.LoadScene("ArenaScene");
     }
 
     private void GoBackToModeSelection()

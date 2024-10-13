@@ -43,9 +43,9 @@ public class SpectatorManager : MonoBehaviour
             PlayerData originData = PlayerDataManager.Instance.GetPlayerData(kvp.Key);
 
             GameObject player = originData.GetPlayerInScene();
-            player.GetComponent<CharacterController>().enabled = false;
+            //player.GetComponent<CharacterController>().enabled = false;
             player.transform.position = targetData.GetPlayerInScene().transform.position;
-            player.GetComponent<CharacterController>().enabled = true;
+            //player.GetComponent<CharacterController>().enabled = true;
         }
     }
 
@@ -74,7 +74,11 @@ public class SpectatorManager : MonoBehaviour
 
         // turn off the third person movenet - Test
         data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().enabled = false;
+        data.GetPlayerInScene().GetComponent<CharacterController>().center = Vector3.up * 300;
         data.GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
+
+        Destroy(data.GetPlayerInScene().GetComponent<ThirdPersonMovement>());
+        Destroy(data.GetPlayerInScene().GetComponent<CharacterController>());
     }
 
     private int GetNextAvailableIndex(int currentlyAt)
@@ -164,12 +168,16 @@ public class SpectatorManager : MonoBehaviour
         return index;
     }*/
 
-    private bool IsSpectator(int id)
+    public bool IsSpectator(int id)
     {
+        Debug.Log("Is Spectator Called");
+        if(spectators.Count == 0) { return false; }
+
         if (spectators.Contains(id))
         {
             return true;
         }
+        Debug.Log("Is Spectator Ended");
         return false;
     }
 }
