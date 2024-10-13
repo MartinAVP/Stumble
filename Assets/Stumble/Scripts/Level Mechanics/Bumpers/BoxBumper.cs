@@ -38,6 +38,12 @@ public class BoxBumper : MonoBehaviour
                 other.GetComponent<IBumper>().Bump(dir, bounceForce);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
             }
+
+            // Sounds
+            if(SFXManager.Instance != null)
+            {
+                SFXManager.Instance.PlaySound("BumperBounce", other.transform);
+            }
         }
 
     }

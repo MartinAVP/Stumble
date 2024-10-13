@@ -16,6 +16,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public Transform cam;
     public PlayerMovement playerMovementSettings;
 
+    public event Action OnJump;
+    public event Action OnDive;
+
     #region Horizontal Movement
     [Header("Movement")]
     private float accelerationSpeed = 10f;
@@ -258,6 +261,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Add to the Vertical Velocity Value
         verticalVelocity = 0;
         verticalVelocity += jumpPower;
+
+        OnJump?.Invoke();
     }
 
     public void Dive(InputAction.CallbackContext context)
@@ -274,6 +279,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Prevent Proning when already in prone
             if (isProne) { return; }
             toggleProne(true);
+
+            OnDive?.Invoke();
         }
     }
     #endregion
