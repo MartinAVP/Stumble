@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PatrolMovement : MovingPlatform
 {
+    #region Events
+    [Header("Events")]
+    public UnityEvent startMoving = new UnityEvent();
+    public UnityEvent stopMoving = new UnityEvent();
+    #endregion
+
     // public int NodeCount = 4;
     private int CurrentNode = 0;
     public List<Transform> PatrolNodes = new List<Transform>();
     public float speed = 2f;
     public float rotationSpeed = 2f;
 
-    private GameObject player;
-
     public bool faceTowardNextNode = false;
 
-    private float delayTime = 1f;
+    public float delayTime = 1f;
     private float delayCounter = 0f;
     private bool delayed = false;
 
@@ -31,6 +36,8 @@ public class PatrolMovement : MovingPlatform
                 return;
             }
             delayed = false;
+
+            startMoving?.Invoke();
         }
         Transform nextNode = PatrolNodes[CurrentNode];
         if (Vector3.Distance(transform.position,nextNode.position) < 0.01f)
@@ -41,6 +48,8 @@ public class PatrolMovement : MovingPlatform
             delayed = true;
 
             CurrentNode = (CurrentNode + 1) % PatrolNodes.Count;
+
+            stopMoving?.Invoke();
         }
         else
         {
