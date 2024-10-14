@@ -65,6 +65,7 @@ public class SFXManager : MonoBehaviour
             audioSource.outputAudioMixerGroup = groups[0];
 
             audioSource.clip = clip;
+            //audioSource.time = .03f;
             audioSource.loop = false;
             audioSource.volume = targetVolume + holder.volumeOffset;
             audioSource.playOnAwake = false;
