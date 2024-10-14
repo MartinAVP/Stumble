@@ -41,6 +41,11 @@ public class OptionsManager : MonoBehaviour
         ChangeAudio("SFXVolume", value);
     }
 
+    public void SetTargetFPS(int value)
+    {
+        Application.targetFrameRate = value;
+    }
+
     private void ChangeAudio(string group, float value)
     {
         if(value <= -35)

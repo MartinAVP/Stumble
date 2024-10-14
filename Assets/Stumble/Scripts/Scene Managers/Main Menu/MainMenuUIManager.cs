@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,6 +29,8 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Slider _generalVolume;
     [SerializeField] private UnityEngine.UI.Slider _MusicVolume;
     [SerializeField] private UnityEngine.UI.Slider _SFXVolume;
+    [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
+    [SerializeField] private TextMeshProUGUI _TargetFPSText;
     [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
 
     private PlayerInputManager playerInputManager;
@@ -52,6 +55,7 @@ public class MainMenuUIManager : MonoBehaviour
         _generalVolume.onValueChanged.AddListener(changeGeneralVolume);
         _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
         _SFXVolume.onValueChanged.AddListener(changeSFXVolume);
+        _TargetFPS.onValueChanged.AddListener(changeTargetFPS);
         _ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
     }
 
@@ -69,6 +73,7 @@ public class MainMenuUIManager : MonoBehaviour
         _generalVolume.onValueChanged.RemoveAllListeners();
         _MusicVolume.onValueChanged.RemoveAllListeners();
         _SFXVolume.onValueChanged.RemoveAllListeners();
+        _TargetFPS.onValueChanged.RemoveAllListeners();
         _ReturnToMenuFromOptions.onClick.RemoveAllListeners();
     }
 
@@ -87,6 +92,7 @@ public class MainMenuUIManager : MonoBehaviour
         changeGeneralVolume(0);
         changeMusicVolume(0);
         changeSFXVolume(0);
+        changeTargetFPS(120);
     }
 
     private void joinHostPlayer(PlayerInput player)
@@ -182,6 +188,16 @@ public class MainMenuUIManager : MonoBehaviour
         if (OptionsManager.Instance != null)
         {
             OptionsManager.Instance.SetSFXVolume(value);
+        }
+    }
+
+    private void changeTargetFPS(float value)
+    {
+        int newValue = (int)value;
+        _TargetFPSText.text = "Limit FPS:               " + newValue;
+        if (OptionsManager.Instance != null)
+        {
+            OptionsManager.Instance.SetTargetFPS(newValue);
         }
     }
 }
