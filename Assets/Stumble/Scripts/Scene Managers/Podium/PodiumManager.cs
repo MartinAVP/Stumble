@@ -34,7 +34,13 @@ public class PodiumManager : MonoBehaviour
 
     private void Start()
     {
-        if (CinematicController.Instance != null) { 
+        StartCountdown();
+    }
+
+    public virtual void StartCountdown()
+    {
+        if (CinematicController.Instance != null)
+        {
             CinematicController.Instance.StartTimeline();
         }
 
