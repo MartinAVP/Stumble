@@ -22,6 +22,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     private PlayerDataManager playerDataManager;
 
+    public event Action onAllPlayersBrought;
+
 /*    [HideInInspector]*/
     //public UnityEvent OnAllPlayersBroughtInSpawned;
 
@@ -137,6 +139,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
                 Debug.Log("Spawning a new Player " + i);
             }
 
+            onAllPlayersBrought?.Invoke();
             bringingPlayersOver = false;
             Debug.Log("Added all players brought");
             //OnAllPlayersBroughtInSpawned?.Invoke();

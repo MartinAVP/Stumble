@@ -12,6 +12,8 @@ public class ControllerForMenus : MonoBehaviour
 
     [SerializeField] GameObject FirstSelectedItem;
     [SerializeField] public MultiplayerEventSystem eventSystem;
+    [Tooltip("Does not apply to controller")]
+    [SerializeField] private bool cursorOnStart;
 
     public bool hostUsingController;
     public static ControllerForMenus Instance { get; private set; }
@@ -68,12 +70,18 @@ public class ControllerForMenus : MonoBehaviour
                 hostUsingController = true;
                 //Debug.Log("Player 0 Is Controller");
                 //eventSystem.firstSelectedGameObject = FirstSelectedItem;
-                eventSystem.SetSelectedGameObject(FirstSelectedItem);
+                if(FirstSelectedItem != null)
+                {
+                    eventSystem.SetSelectedGameObject(FirstSelectedItem);
+                }
             }
             else
             {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
+                if (cursorOnStart)
+                {
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
             }
         }
     }

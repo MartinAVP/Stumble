@@ -48,10 +48,26 @@ public class FeedbackAddon : PodiumManager
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        if(PlayerDataManager.Instance != null)
+        {
+            if(ControllerForMenus.Instance != null)
+            {
+                ControllerForMenus.Instance.ChangeSelectedObject(feedbackButton.gameObject);
+            }
+        }
     }
 
     private void openFeedbackForm(){
-        Application.OpenURL("https://www.youtube.com/watch?v=f_e3NbtwKAo");
+        Application.OpenURL("https://michaelszolowicz.com/stumblebumps-unite-internal-playtest/");
+
+        if (PlayerDataManager.Instance != null)
+        {
+            if (ControllerForMenus.Instance != null)
+            {
+                ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(feedbackButton.gameObject, 0.1f);
+            }
+        }
     }
     private void BackToGame(){
         SceneManager.LoadScene("GamemodeSelect");

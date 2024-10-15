@@ -16,6 +16,8 @@ public class RacemodeManager : MonoBehaviour
     public event Action onCountdownStart;
     public event Action onRaceStart;
 
+    private ExperimentalPlayerManager experimentalPlayerManager;
+
     public static RacemodeManager Instance { get; private set; }
 
     // Singleton
@@ -30,16 +32,20 @@ public class RacemodeManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        experimentalPlayerManager = FindAnyObjectByType<ExperimentalPlayerManager>();
     }
 
     private void OnEnable()
     {
         GameController.Instance.startSystems += LateStart;
+        experimentalPlayerManager.onAllPlayersBrought += AllPlayersSpawned;
     }
 
     private void OnDisable()
     {
         GameController.Instance.startSystems -= LateStart;
+        experimentalPlayerManager.onAllPlayersBrought -= AllPlayersSpawned;
         
     }
 
@@ -75,6 +81,11 @@ public class RacemodeManager : MonoBehaviour
         LockPlayersMovement(true);*/
     }
 
+    private void AllPlayersSpawned()
+    {
+        LockPlayersMovement(true);
+    }
+
     public IEnumerator StartCinematic()
     {
         CinematicController.Instance.StartTimeline();
@@ -98,6 +109,7 @@ public class RacemodeManager : MonoBehaviour
 
         // Start the Timer
         stopwatch.Start();
+        LockPlayersMovement(false);
         UnityEngine.Debug.LogWarning("Race has been initialized");
 
         // Unlock all Player Movement
