@@ -60,12 +60,20 @@ public class HungryHippo : MonoBehaviour
 
     void FixedUpdate()
     {
+
         if (triggered && available)
         {
             
             StartCoroutine(HippoMotion());
                        
         }
+
+        /*
+        if (Mathf.Abs(Quaternion.Euler(openRotation) - rotation2Euler.x))
+        {
+
+        }
+        */
 
         if (reset)
         {
