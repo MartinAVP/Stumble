@@ -486,9 +486,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
 
 
-        if (_grounded && verticalVelocity < 0)
+        if (_grounded && verticalVelocity < -5)
         {
-            verticalVelocity = 0;  // Prevents the character from sinking into the ground
+            verticalVelocity = -5;  // Prevents the character from sinking into the ground
         }
         else
         {
