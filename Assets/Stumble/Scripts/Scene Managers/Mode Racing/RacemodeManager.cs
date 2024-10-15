@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -13,7 +14,8 @@ public class RacemodeManager : MonoBehaviour
     public SortedDictionary<float, PlayerData> positions = new SortedDictionary<float, PlayerData>();
 
     public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
-    public event Action onCountdownStart;
+    public event Action onCountdown;
+    public UnityEvent onCountdownStart;
     public event Action onRaceStart;
 
     private ExperimentalPlayerManager experimentalPlayerManager;
@@ -97,6 +99,7 @@ public class RacemodeManager : MonoBehaviour
 
     public IEnumerator ComenzeRacing()
     {
+        onCountdown?.Invoke();
         onCountdownStart?.Invoke();
         yield return new WaitForSeconds(5.0f);
         StartRace();

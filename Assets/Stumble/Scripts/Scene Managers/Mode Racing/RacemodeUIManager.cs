@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ public class RacemodeUIManager : MonoBehaviour
     [SerializeField] private Sprite countdownTwo;
     [SerializeField] private Sprite countdownOne;
     [SerializeField] private Sprite countdownGo;
+    //[SerializeField] private AnimationClip countDownAnim;
 
     public static RacemodeUIManager Instance { get; private set; }
     private void Awake()
@@ -36,19 +38,22 @@ public class RacemodeUIManager : MonoBehaviour
     private void OnEnable()
     {
         //RaceManager.Instance.onCompleteFinish += DisplayEndScores;
-        RacemodeManager.Instance.onCountdownStart += StartRace;
+        //RacemodeManager.Instance.onCountdown += StartRace;
     }
 
     private void OnDisable()
     {
         //RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        RacemodeManager.Instance.onCountdownStart -= StartRace;
+        //RacemodeManager.Instance.onCountdown -= StartRace;
+        RacemodeManager.Instance.onCountdownStart.RemoveAllListeners();
     }
 
 
 
     private void Start()
     {
+        RacemodeManager.Instance.onCountdownStart.AddListener(StartRace);
+
         if (LoadingScreenManager.Instance != null)
         {
             LoadingScreenManager.Instance.StartTransition(false);
@@ -81,8 +86,11 @@ public class RacemodeUIManager : MonoBehaviour
     {
         float waitTime = 1.2f;
 
+        Debug.Log("CALLED");
+        //countdownTime.AddComponent<Animation>().AddClip(countDownAnim, "ShowNumber");
+
         yield return new WaitForSeconds(waitTime);
-        countdownPanel?.SetActive(true);
+        countdownPanel.SetActive(true);
         countdownTime.sprite = countdownThree;
         //countdownPanel.GetComponent<Animator>().SetTrigger("StartTrigger");
         countdownTime.gameObject.GetComponent<Animation>().Play("ShowNumber");
