@@ -952,14 +952,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bb3d27819fb494a9c9523c179dd093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRotate: 1
-  hippoMouthSpeed: 10
-  hippoMoveSpeed: 2
-  openToLungeDelay: 1
-  hippoLungeTime: 4
-  lungeToCloseDelay: 1
-  closeToRetreatDelay: 1
-  retreatToOpenDelay: 1
+  mouthOpenAngle: 85
+  movementMultiplier: 1
+  distance: 5
+  actionDuration: 2
+  frameSkips: 7
+  inbetweenActionDelay: 0.5
+  minDelay: 1
+  maxDelay: 3
   playerKillzone: {fileID: 1316553137}
   triggered: 0
   reset: 0
@@ -1855,6 +1855,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 080a25c12f32b3b47839a92d4e249e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movingPlatformsData: []
+  rotationSpeed: 2
+  rotateAroundAxis: 0
 --- !u!114 &999931518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2101,7 +2104,7 @@ Transform:
   m_GameObject: {fileID: 1077601889}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -5.43}
+  m_LocalPosition: {x: 0, y: 0, z: -2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3155,6 +3158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 080a25c12f32b3b47839a92d4e249e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movingPlatformsData: []
+  rotationSpeed: 2
+  rotateAroundAxis: 0
 --- !u!23 &1494632619
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -4,25 +4,35 @@ using UnityEngine;
 
 public class HungryHippo : MonoBehaviour
 {
+    //timer for movement smoothness - delay is a lockout to prevent repeat calling
     private float timer;
-    public float timeToRotate = 1f;
+    private bool delayed = false;
 
-    public float hippoMouthSpeed = 10f;
+    public int mouthOpenAngle = 45;
+    public float movementMultiplier = 0.5f;
+
+    public float distance;
+
+    public float actionDuration = 2f;
+    public int frameSkips = 5;
+    
+
+
+    //standard delay inbetween each action
+    public float inbetweenActionDelay = .5f;
+
+    //range for random delay after the full set of actions
+    public float minDelay = .1f;
+    public float maxDelay = 1f;
+    private float inActionDelay = .000000000000000000000000000000000000000000000001f;
+
+    
+    
+
     private Quaternion closedRotation;
     private Quaternion openRotation;
     private Vector3 startingPos;
-
-    public float hippoMoveSpeed = 2;
-
-    public float openToLungeDelay = 1f;
-
-    public float hippoLungeTime = 4f;
-
-    public float lungeToCloseDelay = 1f;
-
-    public float closeToRetreatDelay = 1f;
-
-    public float retreatToOpenDelay = 1f;
+    private Vector3 endingPos;
 
     private GameObject hippoNeck;
 
@@ -35,13 +45,14 @@ public class HungryHippo : MonoBehaviour
 
     public bool reset = false;
 
+
     void Start()
     {
         startingPos = transform.position;
         closedRotation = transform.rotation;
         playerKillzone.SetActive(false);
         hippoNeck = GameObject.Find("HippoNeck");
-        openRotation = Quaternion.Euler(-45f, transform.eulerAngles.y, transform.eulerAngles.z);
+        openRotation = Quaternion.Euler(-mouthOpenAngle, transform.eulerAngles.y, transform.eulerAngles.z);
     }
 
 
@@ -51,8 +62,9 @@ public class HungryHippo : MonoBehaviour
     {
         if (triggered && available)
         {
-
+            
             StartCoroutine(HippoMotion());
+                       
         }
 
         if (reset)
@@ -67,75 +79,122 @@ public class HungryHippo : MonoBehaviour
 
     }
 
-
+    
     private IEnumerator HippoMotion()
     {
         available = false;
+        float smoothing;
+        int temp = 0;
 
-        float smoothing = 0;
+        endingPos.z = startingPos.z + distance;
 
         while (Quaternion.Angle(transform.rotation, openRotation) > 0.1f)
         {
             timer += Time.deltaTime;
-            smoothing = Mathf.SmoothStep(0f, 1f, timer / timeToRotate);
-            Debug.Log(smoothing);
+            smoothing = Mathf.SmoothStep(0f, 1f, timer / actionDuration);
+            
             transform.rotation = Quaternion.Slerp(closedRotation, openRotation, smoothing);
+            temp++;
+            if (temp > frameSkips)
+            {
+                yield return new WaitForSeconds(inActionDelay);
+                temp = 0;
+            }
 
         }
         timer = 0;
         smoothing = 0;
-       
-        Debug.Log("mouth opened");
+
+
+        //Debug.Log("mouth opened");
         
-        yield return new WaitForSecondsRealtime(openToLungeDelay);
+        yield return new WaitForSecondsRealtime(inbetweenActionDelay);
 
-        Debug.Log("lunge");
+        //Debug.Log("lunge");
 
-        while (timer < hippoLungeTime)
+        while (transform.position.z < endingPos.z)
         {
             timer += Time.deltaTime;
-            transform.Translate(Vector3.forward * Time.deltaTime, Space.World);
+            transform.Translate(Vector3.forward * movementMultiplier * Time.deltaTime, Space.World);
+            temp++;
+            if (temp > frameSkips)
+            {
+                yield return new WaitForSeconds(inActionDelay);
+                temp = 0;
+            }
         }
         timer = 0;
 
-        Debug.Log("lunge complete");
+        //Debug.Log("lunge complete");
 
-        yield return new WaitForSecondsRealtime(lungeToCloseDelay);
+        yield return new WaitForSecondsRealtime(inbetweenActionDelay);
 
-        Debug.Log("mouth closing");
+        //Debug.Log("mouth closing");
 
-        while (timer < timeToRotate)
+        while (Quaternion.Angle(transform.rotation, closedRotation) > 0.1f)
         {
             timer += Time.deltaTime;
+            smoothing = Mathf.SmoothStep(0f, 1f, timer / actionDuration);
 
-            smoothing = Mathf.SmoothStep(0f, 1f, timer / timeToRotate);
-            transform.rotation = Quaternion.Lerp(openRotation, closedRotation, smoothing);
+            transform.rotation = Quaternion.Slerp(openRotation, closedRotation, smoothing);
+            temp++;
+            if (temp > frameSkips)
+            {
+                yield return new WaitForSeconds(inActionDelay);
+                temp = 0;
+            }
 
         }
         timer = 0;
         smoothing = 0;
 
         playerKillzone.SetActive(true);
-        Debug.Log("mouth closed");
+        
+        //Debug.Log("mouth closed");
 
-        yield return new WaitForSecondsRealtime(openToLungeDelay);
+        yield return new WaitForSecondsRealtime(inbetweenActionDelay);
+        playerKillzone.SetActive(false);
 
-        Debug.Log("retreat");
+        //Debug.Log("retreat");
 
-        while (timer < hippoLungeTime)
+        while (transform.position.z > startingPos.z)    
         {
             timer += Time.deltaTime;
-            transform.Translate(-Vector3.forward * Time.deltaTime, Space.World);
+            transform.Translate(-Vector3.forward * movementMultiplier * Time.deltaTime, Space.World);
+            temp++;
+            if (temp > frameSkips)
+            {
+                yield return new WaitForSeconds(inActionDelay);
+                temp = 0;
+            }
         }
         timer = 0;
 
-        Debug.Log("retreat complete");
-        yield return new WaitForSecondsRealtime(retreatToOpenDelay);
+        //Debug.Log("retreat complete");
+        yield return new WaitForSecondsRealtime(Random.Range(minDelay, maxDelay));
 
         available = true;
 
     }
 
+    /*
+    private IEnumerator WaitDelay(bool loopDelay)
+    {
+        delayed = true;
+        if (loopDelay)
+        {
+            randomDelay = Random.Range(minDelay, maxDelay);
+
+            yield return new WaitForSecondsRealtime(randomDelay);
+        }
+        if (!loopDelay)
+        {
+
+            yield return new WaitForSecondsRealtime(standardDelay);
+        }
+        delayed = false;
+    } 
+    */
 
 
 
