@@ -8,6 +8,8 @@ public class PlayerDeathVolume : MonoBehaviour
     {
         if (other.transform.CompareTag("Player"))
         {
+            print("kill player ");
+
             // Is in Racing Gamemode
             if(FindAnyObjectByType(typeof(CheckpointManager)) != null)
             {
@@ -21,3 +23,4 @@ public class PlayerDeathVolume : MonoBehaviour
         }
     }
 }
+
