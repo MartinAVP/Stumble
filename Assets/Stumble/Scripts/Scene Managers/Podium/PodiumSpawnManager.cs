@@ -68,6 +68,14 @@ public class PodiumSpawnManager : MonoBehaviour
         }
 
         InitializePlayers();
+
+        StartCoroutine(extraLoadingScreenDelay());
+    }
+
+    private IEnumerator extraLoadingScreenDelay()
+    {
+        yield return new WaitForSeconds(1f);
+
         if (LoadingScreenManager.Instance != null)
         {
             LoadingScreenManager.Instance.StartTransition(false);

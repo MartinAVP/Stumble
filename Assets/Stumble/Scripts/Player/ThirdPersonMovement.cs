@@ -16,6 +16,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public Transform cam;
     public PlayerMovement playerMovementSettings;
 
+    public event Action OnJump;
+    public event Action OnDive;
+
     #region Horizontal Movement
     [Header("Movement")]
     private float accelerationSpeed = 10f;
@@ -97,6 +100,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void OnEnable()
     {
+        // Michael 10/12/2024
+        //Application.targetFrameRate = 30;
+
         if(playerMovementSettings == null)
         {
             Debug.LogError("All the variables were changed to default due to the third person controller not having a player card attached");
@@ -255,6 +261,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Add to the Vertical Velocity Value
         verticalVelocity = 0;
         verticalVelocity += jumpPower;
+
+        OnJump?.Invoke();
     }
 
     public void Dive(InputAction.CallbackContext context)
@@ -271,6 +279,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Prevent Proning when already in prone
             if (isProne) { return; }
             toggleProne(true);
+
+            OnDive?.Invoke();
         }
     }
     #endregion
@@ -402,7 +412,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * airDragMultiplier * Time.deltaTime;
 
-            print(_bumpHorizontalVelocity);
+            //print(_bumpHorizontalVelocity);
         }
 
         // Player input detected, move player
