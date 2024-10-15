@@ -293,6 +293,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void Movement()
     {
+        _bumpHorizontalVelocity.y = 0;
+
         ApplyGravity();
         ApplyVerticalMovement();
         isGrounded();
@@ -482,20 +484,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if (lockVeritcalMovement) { return; }
 
-        // Prone Logic
-        if (isProne)
-        {
-            if (!_grounded)
-            {
-                verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
-            }
 
-            return;
-        }
 
-        if (_grounded && verticalVelocity < -5f)
+        if (_grounded && verticalVelocity < -5)
         {
-            verticalVelocity = -5.0f;  // Prevents the character from sinking into the ground
+            verticalVelocity = -5;  // Prevents the character from sinking into the ground
         }
         else
         {
@@ -552,7 +545,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // 
         }
 
-        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .1f);
+        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
 
         Debug.DrawLine(start1, start1 + delta, Color.red);
         Debug.DrawLine(start2, start2 + delta, Color.blue);
@@ -663,6 +656,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         if (_grounded == false) { _grounded = controller.isGrounded; };
 
+        print("Is player grounded? " + _grounded);
+
         //return _grounded;
     }
 
@@ -705,7 +700,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         controller.enabled = true;
 
         platformVelocity = (transform.position - startPos) / currentPlatform.DeltaTime;
-        platformVelocity.y = 0;
+        //platformVelocity.y = 0;
     }
 
 
