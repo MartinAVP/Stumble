@@ -7,7 +7,7 @@ using UnityEngine.Audio;
 
 public class SFXManager : MonoBehaviour
 {
-    private List<AudioHolder> audios = new List<AudioHolder>();
+    [SerializeField] private List<AudioHolder> audios = new List<AudioHolder>();
     [SerializeField] private AudioMixer audioMixer;
 
     public static SFXManager Instance;
@@ -37,7 +37,7 @@ public class SFXManager : MonoBehaviour
 
     private void Start()
     {
-        LoadAssets();
+        //LoadAssets();
         checkForDuplicates();
     }
 
@@ -107,6 +107,7 @@ public class SFXManager : MonoBehaviour
 
     private void LoadAssets()
     {
+        /*
         string[] guids = AssetDatabase.FindAssets("t:AudioHolder", new[] { folderPath });
 
         audios.Clear();
@@ -122,6 +123,7 @@ public class SFXManager : MonoBehaviour
         }
 
         Debug.Log("Loaded " + audios.Count + " audios from assets folder");
+        */
     }
 
     private void checkForDuplicates()

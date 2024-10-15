@@ -59,6 +59,7 @@ public class RacemodeManager : MonoBehaviour
         // Note: In order to have a cinematic or countdown at the start,
         // Both the RacemodeUIManager and the CinematicController have to be in
         // in the scene, if one of them is missing the race will start without these.
+        /*
         if (CinematicController.Instance != null && RacemodeUIManager.Instance != null)
         {
             // Note: If The Countdown values are not assigned in the UI Manager, then it will
@@ -66,17 +67,17 @@ public class RacemodeManager : MonoBehaviour
             if (RacemodeUIManager.Instance.HasAllCountDownValues())
             {
                 StartCoroutine(StartCinematic());
+                return;
             }
             else
             {
                 UnityEngine.Debug.LogWarning("RaceUIManager does not have all the countdown values, skipping countdown and cinematic.");
             }
         }
-        // No Cinematic Controller in Scene
-        else
+        // No Cinematic Controller in Scene */
         {
             // Start the Race Directly
-            StartRace();
+            Invoke("StartRace", .1f);
         }
 
 /*        // Lock all players in place
@@ -101,12 +102,14 @@ public class RacemodeManager : MonoBehaviour
     {
         onCountdown?.Invoke();
         onCountdownStart?.Invoke();
+        print("racemode manager wait 5 sec");
         yield return new WaitForSeconds(5.0f);
         StartRace();
     }
 
     public void StartRace()
     {
+        print("start race");
         // Invoke Event
         onRaceStart?.Invoke();
 
@@ -206,6 +209,7 @@ public class RacemodeManager : MonoBehaviour
         {
             foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
             {
+                print("Lock player movement true");
                 data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
             }
         }
@@ -213,6 +217,7 @@ public class RacemodeManager : MonoBehaviour
         {
             foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
             {
+                print("Lock player movement false");
                 data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
             }
         }

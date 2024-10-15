@@ -5286,6 +5286,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1590067027}
   - component: {fileID: 1590067026}
+  - component: {fileID: 1590067028}
   m_Layer: 0
   m_Name: SFXManager
   m_TagString: Untagged
@@ -5305,6 +5306,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82a6752b6545744a9a3236bc3a1f5db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audios:
+  - {fileID: 11400000, guid: 8a60c6b697f23fe469abb660c841f7fd, type: 2}
+  - {fileID: 11400000, guid: 724d01c1a36dec4459091dcaa5b09b57, type: 2}
+  - {fileID: 11400000, guid: 73d007a2ac65383418c77314ef97f9e4, type: 2}
+  - {fileID: 11400000, guid: 57955119e2638a54096e0914b42786b5, type: 2}
+  - {fileID: 11400000, guid: d5423b58188660745aca2a3d5f45023c, type: 2}
+  - {fileID: 11400000, guid: 7576609f64322eb45a8c08a71307930d, type: 2}
+  - {fileID: 11400000, guid: 4bb6e5429e8a47c4595212a43dbf5028, type: 2}
+  - {fileID: 11400000, guid: 6cb203babdb692848868efa67ef60042, type: 2}
+  - {fileID: 11400000, guid: 85126d22655890242b8ef0efdccef1dd, type: 2}
+  - {fileID: 11400000, guid: 2981b4a7d69764d4581ae42ad63d594e, type: 2}
   audioMixer: {fileID: 24100000, guid: ad5a1eeb3a520864ca98b81794bbe1a3, type: 2}
   targetVolume: 0.3
   folderPath: Assets/Stumble/Audio/Assets
@@ -5324,6 +5336,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &1590067028
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590067025}
+  m_Enabled: 1
 --- !u!1 &1663037937
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,8 +32,8 @@ public class ArenaManager : MonoBehaviour
     private void Start()
     {
         stopwatch = new Stopwatch();
-        //StartRace();
-        StartCoroutine(StartCinematic());
+        StartRace();
+        //StartCoroutine(StartCinematic());
     }
 
     public IEnumerator StartCinematic()

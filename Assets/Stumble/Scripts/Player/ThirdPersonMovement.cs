@@ -656,7 +656,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         if (_grounded == false) { _grounded = controller.isGrounded; };
 
-        print("Is player grounded? " + _grounded);
+        //print("Is player grounded? " + _grounded);
 
         //return _grounded;
     }
