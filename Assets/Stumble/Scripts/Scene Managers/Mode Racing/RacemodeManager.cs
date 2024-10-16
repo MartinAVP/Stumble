@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,7 @@ public class RacemodeManager : MonoBehaviour
     public event Action onRaceStart;
 
     public static RacemodeManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -30,16 +32,39 @@ public class RacemodeManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Racemode Manager...         [Racemode Manager]");
+        GameController.Instance.startSystems += LateStart;
+
+        initialized = true;
+        return;
     }
 
     private void OnEnable()
     {
-        GameController.Instance.startSystems += LateStart;
     }
 
     private void OnDisable()
     {
-        GameController.Instance.startSystems -= LateStart;
+        if (initialized)
+        {
+            GameController.Instance.startSystems -= LateStart;
+        }
         
     }
 
