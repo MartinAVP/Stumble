@@ -37,7 +37,7 @@ public class SFXManager : MonoBehaviour
 
     private void Start()
     {
-        LoadAssets();
+        //LoadAssets();
         checkForDuplicates();
     }
 
@@ -105,7 +105,7 @@ public class SFXManager : MonoBehaviour
         return null;
     }
 
-    private void LoadAssets()
+/*    private void LoadAssets()
     {
         string[] guids = AssetDatabase.FindAssets("t:AudioHolder", new[] { folderPath });
 
@@ -122,7 +122,7 @@ public class SFXManager : MonoBehaviour
         }
 
         Debug.Log("Loaded " + audios.Count + " audios from assets folder");
-    }
+    }*/
 
     private void checkForDuplicates()
     {

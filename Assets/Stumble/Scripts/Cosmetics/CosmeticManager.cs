@@ -67,7 +67,7 @@ public class CosmeticManager : MonoBehaviour
 
         selectedCosmetic.Add(player.playerIndex, GetSelectedCosmetic(1));
         playerCooldown.Add(player.playerIndex, false);
-        Debug.Log("Player #" + player.playerIndex + " has selected category " + selectedCosmetic[player.playerIndex].ToString());
+        //Debug.Log("Player #" + player.playerIndex + " has selected category " + selectedCosmetic[player.playerIndex].ToString());
 
 
 /*        // Add Cosmetic Selection
@@ -326,7 +326,7 @@ public class CosmeticManager : MonoBehaviour
                     CosmeticUI.Instance.SetDefaultImage(colors[i].iconTexture, data.GetInput().playerIndex, 1);
                 }
 
-                Debug.Log("Color set to #" + data.GetInput().playerIndex + " to " + colors[i].Title);
+                //Debug.Log("Color set to #" + data.GetInput().playerIndex + " to " + colors[i].Title);
                 break;
             }
 

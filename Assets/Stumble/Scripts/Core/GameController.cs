@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -10,7 +11,9 @@ public class GameController : MonoBehaviour
     public GameState viewer;
 
     public event Action startSystems; 
-    public event Action startSecondarySystems; 
+    public event Action startSecondarySystems;
+
+    [HideInInspector] public bool initialized = false;
 
     // Singleton
     private void Awake()
@@ -44,14 +47,19 @@ public class GameController : MonoBehaviour
     public void SetGameState(GameState state){
         gameState = state;
         viewer = state;
-        
+
+        Debug.Log("================= " + SceneManager.GetActiveScene().name + " =================");
+
         // Initialize Systems after the Game State is Inherited from the Scene
-        startSystems?.Invoke();
-        StartCoroutine(secondarySystemStarter());
+        Debug.Log("Start Systems initializing... [Game Controller]");
+        StartCoroutine(StartSytems());
+        initialized = true;
     }
 
-    public IEnumerator secondarySystemStarter()
+    public IEnumerator StartSytems()
     {
+        yield return new WaitForEndOfFrame();
+        startSystems?.Invoke();
         yield return new WaitForEndOfFrame();
         startSecondarySystems?.Invoke();
     }

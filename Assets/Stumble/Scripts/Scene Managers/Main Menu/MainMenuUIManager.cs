@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -36,12 +37,49 @@ public class MainMenuUIManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     [SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
 
+    public static MainMenuUIManager Instance { get; private set; }
+    [HideInInspector] public bool initialized = false;
+
     private void Awake()
     {
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
+        //
+        setup();
     }
 
-    private void OnEnable()
+    private bool menuManagerFound = false;
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (MainMenuManager.Instance == null || MainMenuManager.Instance.enabled == false || MainMenuManager.Instance.initializedFinished == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Main Menu UI Manager...         [Main Menu UI Manager]");
+
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        menuManagerFound = true;
+
+        InitializeManagerSubs();
+        InitializeManager();
+        return;
+    }
+
+    private void InitializeManagerSubs()
     {
         playerInputManager.onPlayerJoined += joinHostPlayer;
 
@@ -61,23 +99,25 @@ public class MainMenuUIManager : MonoBehaviour
 
     private void OnDisable()
     {
-        playerInputManager.onPlayerJoined -= joinHostPlayer;
+        if (menuManagerFound) {        
+            playerInputManager.onPlayerJoined -= joinHostPlayer;
 
-        // Buttons
-        _startGameButton?.onClick.RemoveAllListeners();
-        _optionsButton?.onClick.RemoveAllListeners();
-        _creditsButton?.onClick.RemoveAllListeners();
-        _achievementsButton?.onClick.RemoveAllListeners();
-        _ExitButton?.onClick.RemoveAllListeners();
+            // Buttons
+            _startGameButton?.onClick.RemoveAllListeners();
+            _optionsButton?.onClick.RemoveAllListeners();
+            _creditsButton?.onClick.RemoveAllListeners();
+            _achievementsButton?.onClick.RemoveAllListeners();
+            _ExitButton?.onClick.RemoveAllListeners();
 
-        _generalVolume.onValueChanged.RemoveAllListeners();
-        _MusicVolume.onValueChanged.RemoveAllListeners();
-        _SFXVolume.onValueChanged.RemoveAllListeners();
-        _TargetFPS.onValueChanged.RemoveAllListeners();
-        _ReturnToMenuFromOptions.onClick.RemoveAllListeners();
+            _generalVolume.onValueChanged.RemoveAllListeners();
+            _MusicVolume.onValueChanged.RemoveAllListeners();
+            _SFXVolume.onValueChanged.RemoveAllListeners();
+            _TargetFPS.onValueChanged.RemoveAllListeners();
+            _ReturnToMenuFromOptions.onClick.RemoveAllListeners();
+        }
     }
 
-    private void Start()
+    private void InitializeManager()
     {
         // Initialize Panels
         unityScreenPanel.SetActive(true);
@@ -93,6 +133,8 @@ public class MainMenuUIManager : MonoBehaviour
         changeMusicVolume(0);
         changeSFXVolume(0);
         changeTargetFPS(120);
+
+        initialized = true;
     }
 
     private void joinHostPlayer(PlayerInput player)

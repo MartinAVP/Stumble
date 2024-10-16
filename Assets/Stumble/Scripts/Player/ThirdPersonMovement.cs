@@ -192,7 +192,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
         }
 
-        Debug.Log("I got here 2");
+        //Debug.Log("I got here 2");
     }
 
     private Transform hasCamera()

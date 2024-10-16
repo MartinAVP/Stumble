@@ -5024,6 +5024,7 @@ MonoBehaviour:
   _TargetFPSText: {fileID: 815012687}
   _ReturnToMenuFromOptions: {fileID: 268941399}
   multiplayerEventSystem: {fileID: 0}
+  initialized: 0
 --- !u!114 &1508838400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5053,6 +5054,7 @@ MonoBehaviour:
   FirstSelectedItem: {fileID: 805680846}
   eventSystem: {fileID: 787255503}
   hostUsingController: 0
+  giveHostCursorAccess: 1
 --- !u!114 &1508838402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5285,6 +5287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1590067027}
   - component: {fileID: 1590067026}
+  - component: {fileID: 1590067028}
   m_Layer: 0
   m_Name: SFXManager
   m_TagString: Untagged
@@ -5323,6 +5326,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &1590067028
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590067025}
+  m_Enabled: 1
 --- !u!1 &1663037937
 GameObject:
   m_ObjectHideFlags: 0
@@ -6103,6 +6114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewer: 0
+  initialized: 0
 --- !u!4 &1936146202
 Transform:
   m_ObjectHideFlags: 0
@@ -6131,7 +6143,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   players: []
-  isLobby: 0
 --- !u!1 &1957871623
 GameObject:
   m_ObjectHideFlags: 0
@@ -6493,6 +6504,7 @@ MonoBehaviour:
   sceneCameraType: 2
   lockMovementOnSpawn: 0
   UIEventSystem: {fileID: 787255502}
+  finishedSystemInitializing: 0
 --- !u!114 &2009228511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6533,6 +6545,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48167938a681e7e469bb7355a5a1e7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initializedFinished: 0
 --- !u!1 &2099424829
 GameObject:
   m_ObjectHideFlags: 0

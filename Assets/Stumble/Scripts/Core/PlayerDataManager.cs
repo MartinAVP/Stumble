@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,11 +20,10 @@ public class PlayerDataManager : MonoBehaviour
     public event Action<PlayerInput> onPlayerAdded;
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
+    public event Action<PlayerData> onHostChanged;
 
-    // Scene Variables
-    // Eliminate this variable ASAP
-    public bool isLobby;
-    //private bool addOnJoin = true;
+    // Data Manager is meant to act as a player
+    // storage system that is passes accross scenes.
 
     public static PlayerDataManager Instance { get; private set; }
 
@@ -42,6 +42,20 @@ public class PlayerDataManager : MonoBehaviour
         }
 
         //SceneManager.sceneLoaded += OnSceneSwitch;
+        setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to be 
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
+        {
+            //Debug.Log("Doing stuff Primary");
+            await Task.Delay(1);
+        }
+
+        Debug.Log("Player Data Manager Found... Holds " + players.Count + " Players          [Player Data Manager]");
+        
     }
 
     private void OnEnable()
@@ -161,6 +175,7 @@ public class PlayerDataManager : MonoBehaviour
         if(playerInputManager.playerCount > 0)
         {
             players[0].SetHost(true);
+            onHostChanged?.Invoke(players[0]);
         }
 
     }

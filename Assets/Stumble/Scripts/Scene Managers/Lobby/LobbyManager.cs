@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -12,15 +13,8 @@ public class LobbyManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     public static LobbyManager Instance;
 
-    private void OnEnable()
-    {
-        playerInputManager.onPlayerJoined += AddPlayer;
-    }
+    [HideInInspector] public bool initialized = false;
 
-    private void OnDisable()
-    {
-        playerInputManager.onPlayerJoined -= AddPlayer;
-    }
 
     private void Awake()
     {
@@ -34,11 +28,42 @@ public class LobbyManager : MonoBehaviour
         }
 
         playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        setup();
     }
 
-    public void StartGame()
+/*    public void StartGame()
     {
         SceneManager.LoadScene("Lobby");
+    }*/
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Lobby Manager...         [Lobby Manager]");
+        initialized = true;
+        //InitializeManager();
+        return;
+    }
+
+
+    // Sub to Player Join Event
+    private void OnEnable()
+    {
+        playerInputManager.onPlayerJoined += AddPlayer;
+    }
+
+    private void OnDisable()
+    {
+        playerInputManager.onPlayerJoined -= AddPlayer;
     }
 
     // Change Spawn
