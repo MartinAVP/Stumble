@@ -34,7 +34,13 @@ public class PodiumManager : MonoBehaviour
 
     private void Start()
     {
-        if (CinematicController.Instance != null) { 
+        StartCountdown();
+    }
+
+    public virtual void StartCountdown()
+    {
+        if (CinematicController.Instance != null)
+        {
             CinematicController.Instance.StartTimeline();
         }
 
@@ -43,7 +49,7 @@ public class PodiumManager : MonoBehaviour
 
     private IEnumerator returnToMenuCooldown()
     {
-        yield return new WaitForSeconds(12f);
+        yield return new WaitForSeconds(20f);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("GamemodeSelect");

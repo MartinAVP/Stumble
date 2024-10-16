@@ -64,7 +64,7 @@ public class RacemodeUIManager : MonoBehaviour
 
     public bool HasAllCountDownValues()
     {
-        if(countdownPanel != null && countdownTime != null &&
+        if (countdownPanel != null && countdownTime != null &&
             countdownThree != null && countdownTwo != null && countdownOne != null && countdownGo != null)
         {
             return true;

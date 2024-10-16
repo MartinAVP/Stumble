@@ -16,6 +16,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public Transform cam;
     public PlayerMovement playerMovementSettings;
 
+    public event Action OnJump;
+    public event Action OnDive;
+
     #region Horizontal Movement
     [Header("Movement")]
     private float accelerationSpeed = 10f;
@@ -97,12 +100,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void OnEnable()
     {
-        Application.targetFrameRate = 30;
+        // Michael 10/12/2024
+        //Application.targetFrameRate = 30;
 
         if(playerMovementSettings == null)
         {
             Debug.LogError("All the variables were changed to default due to the third person controller not having a player card attached");
         }
+
 
         // Horizontal Movement
         accelerationSpeed = playerMovementSettings.accelerationSpeed;
@@ -257,6 +262,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Add to the Vertical Velocity Value
         verticalVelocity = 0;
         verticalVelocity += jumpPower;
+
+        OnJump?.Invoke();
     }
 
     public void Dive(InputAction.CallbackContext context)
@@ -273,6 +280,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Prevent Proning when already in prone
             if (isProne) { return; }
             toggleProne(true);
+
+            OnDive?.Invoke();
         }
     }
     #endregion
@@ -285,6 +294,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void Movement()
     {
+        _bumpHorizontalVelocity.y = 0;
+
         ApplyGravity();
         ApplyVerticalMovement();
         isGrounded();
@@ -402,7 +413,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * airDragMultiplier * Time.deltaTime;
 
-            print(_bumpHorizontalVelocity);
+            //print(_bumpHorizontalVelocity);
         }
 
         // Player input detected, move player
@@ -474,20 +485,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         if (lockVeritcalMovement) { return; }
 
-        // Prone Logic
-        if (isProne)
-        {
-            if (!_grounded)
-            {
-                verticalVelocity += _gravity * gravityMultiplier * Time.deltaTime;
-            }
 
-            return;
-        }
 
-        if (_grounded && verticalVelocity < -5f)
+        if (_grounded && verticalVelocity < -5)
         {
-            verticalVelocity = -5.0f;  // Prevents the character from sinking into the ground
+            verticalVelocity = -5;  // Prevents the character from sinking into the ground
         }
         else
         {
@@ -544,7 +546,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // 
         }
 
-        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .1f);
+        Vector3 delta = Vector3.down * ((0.5f * playerHeight) + .2f);
 
         Debug.DrawLine(start1, start1 + delta, Color.red);
         Debug.DrawLine(start2, start2 + delta, Color.blue);
@@ -655,6 +657,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         if (_grounded == false) { _grounded = controller.isGrounded; };
 
+        print("Is player grounded? " + _grounded);
+
         //return _grounded;
     }
 
@@ -697,7 +701,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         controller.enabled = true;
 
         platformVelocity = (transform.position - startPos) / currentPlatform.DeltaTime;
-        platformVelocity.y = 0;
+        //platformVelocity.y = 0;
     }
 
 

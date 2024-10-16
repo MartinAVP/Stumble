@@ -25,6 +25,7 @@ public class AnimationStateController : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float slideTreshold;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,11 +45,6 @@ public class AnimationStateController : MonoBehaviour
 
         slideFactor = thirdPersonMovement.diveDragMultiplier;
         animator.SetFloat("slideFactor", slideFactor);
-    }
-
-    private void LateUpdate()
-    {
-        
     }
 
     private void Update()
