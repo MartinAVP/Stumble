@@ -16,8 +16,8 @@ public class PlayerDeathVolume : MonoBehaviour
                 CheckpointManager.Instance.Respawn(other.gameObject);
             }
             // Player is in Arena Mode
-            if (FindAnyObjectByType(typeof(ArenaSpectator)) != null) {
-                ArenaSpectator.Instance.KillPlayer(other.gameObject);
+            if (FindAnyObjectByType(typeof(ArenamodeManager)) != null) {
+                ArenamodeManager.Instance.PlayerOnKillZone(other.gameObject);
                 // Kill the player
             }
         }

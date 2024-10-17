@@ -47,7 +47,7 @@ public static class MovingPlatformEventBus
 
         if(events.TryGetValue(eventType,out gameEvent))
         {
-            gameEvent.Invoke();
+            gameEvent?.Invoke();
         }
     }
 }

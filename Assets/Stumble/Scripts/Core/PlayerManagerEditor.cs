@@ -3,10 +3,10 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
 
-[CustomEditor(typeof(ExperimentalPlayerManager))]
-public class PlayerManagerEditor : Editor
+//[CustomEditor(typeof(ExperimentalPlayerManager))]
+/*public class PlayerManagerEditor : Editor
 {
-/*    public override void OnInspectorGUI()
+*//*    public override void OnInspectorGUI()
     {
         ExperimentalPlayerManager myScript = (ExperimentalPlayerManager)target;
 
@@ -30,5 +30,5 @@ public class PlayerManagerEditor : Editor
         {
             EditorUtility.SetDirty(myScript);
         }
-    }*/
-}
+    }*//*
+}*/

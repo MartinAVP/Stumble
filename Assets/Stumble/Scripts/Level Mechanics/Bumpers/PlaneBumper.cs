@@ -23,6 +23,12 @@ public class PlaneBumper : MonoBehaviour
             other.GetComponent<IBumper>().Bump(hit.normal, bounceForce);
             Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
         }
+
+        // Sounds
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlaySound("BumperBounce", other.transform);
+        }
     }
 
     /// <summary>

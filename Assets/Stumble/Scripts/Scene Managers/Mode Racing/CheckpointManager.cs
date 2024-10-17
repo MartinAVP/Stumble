@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,11 +10,13 @@ public class CheckpointManager : MonoBehaviour
     public List<CheckpointData> Checkpoints;
 
     public static CheckpointManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     [Header("Debug")]
     [SerializeField] private bool debug = false;
-    [SerializeField] private Material checkPointVisualizerMaterial;
+    //[SerializeField] private Material checkPointVisualizerMaterial;
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -25,17 +28,38 @@ public class CheckpointManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        setup();
     }
 
-    private void OnEnable()
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.initialized == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Racemode Manager...         [Racemode Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        InitializeManager();
+        initialized = true;
+        return;
+    }
+
+/*    private void OnEnable()
     {
         if (GameController.Instance != null)
         {
             GameController.Instance.startSecondarySystems += LateStart;
         }
-    }
-
-    private void OnDisable()
+    }*/
+/*    private void OnDisable()
     {
         Checkpoints.Clear();
 
@@ -43,23 +67,23 @@ public class CheckpointManager : MonoBehaviour
         {
             GameController.Instance.startSecondarySystems -= LateStart;
         }
-    }
+    }*/
 
-    private void Start()
+    private void InitializeManager()
     {
-        initializeCheckpoints();
-        if (GameController.Instance == null)
+        InitializeCheckpoints();
+        InitializePlayers();
+/*        if (GameController.Instance == null)
         {
             InitializePlayers();
-        }
+        }*/
     }
 
-    private void LateStart()
+/*    private void LateStart()
     {
-        InitializePlayers();
-    }
+    }*/
     
-    public void initializeCheckpoints()
+    public void InitializeCheckpoints()
     {
         Checkpoints.Clear();
         // Get all checkpoints in scene and add them to the Data
@@ -152,6 +176,7 @@ public class CheckpointManager : MonoBehaviour
         }
         playerObject.GetComponent<ThirdPersonMovement>().horizontalVelocity = 0;
         playerObject.GetComponent<ThirdPersonMovement>().verticalVelocity = 0;
+        playerObject.GetComponent<ThirdPersonMovement>()._bumpHorizontalVelocity = Vector3.zero;
 
         // Adjust the rotation to the spawn rotation
         playerObject.transform.rotation = spawn.rotation;
