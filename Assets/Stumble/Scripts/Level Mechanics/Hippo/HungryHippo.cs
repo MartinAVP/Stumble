@@ -34,6 +34,7 @@ public class HungryHippo : MonoBehaviour
     private Vector3 startingPos;
     private Vector3 endingPos;
 
+    private float previousMouthAngle;
     private GameObject hippoNeck;
 
 
@@ -53,6 +54,8 @@ public class HungryHippo : MonoBehaviour
         playerKillzone.SetActive(false);
         hippoNeck = GameObject.Find("HippoNeck");
         openRotation = Quaternion.Euler(-mouthOpenAngle, transform.eulerAngles.y, transform.eulerAngles.z);
+
+        previousMouthAngle = mouthOpenAngle;
     }
 
 
@@ -68,12 +71,13 @@ public class HungryHippo : MonoBehaviour
                        
         }
 
-        /*
-        if (Mathf.Abs(Quaternion.Euler(openRotation) - rotation2Euler.x))
+        
+        if (mouthOpenAngle != previousMouthAngle)
         {
-
+            openRotation = Quaternion.Euler(-mouthOpenAngle, 0f, 0f);
+            previousMouthAngle = mouthOpenAngle;
         }
-        */
+        
 
         if (reset)
         {
