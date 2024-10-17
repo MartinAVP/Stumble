@@ -49,8 +49,9 @@ public class RacemodeManager : MonoBehaviour
 
         // Once it finds it initialize the scene
         Debug.Log("Initializing Racemode Manager...         [Racemode Manager]");
-        GameController.Instance.startSystems += LateStart;
+        //GameController.Instance.startSystems += LateStart;
 
+        InitializeManager();
         initialized = true;
         return;
     }
@@ -61,16 +62,16 @@ public class RacemodeManager : MonoBehaviour
 
     private void OnDisable()
     {
-        if (initialized)
+/*        if (initialized)
         {
-            GameController.Instance.startSystems -= LateStart;
-        }
+            //GameController.Instance.startSystems -= LateStart;
+        }*/
         
     }
 
-    private void LateStart()
+    private void InitializeManager()
     {
-        UnityEngine.Debug.Log("Late Start Called on Race manager");
+        //UnityEngine.Debug.Log("Late Start Called on Race manager");
         stopwatch = new Stopwatch();
 
         // Note: In order to have a cinematic or countdown at the start,
@@ -96,8 +97,8 @@ public class RacemodeManager : MonoBehaviour
             StartRace();
         }
 
-/*        // Lock all players in place
-        LockPlayersMovement(true);*/
+        // Lock all players in place
+        LockPlayersMovement(true);
     }
 
     public IEnumerator StartCinematic()
@@ -126,7 +127,7 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.LogWarning("Race has been initialized");
 
         // Unlock all Player Movement
-/*        LockPlayersMovement(false);*/
+        LockPlayersMovement(false);
     }
 
     public void ReachFinishLine(PlayerData player)
@@ -209,22 +210,43 @@ public class RacemodeManager : MonoBehaviour
 
     private void LockPlayersMovement(bool value)
     {
-        if (PlayerDataManager.Instance == null) { Debug.LogWarning("Could not find the PlayerData Manager"); return; }
+        if (PlayerDataManager.Instance != null)
+        {
+            Debug.Log("Locking in " + PlayerDataManager.Instance.GetPlayers().Count);
+            if (value)
+            {
+                foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+                {
+                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+                }
+            }
+            else
+            {
+                foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+                {
+                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
+                }
+            }
+        }
+        else // No Player Data Manager
+        {
+            ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
 
-        Debug.Log("Locking in " + PlayerDataManager.Instance.GetPlayers().Count);
-        if (value)
-        {
-            foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+            if (value)
             {
-                data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+                foreach (ThirdPersonMovement player in players)
+                {
+                    player.lockMovement = true;
+                }
+            }
+            else
+            {
+                foreach (ThirdPersonMovement player in players)
+                {
+                    player.lockMovement = false;
+                }
             }
         }
-        else
-        {
-            foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
-            {
-                data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
-            }
-        }
+
     }
 }

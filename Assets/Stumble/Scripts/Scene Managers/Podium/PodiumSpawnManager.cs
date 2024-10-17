@@ -2,7 +2,10 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class PodiumSpawnManager : MonoBehaviour
 {
@@ -10,6 +13,7 @@ public class PodiumSpawnManager : MonoBehaviour
     List<PlayerData> tempPlayerList = new List<PlayerData>();
 
     public static PodiumSpawnManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -23,17 +27,42 @@ public class PodiumSpawnManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        setup();
     }
 
-    //
-    private void OnEnable()
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        UnityEngine.Debug.Log("Initializing Podium Manager...         [Podium Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        //InitializeManager();
+        initialized = true;
+        PodiumManager.Instance.onPodiumStarted += LateStart;
+        return;
+    }
+
+/*    private void OnEnable()
     {
         GameController.Instance.startSecondarySystems += LateStart;
-    }
+    }*/
 
     private void OnDisable()
     {
-        GameController.Instance.startSecondarySystems -= LateStart;
+        if (initialized)
+        {
+            GameController.Instance.startSecondarySystems -= LateStart;
+        }
     }
 
     // Start is called before the first frame update

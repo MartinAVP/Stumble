@@ -69,12 +69,13 @@ public class ExperimentalPlayerManager : MonoBehaviour
             await Task.Delay(1);
         }
 
-        //Debug.Log("Game Controller Found, Initializing event subscription... ");
+        Debug.Log("Game Controller Found, Initializing event subscription... ");
         gameController = GameController.Instance;
         playerDataManager = PlayerDataManager.Instance;
         playerInputManager = GetComponent<PlayerInputManager>();
 
-        gameController.startSystems += LateStart;
+        //gameController.startSystems += LateStart;
+        LateStart();
 
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
@@ -84,7 +85,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
     {
         if (gameController != null)
         {
-            gameController.startSystems -= LateStart;
+            //gameController.startSystems -= LateStart;
         //Fuck michael - Angel 10/09/2024
 /*        if (playerDataManager != null)
         {
@@ -165,6 +166,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
         }
 
         Debug.Log("Experimental Player Manager correctly initialized...             [Experimental Player Manager]");
+
         finishedSystemInitializing = true;
     }
 

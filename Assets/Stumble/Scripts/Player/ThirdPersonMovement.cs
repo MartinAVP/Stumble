@@ -36,7 +36,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Bumping")]
     private float bumpForce = 20f;
     private float bumpUpwardForce = .2f;
-    private Vector3 _bumpHorizontalVelocity = Vector3.zero;
+    [HideInInspector] public Vector3 _bumpHorizontalVelocity = Vector3.zero;
     #endregion
 
     #region Rotating

@@ -7,7 +7,7 @@ using UnityEngine.Audio;
 
 public class SFXManager : MonoBehaviour
 {
-    private List<AudioHolder> audios = new List<AudioHolder>();
+    [SerializeField] private List<AudioHolder> audios = new List<AudioHolder>();
     [SerializeField] private AudioMixer audioMixer;
 
     public static SFXManager Instance;

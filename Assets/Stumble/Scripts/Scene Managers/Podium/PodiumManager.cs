@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,11 +13,12 @@ public class PodiumManager : MonoBehaviour
 
     //public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
     //public event Action onCountdownStart;
-    //public event Action onRaceStart;
+    public event Action onPodiumStarted;
 
     //PlayerDataManager dataManager;
 
     public static PodiumManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -30,10 +32,33 @@ public class PodiumManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        setup();
     }
 
-    private void Start()
+    private async Task setup()
     {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        {
+            // Await 2 ms and try finding it again.
+            // It is made 2 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        UnityEngine.Debug.Log("Initializing Podium Manager...         [Podium Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        InitializeManager();
+        initialized = true;
+        return;
+    }
+
+    private void InitializeManager()
+    {
+        onPodiumStarted?.Invoke();
         StartCountdown();
     }
 
@@ -141,7 +166,8 @@ public class PodiumManager : MonoBehaviour
 
         private void LockPlayersMovement(bool value)
         {
-    *//*        if (value)
+    */
+    /*        if (value)
             {
                 foreach (PlayerData data in dataManager.GetPlayers())
                 {
@@ -154,6 +180,6 @@ public class PodiumManager : MonoBehaviour
                 {
                     data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
                 }
-            }*//*
+            }
         }*/
 }
