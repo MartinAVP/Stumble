@@ -126,8 +126,8 @@ public class PlayerDataManager : MonoBehaviour
     public void AddPlayer(PlayerInput input)
     {
         //if(!addOnJoin) { return; }
-        Debug.Log("Called");
-        Debug.Log(input.transform.name);
+        //Debug.Log("Called");
+        //Debug.Log(input.transform.name);
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData tempPlayerData;

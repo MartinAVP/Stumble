@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(PodiumManager))]
 public class FeedbackAddon : PodiumManager
 {
     [SerializeField] private GameObject feedbackPanel;
@@ -22,9 +24,33 @@ public class FeedbackAddon : PodiumManager
         exitButton.onClick.RemoveAllListeners();
     }
 
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        {
+            // Await 2 ms and try finding it again.
+            // It is made 2 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(1);
+        }
+
+        // Once it finds it initialize the scene
+        UnityEngine.Debug.Log("Initializing Podium Manager...         [Podium Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        InitializeManager();
+        //initialized = true;
+        return;
+    }
+
     private void Start()
     {
         feedbackPanel.SetActive(false);
+    }
+
+    private void InitializeManager()
+    {
         //Debug.Log("I've been executed");
         StartCountdown();
     }

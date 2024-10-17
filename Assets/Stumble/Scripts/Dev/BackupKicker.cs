@@ -80,6 +80,7 @@ public class BackupKicker : MonoBehaviour
         {
             GameObject controller = new GameObject("Game Controller Backup Kicker");
             controller.AddComponent<GameController>();
+            controller.AddComponent<AudioListener>();
         }
 
         LockKicker = true;
@@ -88,7 +89,7 @@ public class BackupKicker : MonoBehaviour
 
     public void start()
     {
-        Debug.Log("Howdy Neighbour");
+        //Debug.Log("Howdy Neighbour");
         if(playerFaker == 1)
         {
             StartCoroutine(initializeCoroutine());
@@ -153,7 +154,7 @@ public class BackupKicker : MonoBehaviour
                         players.Clear();*/
 
             yield return new WaitForEndOfFrame();
-            Debug.Log("Out 0");
+            //Debug.Log("Out 0");
             for (int i = 0; i < 1; i++)
             {
                 GameObject fakePlayer = Instantiate(playerPrefab);
@@ -167,11 +168,11 @@ public class BackupKicker : MonoBehaviour
                 //Destroy(fakeInput.gameObject);
                 PlayerDataManager.Instance.AddPlayer(fakeInput);
                 Destroy(fakePlayer);
-                Debug.Log($"Player {i} instantiated with PlayerInput index: {fakeInput.playerIndex} and is using {fakeInput.currentControlScheme}");
+                //Debug.Log($"Player {i} instantiated with PlayerInput index: {fakeInput.playerIndex} and is using {fakeInput.currentControlScheme}");
                 //players.Add(fakePlayer);
             }
 
-            Debug.Log("Out 1");
+            //Debug.Log("Out 1");
 
             /*            while(players.Count != 0)
                         {
@@ -192,8 +193,8 @@ public class BackupKicker : MonoBehaviour
                         }*/
 
 
-            Debug.Log("Out 2");
-            Debug.LogError("Pause");
+            //Debug.Log("Out 2");
+            //Debug.LogError("Pause");
             /*
                         foreach(PlayerData playerData in data.GetPlayers())
                         {
@@ -208,14 +209,7 @@ public class BackupKicker : MonoBehaviour
         }
         //Debug.LogError("Hello");
 
-        if (GameController.Instance == null)
-        {
-            GameObject controller = new GameObject("Game Controller Backup Kicker");
-            controller.AddComponent<GameController>();
-        }
-
-        LockKicker = true;
-        Debug.LogWarning("Backup Kicked In Systems Starting...");
+        GameControllerInitialize();
     }
 
     private async Task initialize()
@@ -312,9 +306,13 @@ public class BackupKicker : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
+
 [CustomEditor(typeof(BackupKicker))]
 class BackupKickerEditor : Editor
 {
+    private bool displayDocumentation = false;
+
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
@@ -371,6 +369,34 @@ class BackupKickerEditor : Editor
             }
         }
 
+
+        GUILayout.Label("");
+        if(!displayDocumentation)
+        {
+            if (GUILayout.Button("Show Docs"))
+            {
+                //Debug.Log("It's alive: " + target);
+                displayDocumentation = !displayDocumentation;
+            }
+        }
+        else
+        {
+            if (GUILayout.Button("Hide Docs"))
+            {
+                //Debug.Log("It's alive: " + target);
+                displayDocumentation = !displayDocumentation;
+            }
+        }
+
+        if (displayDocumentation)
+        {
+            DisplayDocs();
+        }
+    }
+
+
+    private void DisplayDocs()
+    {
         GUIStyle titleStyle = new GUIStyle(GUI.skin.label);
         titleStyle.fontSize = 20;
         titleStyle.fontStyle = FontStyle.Bold;
@@ -379,7 +405,7 @@ class BackupKickerEditor : Editor
         header1Style.fontSize = 14;
 
         GUIStyle normalStyle = new GUIStyle(GUI.skin.label);
-        normalStyle.fontSize = 10; 
+        normalStyle.fontSize = 10;
 
         // Use the styles in your labels
         GUILayout.Label("", normalStyle);
@@ -396,10 +422,7 @@ class BackupKickerEditor : Editor
         GUILayout.Label("Start Player Joining, this will start a fake joining system.", normalStyle);
         GUILayout.Label("Press once a button on the input device you want.", normalStyle);
         GUILayout.Label("Once all the players are joined, hit Start Game Scene.", normalStyle);
-
     }
-
-
-    [TextArea(10, 1000)]
-    public string Comment = "Information Here.";
 }
+
+#endif

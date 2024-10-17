@@ -39,16 +39,16 @@ public class PodiumSpawnManager : MonoBehaviour
             // Await 5 ms and try finding it again.
             // It is made 5 seconds because it is
             // a core gameplay mechanic.
-            await Task.Delay(2);
+            await Task.Delay(1);
         }
 
         // Once it finds it initialize the scene
-        UnityEngine.Debug.Log("Initializing Podium Manager...         [Podium Manager]");
+        UnityEngine.Debug.Log("Initializing Podium Spawn Manager...         [Podium Spawn Manager]");
         //GameController.Instance.startSystems += LateStart;
 
         //InitializeManager();
         initialized = true;
-        PodiumManager.Instance.onPodiumStarted += LateStart;
+        LateStart();
         return;
     }
 
@@ -116,8 +116,8 @@ public class PodiumSpawnManager : MonoBehaviour
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
 
-        Debug.Log("Changing Spawns");
-        Debug.Log("There are " + tempPlayerList.Count);
+        //Debug.Log("Changing Spawns");
+        //Debug.Log("There are " + tempPlayerList.Count);
         for (int i = 0; i < tempPlayerList.Count; i++)
         {
             Transform spawn = spawns[i].transform;
@@ -127,7 +127,7 @@ public class PodiumSpawnManager : MonoBehaviour
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.rotation = spawn.rotation;
 
-            Debug.Log("Player #" + i + " has been spawned by the manager");
+            //Debug.Log("Player #" + i + " has been spawned by the manager");
 
             //Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
             //tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //

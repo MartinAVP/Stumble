@@ -132,10 +132,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
 
             bringingPlayersOver = true;
 
-            if(GameController.Instance.gameState == GameState.Podium)
+/*            if(GameController.Instance.gameState == GameState.Podium)
             {
-                Debug.Log("Podium Starter");
-            }
+                //Debug.Log("Podium Starter");
+            }*/
 
             // Spawn Players Already In the Player Data Manager
             int players = playerDataManager.players.Count;

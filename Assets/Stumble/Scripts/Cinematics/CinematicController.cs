@@ -28,10 +28,10 @@ public class CinematicController : MonoBehaviour
     }
 
 
-    private void OnEnable()
+/*    private void OnEnable()
     {
         timeline = GetComponentInChildren<PlayableDirector>();
-    }
+    }*/
 
     private void Start()
     {
@@ -70,7 +70,7 @@ public class CinematicController : MonoBehaviour
     {
         yield return new WaitForSeconds(GetTimelineLenght - 1);
         //timeline.Pause();
-        Debug.Log("Paused");
+        Debug.Log("Cinematic Controller Ended Correctly                 [Cinematic Controller]");
 
         foreach (var point in points)
         {
@@ -83,13 +83,20 @@ public class CinematicController : MonoBehaviour
                 }*/
 
 
-        this.GetComponentInChildren<Camera>().gameObject.SetActive(false);
+        //this.GetComponentInChildren<CinemachineBrain>().gameObject.SetActive(false);
+        foreach (Transform child in this.transform)
+        {
+            if (child.GetComponent<Camera>() != null)
+            {
+                child.gameObject.SetActive(false);
+                break;
+            }
 
-        /*        foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
-                {
-                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().camController.transform.GetComponent<CinemachineFreeLook>().enabled = true;
-                }*/
+            /*        foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+                    {
+                        data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().camController.transform.GetComponent<CinemachineFreeLook>().enabled = true;
+                    }*/
+        }
     }
-
     public float GetTimelineLenght => (float)timeline.duration;
 }
