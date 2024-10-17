@@ -36,12 +36,15 @@ public class CosmeticManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        playerInputManager.onPlayerJoined += AddPlayer;
+        selectedCosmetic.Clear();
     }
 
     private void OnEnable()
     {
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
-        playerInputManager.onPlayerJoined += AddPlayer;
+        playerCooldown.Clear();
     }
 
     private void OnDisable()
@@ -65,9 +68,21 @@ public class CosmeticManager : MonoBehaviour
             player.gameObject.transform.parent.GetComponentInChildren<MeshRenderer>().material = colors[0].colorMaterial;
         }
 
-        selectedCosmetic.Add(player.playerIndex, GetSelectedCosmetic(1));
-        playerCooldown.Add(player.playerIndex, false);
-        Debug.Log("Player #" + player.playerIndex + " has selected category " + selectedCosmetic[player.playerIndex].ToString());
+        //Debug.Log("Contents of Dictionary;");
+/*        foreach(var kvp in selectedCosmetic)
+        {
+            Debug.Log(kvp.Key + " at " + kvp.Value);
+        }*/
+        if (!selectedCosmetic.ContainsKey(player.playerIndex))
+        {
+            selectedCosmetic.Add(player.playerIndex, GetSelectedCosmetic(1));
+        }
+        //selectedCosmetic.TryAdd(player.playerIndex, GetSelectedCosmetic(1));
+        if(!playerCooldown.ContainsKey(player.playerIndex))
+        {
+            playerCooldown.Add(player.playerIndex, false);
+        }
+        //Debug.Log("Player #" + player.playerIndex + " has selected category " + selectedCosmetic[player.playerIndex].ToString());
 
 
 /*        // Add Cosmetic Selection
@@ -326,7 +341,7 @@ public class CosmeticManager : MonoBehaviour
                     CosmeticUI.Instance.SetDefaultImage(colors[i].iconTexture, data.GetInput().playerIndex, 1);
                 }
 
-                Debug.Log("Color set to #" + data.GetInput().playerIndex + " to " + colors[i].Title);
+                //Debug.Log("Color set to #" + data.GetInput().playerIndex + " to " + colors[i].Title);
                 break;
             }
 

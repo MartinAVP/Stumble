@@ -2,7 +2,10 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class PodiumSpawnManager : MonoBehaviour
 {
@@ -10,6 +13,7 @@ public class PodiumSpawnManager : MonoBehaviour
     List<PlayerData> tempPlayerList = new List<PlayerData>();
 
     public static PodiumSpawnManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -23,17 +27,42 @@ public class PodiumSpawnManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        setup();
     }
 
-    //
-    private void OnEnable()
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(1);
+        }
+
+        // Once it finds it initialize the scene
+        UnityEngine.Debug.Log("Initializing Podium Spawn Manager...         [Podium Spawn Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        //InitializeManager();
+        initialized = true;
+        LateStart();
+        return;
+    }
+
+/*    private void OnEnable()
     {
         GameController.Instance.startSecondarySystems += LateStart;
-    }
+    }*/
 
     private void OnDisable()
     {
-        GameController.Instance.startSecondarySystems -= LateStart;
+        if (initialized)
+        {
+            GameController.Instance.startSecondarySystems -= LateStart;
+        }
     }
 
     // Start is called before the first frame update
@@ -87,8 +116,8 @@ public class PodiumSpawnManager : MonoBehaviour
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
 
-        Debug.Log("Changing Spawns");
-        Debug.Log("There are " + tempPlayerList.Count);
+        //Debug.Log("Changing Spawns");
+        //Debug.Log("There are " + tempPlayerList.Count);
         for (int i = 0; i < tempPlayerList.Count; i++)
         {
             Transform spawn = spawns[i].transform;
@@ -98,7 +127,7 @@ public class PodiumSpawnManager : MonoBehaviour
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.rotation = spawn.rotation;
 
-            Debug.Log("Player #" + i + " has been spawned by the manager");
+            //Debug.Log("Player #" + i + " has been spawned by the manager");
 
             //Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
             //tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //

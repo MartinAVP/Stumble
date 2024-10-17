@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,11 +12,11 @@ public class MainMenuManager : MonoBehaviour
 
     private PlayerInputManager playerInputManager;
 
+    public static MainMenuManager Instance { get; private set; }
+    [HideInInspector] public bool initializedFinished = false;
+
+    // Singleton
     private void Awake()
-    {
-        DefineAsSingleton();
-    }
-    private void DefineAsSingleton()
     {
         if (Instance != null && Instance != this)
         {
@@ -25,22 +26,43 @@ public class MainMenuManager : MonoBehaviour
         {
             Instance = this;
         }
-    }
-    public static MainMenuManager Instance;
 
-    private void Start()
+        // Start Search for Experimental Player Manager
+        setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Main Menu Manager...         [Main Menu Manager]");
+        InitializeManager();
+        return;
+    }
+
+    private void InitializeManager()
     {
         playerInputManager = FindAnyObjectByType<PlayerInputManager>();
 
         initializeScene?.Invoke();
         StartCoroutine(tempLockPlayers());
+
+        initializedFinished = true;
     }
 
+    // Prevent Player from Joining While there is the animation playing.
     private IEnumerator tempLockPlayers()
     {
         playerInputManager.DisableJoining();
         yield return new WaitForSeconds(1f);
         playerInputManager.EnableJoining();
-
     }
 }
