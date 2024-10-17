@@ -9,18 +9,17 @@ using UnityEngine.InputSystem;
 
 public class BackupKicker : MonoBehaviour
 {
-    [SerializeField] private bool kickBackup;
     [Range(1,4)]
-    [SerializeField] private int playerFaker = 1;
+    [SerializeField] public int playerFaker = 1;
 
-    public List<GameObject> players = new List<GameObject>();
+    private List<GameObject> players = new List<GameObject>();
 
-    public bool playersJoined;
+    [HideInInspector] public bool LockKicker = false;
 
     public static BackupKicker Instance { get; private set; }
     public bool initialized { get; private set; }
 
-    private bool joiningPlayers = false;
+
 
     private void Awake()
     {
@@ -34,7 +33,7 @@ public class BackupKicker : MonoBehaviour
         }
     }
 
-    public int playersActive = 0;
+    [HideInInspector] public int playersActive = 0;
 
     public void startJoiningPlayers()
     {
@@ -83,6 +82,7 @@ public class BackupKicker : MonoBehaviour
             controller.AddComponent<GameController>();
         }
 
+        LockKicker = true;
         Debug.LogWarning("Backup Kicked In Systems Starting...");
     }
 
@@ -154,7 +154,7 @@ public class BackupKicker : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
             Debug.Log("Out 0");
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 1; i++)
             {
                 GameObject fakePlayer = Instantiate(playerPrefab);
                 PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
@@ -206,7 +206,7 @@ public class BackupKicker : MonoBehaviour
 
             //Destroy(fakePlayer);
         }
-        Debug.LogError("Hello");
+        //Debug.LogError("Hello");
 
         if (GameController.Instance == null)
         {
@@ -214,6 +214,7 @@ public class BackupKicker : MonoBehaviour
             controller.AddComponent<GameController>();
         }
 
+        LockKicker = true;
         Debug.LogWarning("Backup Kicked In Systems Starting...");
     }
 
@@ -318,7 +319,7 @@ class BackupKickerEditor : Editor
     {
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Start Player Joining System"))
+/*        if (GUILayout.Button("Start Player Joining System"))
         {
             if (Application.isPlaying)
             {
@@ -326,20 +327,75 @@ class BackupKickerEditor : Editor
             }
             //Debug.Log("It's alive: " + target);
 
-        }
-
-        if (GUILayout.Button("Initialize Backup Generator"))
+        }*/
+        
+        if(target.GetComponent<BackupKicker>().LockKicker == true)
         {
-            if (Application.isPlaying)
+            if(target.GetComponent<BackupKicker>().playerFaker > 1)
             {
-                target.GetComponent<BackupKicker>().startBig();
-            }
-            //Debug.Log("It's alive: " + target);
+                if (GUILayout.Button("Start Player Joining"))
+                {
+                    if (Application.isPlaying)
+                    {
+                        target.GetComponent<BackupKicker>().start();
+                    }
+                    //Debug.Log("It's alive: " + target);
 
+                }
+
+                if (GUILayout.Button("Start Game Scene"))
+                {
+                    if (Application.isPlaying)
+                    {
+                        target.GetComponent<BackupKicker>().startBig();
+                    }
+                    //Debug.Log("It's alive: " + target);
+
+                }
+                int players = target.GetComponent<BackupKicker>().playersActive;
+                GUILayout.Label("Debug Information");
+                GUILayout.Label("Current Have: " + players + " players joined");
+
+            }
+            else
+            {
+                if (GUILayout.Button("Start Single Player"))
+                {
+                    if (Application.isPlaying)
+                    {
+                        target.GetComponent<BackupKicker>().start();
+                    }
+                    //Debug.Log("It's alive: " + target);
+
+                }
+            }
         }
 
-        int players = target.GetComponent<BackupKicker>().playersActive;
-        GUILayout.Label("Current Have: " + players + "players joined");
+        GUIStyle titleStyle = new GUIStyle(GUI.skin.label);
+        titleStyle.fontSize = 20;
+        titleStyle.fontStyle = FontStyle.Bold;
+
+        GUIStyle header1Style = new GUIStyle(GUI.skin.label);
+        header1Style.fontSize = 14;
+
+        GUIStyle normalStyle = new GUIStyle(GUI.skin.label);
+        normalStyle.fontSize = 10; 
+
+        // Use the styles in your labels
+        GUILayout.Label("", normalStyle);
+        GUILayout.Label("How to use the Backup Kicker", titleStyle);
+        GUILayout.Label("", normalStyle);
+        GUILayout.Label("For Single Player:", header1Style);
+        GUILayout.Label("Put the player Fake on 1 player and hit Start Single Player", normalStyle);
+        GUILayout.Label("That will Generate a Fake player for you to test the level", normalStyle);
+        GUILayout.Label("Only mouse and Keyboard!, Checkpoints will work.", normalStyle);
+        GUILayout.Label("", normalStyle);
+
+        GUILayout.Label("For Multi Player:", header1Style);
+        GUILayout.Label("Put the player Fake on the desired player quantity and hit ", normalStyle);
+        GUILayout.Label("Start Player Joining, this will start a fake joining system.", normalStyle);
+        GUILayout.Label("Press once a button on the input device you want.", normalStyle);
+        GUILayout.Label("Once all the players are joined, hit Start Game Scene.", normalStyle);
 
     }
 
