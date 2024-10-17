@@ -56,6 +56,10 @@ public class ExperimentalPlayerManager : MonoBehaviour
         }
 
         // Get the Player Input Manager Unique tu each scene
+    }
+
+    private void Start()
+    {
         setup();
     }
 
@@ -66,8 +70,9 @@ public class ExperimentalPlayerManager : MonoBehaviour
         while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
         {
             //Debug.Log("Doing stuff Primary");
-            await Task.Delay(1);
+            await Task.Delay(3);
         }
+
 
         Debug.Log("Game Controller Found, Initializing event subscription... ");
         gameController = GameController.Instance;
@@ -75,10 +80,11 @@ public class ExperimentalPlayerManager : MonoBehaviour
         playerInputManager = GetComponent<PlayerInputManager>();
 
         //gameController.startSystems += LateStart;
-        LateStart();
-
         playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
+
+        LateStart();
+
     }
 
     private void OnDisable()
@@ -141,7 +147,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
                 InputDevice playerDevice = playerDataManager.GetPlayerData(i).device;
                 //playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
                 playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
-                //Debug.Log("Spawning a new Player " + i);
+                Debug.Log("Player #" + i + " has been spawned           [Experimental Player Manager]");
             }
 
             bringingPlayersOver = false;
@@ -166,7 +172,6 @@ public class ExperimentalPlayerManager : MonoBehaviour
         }
 
         Debug.Log("Experimental Player Manager correctly initialized...             [Experimental Player Manager]");
-
         finishedSystemInitializing = true;
     }
 
@@ -195,9 +200,11 @@ public class ExperimentalPlayerManager : MonoBehaviour
             {
                 //Debug.Log("Player has a PlayerCosmetics Item");
                 // Add Cosmetic [Prototype]
+                Debug.Log(GameController.Instance.gameState.ToString());
                 if (GameController.Instance.gameState == GameState.Lobby) {
                     // Set the default cosmetic if the scene is Lobby
                     CosmeticManager.Instance.setDefaultCosmetic(playerDataManager.GetPlayerData(player));
+                    Debug.Log("Set the default player for Player #" + player.playerIndex);
                 }
                 else
                 {

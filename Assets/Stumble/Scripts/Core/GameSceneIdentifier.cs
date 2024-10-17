@@ -37,7 +37,7 @@ public class GameSceneIdentifier : MonoBehaviour
             // Set the Game Scene Type and Start
             // Chain events. More notes on the Game Controller
             gameController.SetGameState(gameScene);
-            Debug.Log("The Game Scene has been identified correctly as " + gameScene.ToString() + ". Initializing Systems...");
+            Debug.Log("The Game Scene has been identified correctly as " + gameScene.ToString() + ". Initializing Systems...        [Game Scene Identifier]");
         }
     }
 }

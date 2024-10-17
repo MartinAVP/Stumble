@@ -18,10 +18,6 @@ public class GameController : MonoBehaviour
     // Singleton
     private void Awake()
     {
-        Singleton();
-    }
-    private void Singleton()
-    {
         // If there is an instance, and it's not me, delete myself.
         if (Instance != null && Instance != this)
         {
@@ -34,14 +30,16 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    private void OnEnable()
     {
-        startSystems = null;
+        // Subscribe to the sceneLoaded event
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void Start()
+    private void OnDisable()
     {
-
+        // Unsubscribe from the event to avoid memory leaks
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void SetGameState(GameState state){
@@ -52,15 +50,31 @@ public class GameController : MonoBehaviour
 
         // Initialize Systems after the Game State is Inherited from the Scene
         Debug.Log("Start Systems initializing... [Game Controller]");
-        StartCoroutine(StartSytems());
+        //StartCoroutine(StartSytems());
+
+        StartCoroutine(framwaiter());
+    }
+
+    private IEnumerator framwaiter()
+    {
+        yield return new WaitForEndOfFrame();
         initialized = true;
     }
 
-    public IEnumerator StartSytems()
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        yield return new WaitForEndOfFrame();
-        startSystems?.Invoke();
-        yield return new WaitForEndOfFrame();
-        startSecondarySystems?.Invoke();
+        initialized = false;
+        Debug.Log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        //Debug.Log($"Scene {scene.name} loaded with mode {mode}");
+
+        // You can add additional logic here for when a scene is switched
     }
+
+    /*    public IEnumerator StartSytems()
+        {
+            yield return new WaitForEndOfFrame();
+            startSystems?.Invoke();
+            yield return new WaitForEndOfFrame();
+            startSecondarySystems?.Invoke();
+        }*/
 }

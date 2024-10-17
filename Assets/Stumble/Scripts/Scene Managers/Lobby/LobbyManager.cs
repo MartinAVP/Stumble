@@ -44,7 +44,7 @@ public class LobbyManager : MonoBehaviour
             // Await 5 ms and try finding it again.
             // It is made 5 seconds because it is
             // a core gameplay mechanic.
-            await Task.Delay(2);
+            await Task.Delay(140);
         }
 
         // Once it finds it initialize the scene

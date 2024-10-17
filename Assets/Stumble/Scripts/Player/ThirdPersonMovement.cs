@@ -178,8 +178,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+/*            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;*/
             return;
         }
 
@@ -190,6 +190,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
         {
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
+            cam = Camera.main.transform;
         }
 
         //Debug.Log("I got here 2");

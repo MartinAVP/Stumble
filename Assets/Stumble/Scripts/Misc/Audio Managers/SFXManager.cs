@@ -46,7 +46,7 @@ public class SFXManager : MonoBehaviour
         AudioHolder holder = GetAudioHolder(soundName);
         if (holder != null)
         {
-            Debug.Log("Found " + soundName);
+            //Debug.Log("Found " + soundName);
             AudioSource audioSource = origin.AddComponent<AudioSource>();
             AudioClip clip;
             if(holder.audioClip.Count == 0){ Debug.LogError("The sound " + soundName + " is missing a sound asset"); return; }

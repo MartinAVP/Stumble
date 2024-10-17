@@ -36,12 +36,13 @@ public class CosmeticManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        playerInputManager.onPlayerJoined += AddPlayer;
     }
 
     private void OnEnable()
     {
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
-        playerInputManager.onPlayerJoined += AddPlayer;
     }
 
     private void OnDisable()

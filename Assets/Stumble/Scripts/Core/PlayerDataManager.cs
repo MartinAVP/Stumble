@@ -42,6 +42,7 @@ public class PlayerDataManager : MonoBehaviour
         }
 
         //SceneManager.sceneLoaded += OnSceneSwitch;
+        //players = new List<PlayerData>();
         setup();
     }
 
@@ -81,24 +82,24 @@ public class PlayerDataManager : MonoBehaviour
         playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();*/
     }
 
-/*    private void OnDisable()
-    {
-        playerInputManager.onPlayerJoined -= AddPlayer;
-        playerInputManager.onPlayerLeft -= RemovePlayer;
-        InputSystem.onDeviceChange -= OnDeviceChange;
-    }*/
-
+    /*    private void OnDisable()
+        {
+            playerInputManager.onPlayerJoined -= AddPlayer;
+            playerInputManager.onPlayerLeft -= RemovePlayer;
+            InputSystem.onDeviceChange -= OnDeviceChange;
+        }*/
+/*
     private void OnSceneSwitch(Scene scene, LoadSceneMode mode)
     {
         //playerManager.OnAllPlayersBroughtInSpawned -= UnLockPlayerAdd;
-        /*
-                playerInputManager.onPlayerJoined -= AddPlayer;
-                playerInputManager.onPlayerLeft -= RemovePlayer;
-                InputSystem.onDeviceChange -= OnDeviceChange;*/
+
+        playerInputManager.onPlayerJoined -= AddPlayer;
+        playerInputManager.onPlayerLeft -= RemovePlayer;
+        InputSystem.onDeviceChange -= OnDeviceChange;
 
         //playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();
 
-/*        LockPlayerAdd();
+        LockPlayerAdd();
 
         Debug.Log("Scene Switched");
         playerInputManager = FindObjectOfType<PlayerInputManager>();
@@ -108,24 +109,25 @@ public class PlayerDataManager : MonoBehaviour
         InputSystem.onDeviceChange += OnDeviceChange;
 
         playerManager = FindObjectOfType<ExperimentalPlayerManager>();
-        playerManager.OnAllPlayersBroughtInSpawned.AddListener(UnLockPlayerAdd);*/
-    }
-
-/*    private void LockPlayerAdd()
-    {
-        addOnJoin = false;
-        Debug.Log("Locking Adding Players");
-    }
-
-    private void UnLockPlayerAdd()
-    {
-        addOnJoin = true;
-        Debug.Log("Unlocking Adding Players");
+        playerManager.OnAllPlayersBroughtInSpawned.AddListener(UnLockPlayerAdd);
     }*/
+    /*    private void LockPlayerAdd()
+        {
+            addOnJoin = false;
+            Debug.Log("Locking Adding Players");
+        }
+
+        private void UnLockPlayerAdd()
+        {
+            addOnJoin = true;
+            Debug.Log("Unlocking Adding Players");
+        }*/
 
     public void AddPlayer(PlayerInput input)
     {
         //if(!addOnJoin) { return; }
+        Debug.Log("Called");
+        Debug.Log(input.transform.name);
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData tempPlayerData;
@@ -274,10 +276,10 @@ public class PlayerDataManager : MonoBehaviour
     {
         return players;
     }
-    public void ClearPlayers()
+/*    public void ClearPlayers()
     {
         players.Clear();
-    }
+    }*/
 
     public int GetPlayersWithInGameCharacter()
     {
