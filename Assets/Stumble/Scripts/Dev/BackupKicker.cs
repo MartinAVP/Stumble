@@ -55,6 +55,7 @@ public class BackupKicker : MonoBehaviour
     {
         playersActive++;
         PlayerDataManager.Instance.AddPlayer(input);
+        players.Add(input.transform.parent.gameObject);
     }
 
     private void PlayerDataManagerInitialize()
@@ -71,6 +72,11 @@ public class BackupKicker : MonoBehaviour
 
     private void GameControllerInitialize()
     {
+        foreach (var player in players)
+        {
+            Destroy(player);
+        }
+
         if (GameController.Instance == null)
         {
             GameObject controller = new GameObject("Game Controller Backup Kicker");

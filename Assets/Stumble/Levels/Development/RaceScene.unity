@@ -243,6 +243,7 @@ GameObject:
   m_Component:
   - component: {fileID: 78187410}
   - component: {fileID: 78187409}
+  - component: {fileID: 78187411}
   m_Layer: 0
   m_Name: BackupKicker
   m_TagString: Untagged
@@ -263,9 +264,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kickBackup: 0
-  playerFaker: 3
+  playerFaker: 1
   players: []
   playersJoined: 0
+  playersActive: 0
 --- !u!4 &78187410
 Transform:
   m_ObjectHideFlags: 0
@@ -281,6 +283,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &78187411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 78187408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4562de50e75b72c4f96f500003c4ca81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hats:
+  - {fileID: 11400000, guid: bc49077edd9d7a740adbeb4d02e8c863, type: 2}
+  - {fileID: 11400000, guid: 647bb0ec979c60f4b889d4b44cf2d986, type: 2}
+  colors:
+  - {fileID: 11400000, guid: 8efd7a3b2513ccc43833ed2b80aca4ed, type: 2}
+  - {fileID: 11400000, guid: b217458d59bf8a8449b72c09191d71e2, type: 2}
+  - {fileID: 11400000, guid: 4642362967975e34bbd03bf2513ce838, type: 2}
+  - {fileID: 11400000, guid: 7b4a0318084eab34f96a453337ca3e93, type: 2}
+  boots:
+  - {fileID: 11400000, guid: 05acc3881169eaf4fa7c2c54b1efa412, type: 2}
+  inputDelay: 0.2
 --- !u!1 &78945321
 GameObject:
   m_ObjectHideFlags: 0

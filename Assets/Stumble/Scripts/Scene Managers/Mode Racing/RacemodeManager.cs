@@ -51,8 +51,8 @@ public class RacemodeManager : MonoBehaviour
         Debug.Log("Initializing Racemode Manager...         [Racemode Manager]");
         //GameController.Instance.startSystems += LateStart;
 
-        InitializeManager();
         initialized = true;
+        InitializeManager();
         return;
     }
 
