@@ -32,7 +32,7 @@ public class ControllerForMenus : MonoBehaviour
 
     void Start()
     {
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

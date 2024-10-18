@@ -28,7 +28,7 @@ public class LobbyManager : MonoBehaviour
         }
 
         playerInputManager = FindAnyObjectByType<PlayerInputManager>();
-        setup();
+        Task Setup = setup();
     }
 
 /*    public void StartGame()

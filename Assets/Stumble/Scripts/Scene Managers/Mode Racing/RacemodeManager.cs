@@ -37,7 +37,7 @@ public class RacemodeManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
@@ -122,7 +122,7 @@ public class RacemodeManager : MonoBehaviour
 
         // Start Start Process
         //StartCoroutine(StartCinematic());
-        MainRaceController();
+        Task MainRace = MainRaceController();
     }
 
     private async Task MainRaceController()

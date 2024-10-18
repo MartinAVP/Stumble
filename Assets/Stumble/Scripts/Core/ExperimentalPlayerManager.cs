@@ -60,7 +60,7 @@ public class ExperimentalPlayerManager : MonoBehaviour
 
     private void Start()
     {
-        setup();
+        Task Setup = setup();
     }
 
     // Note: Setup is the function used to wait until it finds a GameController
