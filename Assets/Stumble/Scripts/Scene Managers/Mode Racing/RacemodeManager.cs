@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,9 @@ public class RacemodeManager : MonoBehaviour
     public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
     public event Action onCountdownStart;
     public event Action onRaceStart;
+
+    private bool foundCinematicController = false;
+    private bool foundRaceUIManager = false;
 
     public static RacemodeManager Instance { get; private set; }
     public bool initialized { get; private set; }
@@ -33,7 +37,7 @@ public class RacemodeManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
@@ -74,7 +78,7 @@ public class RacemodeManager : MonoBehaviour
         //UnityEngine.Debug.Log("Late Start Called on Race manager");
         stopwatch = new Stopwatch();
 
-        // Note: In order to have a cinematic or countdown at the start,
+/*        // Note: In order to have a cinematic or countdown at the start,
         // Both the RacemodeUIManager and the CinematicController have to be in
         // in the scene, if one of them is missing the race will start without these.
         if (CinematicController.Instance != null && RacemodeUIManager.Instance != null)
@@ -95,27 +99,84 @@ public class RacemodeManager : MonoBehaviour
         {
             // Start the Race Directly
             StartRace();
-        }
+        }*/
 
         // Lock all players in place
         LockPlayersMovement(true);
+
+        if(CinematicController.Instance != null && CinematicController.Instance.enabled == true)
+        {
+            foundCinematicController = true;
+        }
+        if(RacemodeUIManager.Instance != null && RacemodeUIManager.Instance.enabled == true)
+        {
+            if (RacemodeUIManager.Instance.HasAllCountDownValues())
+            {
+                foundRaceUIManager = true;
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("RaceUIManager does not have all the countdown values, skipping countdown and cinematic.");
+            }
+        }
+
+        // Start Start Process
+        //StartCoroutine(StartCinematic());
+        Task MainRace = MainRaceController();
     }
 
-    public IEnumerator StartCinematic()
+    private async Task MainRaceController()
     {
-        CinematicController.Instance.StartTimeline();
-        yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+        // Base Delay
+        await Task.Delay(5);
 
-        // On Cinematic End
+        if (foundCinematicController)
+        {
+            CinematicController.Instance.StartTimeline();
+            //yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+            await Task.Delay(CinematicController.Instance.GetTimelineLenght.ConvertTo<int>() * 1000);
+
+            // On Cinematic End
+        }
+
+        //Debug.Log("Racing Comenzed");
+        onCountdownStart?.Invoke();
+
+        if (foundRaceUIManager)
+        {
+            //yield return new WaitForSeconds(5.0f);
+            await Task.Delay(5 * 1000);
+        }
+
+        StartRace();
+    }
+
+/*    public IEnumerator StartCinematic()
+    {
+        yield return new WaitForEndOfFrame();
+        if (foundCinematicController)
+        {
+            CinematicController.Instance.StartTimeline();
+            yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+
+            // On Cinematic End
+        }
+        yield return new WaitForSeconds(0);
         StartCoroutine(ComenzeRacing());
     }
 
     public IEnumerator ComenzeRacing()
     {
+        Debug.Log("Racing Comenzed");
         onCountdownStart?.Invoke();
-        yield return new WaitForSeconds(5.0f);
+
+        if (foundRaceUIManager)
+        {
+            yield return new WaitForSeconds(5.0f);
+        }
+
         StartRace();
-    }
+    }*/
 
     public void StartRace()
     {

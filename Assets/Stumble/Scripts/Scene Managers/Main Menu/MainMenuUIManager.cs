@@ -52,7 +52,7 @@ public class MainMenuUIManager : MonoBehaviour
         }
 
         //
-        setup();
+        Task Setup = setup();
     }
 
     private bool menuManagerFound = false;

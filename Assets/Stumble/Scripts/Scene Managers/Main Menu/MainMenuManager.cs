@@ -28,7 +28,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // Start Search for Experimental Player Manager
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
