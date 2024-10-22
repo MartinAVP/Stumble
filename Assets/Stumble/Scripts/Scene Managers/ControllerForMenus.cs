@@ -39,13 +39,12 @@ public class ControllerForMenus : MonoBehaviour
     {
         // Note: This system relies on the Main Menu UI Manager & Player Data Manager.
         // If any of these components is missing it will not work.
-        while (MainMenuUIManager.Instance == null || MainMenuUIManager.Instance.enabled == false || MainMenuUIManager.Instance.initialized == false
-            || PlayerDataManager.Instance == null || PlayerDataManager.Instance.enabled == false)
+        while (PlayerDataManager.Instance == null || PlayerDataManager.Instance.enabled == false)
         {
             // Await 5 ms and try finding it again.
             // It is made 5 seconds because it is
             // a core gameplay mechanic.
-            await Task.Delay(2);
+            await Task.Delay(1);
         }
 
         // Once it finds it initialize the scene
