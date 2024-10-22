@@ -77,7 +77,7 @@ public class FeedbackAddon : PodiumManager
     }
 
     private void openFeedbackForm(){
-        Application.OpenURL("https://www.youtube.com/watch?v=f_e3NbtwKAo");
+        Application.OpenURL("https://michaelszolowicz.com/stumblebumps-unite-playtest/");
     }
     private void BackToGame(){
         SceneManager.LoadScene("GamemodeSelect");
