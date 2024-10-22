@@ -219,6 +219,6 @@ public class LevelDebugger : MonoBehaviour
         [TextArea(10, 1000)]
         public string Comment = "Information Here.";
     }
+#endif
 }
 
-#endif
