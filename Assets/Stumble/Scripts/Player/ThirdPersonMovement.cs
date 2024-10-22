@@ -297,6 +297,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         _bumpHorizontalVelocity.y = 0;
 
+        print("Bump velocity: " + _bumpHorizontalVelocity +
+            "Horizontal Velocity: " + horizontalVelocity);
+
         ApplyGravity();
         ApplyVerticalMovement();
         isGrounded();
@@ -435,6 +438,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Decellerate the player based on multiplier
         else
         {
+            print("Braking: " + actualBraking);
             horizontalVelocity -= actualBraking;
 
             if (horizontalVelocity <= 0.05f)
@@ -642,6 +646,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
                     _bumpHorizontalVelocity -= platformVelocity;
                 }
+            }
+            else if(currentPlatform != null)
+            {
+                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
+                _bumpHorizontalVelocity += platformVelocity;
+                currentPlatform = null;
             }
 
         }
