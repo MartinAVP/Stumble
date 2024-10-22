@@ -11,7 +11,8 @@ public class HungryHippo : MonoBehaviour
     public int mouthOpenAngle = 45;
     public float movementMultiplier = 0.5f;
 
-    public float distance;
+    public float speed;
+
 
     public float actionDuration = 2f;
     public int frameSkips = 5;
@@ -32,10 +33,11 @@ public class HungryHippo : MonoBehaviour
     private Quaternion closedRotation;
     private Quaternion openRotation;
     private Vector3 startingPos;
-    private Vector3 endingPos;
+    public GameObject endingPos;
 
     private float previousMouthAngle;
     private GameObject hippoNeck;
+    private Quaternion startingRotation;
 
 
 
@@ -54,7 +56,7 @@ public class HungryHippo : MonoBehaviour
         playerKillzone.SetActive(false);
         hippoNeck = GameObject.Find("HippoNeck");
         openRotation = Quaternion.Euler(-mouthOpenAngle, transform.eulerAngles.y, transform.eulerAngles.z);
-
+        startingRotation = transform.rotation;
         previousMouthAngle = mouthOpenAngle;
     }
 
@@ -84,7 +86,7 @@ public class HungryHippo : MonoBehaviour
             reset = false;
             triggered = false;
             available = true;
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            transform.rotation = startingRotation;
             transform.position = startingPos;
         }
         
@@ -97,8 +99,6 @@ public class HungryHippo : MonoBehaviour
         available = false;
         float smoothing;
         int temp = 0;
-
-        endingPos.z = startingPos.z + distance;
 
         while (Quaternion.Angle(transform.rotation, openRotation) > 0.1f)
         {
@@ -124,10 +124,11 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("lunge");
 
-        while (transform.position.z < endingPos.z)
+        while (transform.position != endingPos.transform.position)
         {
             timer += Time.deltaTime;
-            transform.Translate(Vector3.forward * movementMultiplier * Time.deltaTime, Space.World);
+            this.transform.position = Vector3.MoveTowards(transform.position, endingPos.transform.position, speed * Time.deltaTime);
+            //this.transform.Translate(Vector3.forward * movementMultiplier * Time.deltaTime, Space.Self);
             temp++;
             if (temp > frameSkips)
             {
@@ -169,10 +170,11 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("retreat");
 
-        while (transform.position.z > startingPos.z)    
+        while (transform.position != startingPos)    
         {
             timer += Time.deltaTime;
-            transform.Translate(-Vector3.forward * movementMultiplier * Time.deltaTime, Space.World);
+            transform.position = Vector3.MoveTowards(transform.position, startingPos, speed * Time.deltaTime);
+            //this.transform.Translate(-Vector3.forward * movementMultiplier * Time.deltaTime, Space.World);
             temp++;
             if (temp > frameSkips)
             {
