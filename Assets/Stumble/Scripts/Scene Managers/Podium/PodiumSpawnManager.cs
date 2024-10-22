@@ -28,7 +28,7 @@ public class PodiumSpawnManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

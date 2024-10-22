@@ -523,7 +523,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void isGrounded()
     {
-        Vector3 start1, start2, start3, start4, extra1, extra2 = Vector3.zero;
+        Vector3 start1, start2, start3, start4 = Vector3.zero;
         //Vector3 start5, start6, start7, start8 = Vector3.zero;
 
         // Player not proning
