@@ -232,6 +232,11 @@ public class RacemodeManager : MonoBehaviour
         {
             LoadingScreenManager.Instance.StartTransition(true);
         }
+        if (GameMusicController.Instance != null)
+        {
+            GameMusicController.Instance.EndMusic(1.2f);
+        }
+
         // Start the brough Overs to the next scene
         GameObject ranking = new GameObject("Ranking");
         //ranking.AddComponent(typeof(PodiumRanking));

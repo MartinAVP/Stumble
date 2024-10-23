@@ -131,7 +131,7 @@ public class MainMenuUIManager : MonoBehaviour
 
         changeGeneralVolume(0);
         changeMusicVolume(0);
-        changeSFXVolume(0);
+        //changeSFXVolume(0);
         changeTargetFPS(120);
 
         initialized = true;
