@@ -10,6 +10,7 @@ public class OptionsManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float maxVolume = 0.1f;
 
+    private Coroutine sfxTestSoundCoroutine;
     public static OptionsManager Instance { get; private set; }
 
     private void Start()
@@ -53,5 +54,30 @@ public class OptionsManager : MonoBehaviour
             value = -80;
         }
         gameMixer.SetFloat(group, value);
+
+
+        // Restart the timer
+        if(group == "SFXVolume")
+        {
+            if (sfxTestSoundCoroutine != null)
+            {
+                StopCoroutine(sfxTestSoundCoroutine);
+            }
+            sfxTestSoundCoroutine = StartCoroutine(Timer());
+        }
+    }
+
+    private IEnumerator Timer()
+    {
+        yield return new WaitForSeconds(.5f);
+
+        PlayTestSound();
+    }
+    private void PlayTestSound()
+    {
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlaySound("Jump", this.transform);
+        }
     }
 }
