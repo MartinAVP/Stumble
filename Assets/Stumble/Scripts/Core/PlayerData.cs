@@ -17,14 +17,14 @@ public class PlayerData
     }
 
     // Main Data
-    public int id;                      // Id of the player [0,1,2,3]
-    public GameObject playerInScene;    // The player in the scene (can be changed depending on the level)
-    public PlayerInput input;           // Should be static for every scene once the player joins
-    public InputDevice device;          // The Device the player is connected to
-    public bool isHost;
+    public int id { get; set; }                         // Id of the player [0,1,2,3]
+    public GameObject playerInScene { get; set; }       // The player in the scene (can be changed depending on the level)
+    public PlayerInput input { get; set; }              // Should be static for every scene once the player joins
+    public InputDevice device { get; set; }             // The Device the player is connected to
+    public bool isHost { get; set; }
 
     // Add Cosmetics Here
-    public CosmeticData cosmeticData;
+    public CosmeticData cosmeticData { get; set; }
 
     // Main
     #region Setters

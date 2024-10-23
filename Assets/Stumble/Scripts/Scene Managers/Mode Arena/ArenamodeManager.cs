@@ -276,6 +276,7 @@ public class ArenamodeManager : MonoBehaviour
             {
                 alive++;
             }
+
         }
         return alive;
     }
