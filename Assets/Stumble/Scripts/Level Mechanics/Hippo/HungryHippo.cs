@@ -10,7 +10,7 @@ public class HungryHippo : MonoBehaviour
 
     public int mouthOpenAngle = 45;
     public float movementMultiplier = 0.5f;
-
+    
     public float speed;
 
 
@@ -172,7 +172,7 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("retreat");
 
-        while (transform.position != startingPos)    
+        while (Vector3.Distance(transform.position, startingPos) > .1f)    
         {
             timer += Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, startingPos, speed * Time.deltaTime);
@@ -184,6 +184,8 @@ public class HungryHippo : MonoBehaviour
                 temp = 0;
             }
         }
+
+        transform.position = startingPos;
         timer = 0;
 
         //Debug.Log("retreat complete");
