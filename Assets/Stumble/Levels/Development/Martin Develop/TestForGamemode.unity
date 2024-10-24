@@ -416,7 +416,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 118754870}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99994355
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2049,7 +2049,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00065762305}
+  m_AnchoredPosition: {x: 0, y: 0.0000825593}
   m_SizeDelta: {x: 0, y: 783}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &670512203
@@ -2220,8 +2220,9 @@ GameObject:
   m_Component:
   - component: {fileID: 693740507}
   - component: {fileID: 693740506}
+  - component: {fileID: 693740508}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: '[Library] Modules'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2243,7 +2244,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 53b0ad523fa0b6f4ab98647b8e436f04, type: 2}
   - {fileID: 11400000, guid: d549683595809664bb814593a829142a, type: 2}
   - {fileID: 11400000, guid: 00d1b37ad47f24e4aa872b9502e12a1b, type: 2}
-  chosenGamemodes: []
+  activeGamemodes: []
   targetSelection: 2
   allowDuplicates: 0
 --- !u!4 &693740507
@@ -2261,6 +2262,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &693740508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693740505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4ea7567adb57e74b85105c9ef3b74be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelId: 0
+  partyGameSize: 3
 --- !u!1 &729562894
 GameObject:
   m_ObjectHideFlags: 0
