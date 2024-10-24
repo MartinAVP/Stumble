@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class ModularGamemodes : MonoBehaviour
 {
-    public List<Gamemode> modules;                  // List of Module Gamemodes 
+    public List<Gamemode> modules;                                          // List of Module Gamemodes 
     [Header("Selection")]
-    public List<Gamemode> chosenGamemodes = new List<Gamemode>();          // List of Chosen Module Gamemodes
+    public List<Gamemode> chosenGamemodes = new List<Gamemode>();           // List of Chosen Module Gamemodes
 
     [SerializeField]private int targetSelection;
     public bool allowDuplicates = false;
@@ -18,6 +18,11 @@ public class ModularGamemodes : MonoBehaviour
         chosenGamemodes.Clear();
     }
 
+    private void Start()
+    {
+
+    }
+
     private void OnGUI()
     {
         // Set the position and size of the button
@@ -25,6 +30,7 @@ public class ModularGamemodes : MonoBehaviour
         {
             chosenGamemodes.Clear();
             SelectGamemodes(targetSelection);
+            //Debug.Log("Select Random Gamemodes");
         }
     }
 
@@ -45,12 +51,14 @@ public class ModularGamemodes : MonoBehaviour
         if (chosenGamemodes.Contains(modules[id]) && !allowDuplicates)
         {
             RecursiveSelect(quantity);
+            return;
         }
 
         // Check if the Specific Module is disabled
-        if (!modules[id].enabled)
+        if (modules[id].disabled)
         {
             RecursiveSelect(quantity);
+            return;
         }
 
         else
@@ -67,7 +75,7 @@ public class ModularGamemodes : MonoBehaviour
         int enabledMaps = 0;
         foreach (var module in modules)
         {
-            if (module.enabled) { enabledMaps++; }
+            if (!module.disabled) { enabledMaps++; }
         }
 
         return enabledMaps;

@@ -11,7 +11,7 @@ public class Gamemode : ScriptableObject
     public GamemodeType type;
     public Texture2D modulePreview;
     public SceneAsset scene;
-    [HideInInspector] public bool enabled;
+    public bool disabled;
 }
 
 public enum GamemodeType
