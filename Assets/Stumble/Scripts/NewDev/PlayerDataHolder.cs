@@ -11,7 +11,8 @@ public class PlayerDataHolder : MonoBehaviour
     // This class holds every player that is being managed in the game.
     // This class should not be wiped across scenes, it is what carries
     // the players over.
-    public List<PlayerData> players { get; private set; } = new List<PlayerData>();
+    //public List<PlayerData> players { get; private set; } = new List<PlayerData>();
+    public List<PlayerData> players = new List<PlayerData>();
 
     // Instance of the Class
     public static PlayerDataHolder Instance { get; private set; }
@@ -32,10 +33,10 @@ public class PlayerDataHolder : MonoBehaviour
         }
 
         // Initialize Task to Start Data Management
-        Task Setup = setup();
+        //Task Setup = setup();
     }
 
-    private async Task setup()
+/*    private async Task setup()
     {
         // Wait for these values GameController needs to be 
         while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
@@ -44,7 +45,7 @@ public class PlayerDataHolder : MonoBehaviour
         }
 
         Debug.Log("Player Data Holder Found... Holds " + players.Count + " Players          [Player Data Holder]");
-    }
+    }*/
 
     // Get All Players
     public List<PlayerData> GetPlayers()
@@ -57,6 +58,7 @@ public class PlayerDataHolder : MonoBehaviour
     {
         // The Reason behind setting the player as the parent of the
         // gameobject is because of the player prefab layout.
+        //Debug.Log("Adding Player");
         GameObject playerGameObject = input.transform.parent.gameObject;
         bool isFirstPlayer = false;
 
@@ -67,6 +69,7 @@ public class PlayerDataHolder : MonoBehaviour
         }
 
         tempPlayerData = new PlayerData(players.Count, playerGameObject, input, input.devices[0], isFirstPlayer, new CosmeticData());
+        players.Add(tempPlayerData);
     }
 
     // Remove a Player
@@ -157,9 +160,17 @@ public class PlayerDataHolder : MonoBehaviour
         }
         return null;
     }
-    public PlayerData GetData(int id)
+    public PlayerData GetPlayerData(int id)
     {
         //Debug.Log("Current Players PlayerDataMAnager: " + players.Count);
+        if (id <= players.Count)
+        {
+            return players[id];
+        }
+        return null;
+    }
+    public PlayerData GetData(int id)
+    {
         if (id <= players.Count)
         {
             return players[id];

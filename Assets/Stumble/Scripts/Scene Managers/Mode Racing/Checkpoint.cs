@@ -10,7 +10,7 @@ public class Checkpoint : MonoBehaviour
         if (other.transform.CompareTag("Player"))
         {
             // Which player triggered it?
-            PlayerData data = PlayerDataManager.Instance.GetPlayerData(other.GetComponent<PlayerInput>());
+            PlayerData data = PlayerDataHolder.Instance.GetPlayerData(other.GetComponent<PlayerInput>());
             CheckpointManager.Instance.ReachCheckpoint(data, this.gameObject);
         }
     }

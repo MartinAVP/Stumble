@@ -12,6 +12,13 @@ public class ModularController : MonoBehaviour
     [Tooltip("The amount of modes that party gamemode will have.")]
     [SerializeField] private int partyGameSize;
 
+
+    public static ModularController Instance;
+    private void Awake()
+    {
+        if (Instance == null) { Instance = this; }
+    }
+
     private void Start()
     {
         if(GetComponent<ModularGamemodes>() == null)
@@ -38,7 +45,7 @@ public class ModularController : MonoBehaviour
     /// <summary>
     ///  Initialize Party starts the main gamemode with preselected gamemode Quantity
     /// </summary>
-    private void InitializeParty()
+    public void InitializeParty()
     {
         gamesLib.SelectGamemodes(partyGameSize);
         AdvanceLevels();
@@ -61,7 +68,7 @@ public class ModularController : MonoBehaviour
         }
 
         // Load The Next Scene
-        Debug.Log("Loading New Active Gamemode " + gamesLib.activeGamemodes[levelId].scene.name + "   (" + levelId + "/" + gamesLib.activeGamemodes.Count + ")");
+        Debug.Log("Loading New Active Gamemode " + gamesLib.activeGamemodes[levelId].scene.name + "   (" + (levelId + 1) + "/" + gamesLib.activeGamemodes.Count + ")");
         SceneManager.LoadScene(gamesLib.activeGamemodes[levelId].scene.name);
     }
 }

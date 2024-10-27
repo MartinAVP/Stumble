@@ -21,7 +21,7 @@ public class PodiumPlayerManager : MonoBehaviour
         playerDataManager = PlayerDataManager.Instance;
 
         playerInputManager.onPlayerJoined += AddPlayer;
-        playerDataManager.onPlayerInputDeviceDisconnect += OnPlayerInputDisconnected;
+        //playerDataManager.onPlayerInputDeviceDisconnect += OnPlayerInputDisconnected;
         playerDataManager.onPlayerInputDeviceReconnect += OnPlayerInputReconnected;
     }
 
@@ -49,7 +49,7 @@ public class PodiumPlayerManager : MonoBehaviour
     {
         playerInputManager.onPlayerJoined -= AddPlayer;
 
-        playerDataManager.onPlayerInputDeviceDisconnect -= OnPlayerInputDisconnected;
+        //playerDataManager.onPlayerInputDeviceDisconnect -= OnPlayerInputDisconnected;
         playerDataManager.onPlayerInputDeviceReconnect -= OnPlayerInputReconnected;
     }
 

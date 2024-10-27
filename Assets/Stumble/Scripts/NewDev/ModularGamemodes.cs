@@ -1,38 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class ModularGamemodes : MonoBehaviour
 {
-    public List<Gamemode> modules;                                          // List of Module Gamemodes 
+    private List<Gamemode> modules = new List<Gamemode>();                  // List of Module Gamemodes 
     [Header("Selection")]
     public List<Gamemode> activeGamemodes = new List<Gamemode>();           // List of Chosen Module Gamemodes
-
-    [SerializeField]private int targetSelection;
     public bool allowDuplicates = false;
 
     private void OnDisable()
     {
+        modules.Clear();
         activeGamemodes.Clear();
     }
 
-    private void Start()
+    private void Awake()
     {
-
+        // Load Assets from "Resources/Modules" folder
+        PopulateModulesFromFile();
     }
 
-/*    private void OnGUI()
+    private void PopulateModulesFromFile()
     {
-        // Set the position and size of the button
-        if (GUI.Button(new Rect(10, 10, 150, 30), "Select Gamemodes"))
-        {
-            activeGamemodes.Clear();
-            SelectGamemodes(targetSelection);
-            //Debug.Log("Select Random Gamemodes");
-        }
-    }*/
+        modules = Resources.LoadAll("Modules", typeof(Gamemode)).Cast<Gamemode>().ToList();
+    }
 
     public void SelectGamemodes(int quantity)
     {

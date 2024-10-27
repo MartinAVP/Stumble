@@ -16,22 +16,24 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private List<LayerMask> playerLayers;
 
     // Core Controller
-    private GameController gameController;
+    private GameController gameController;              // Core Game Controller
+    private PlayerInputManager playerInputManager;      // Play Input Manager Reference.
 
-    private PlayerInputManager playerInputManager;
-    private PlayerDataHolder playerDataHolder;
+    private PlayerDataHolder playerDataHolder;          // Reference to where the Data is Being Saved
 
     [Header("Settings")]
     [SerializeField] private bool kickPlayerOnDisconntect = false;      // Kick players when they leave from the game
     [SerializeField] private SceneCameraType sceneCameraType;   
-    [SerializeField] public bool lockMovementOnSpawn = false;
+/*    [SerializeField] public bool lockMovementOnSpawn = false;*/
     [Space]
 
     // UI
     public InputSystemUIInputModule UIEventSystem;
-    private Dictionary<InputDevice, PlayerInput> deviceSaver = new Dictionary<InputDevice, PlayerInput>(); // Dictionary that holds player devices in case of kicking enabled
+    private Dictionary<InputDevice, PlayerInput> deviceSaver = new Dictionary<InputDevice, PlayerInput>(); //    Dictionary that holds player devices in case of kicking enabled
     private bool bringingPlayersOver = false;
-    [HideInInspector] public bool finishedSystemInitializing = false;
+
+
+    [HideInInspector] public bool initialized = false;
 
     public static PlayerManager Instance { get; private set; }
 
@@ -45,8 +47,6 @@ public class PlayerManager : MonoBehaviour
         {
             Instance = this;
         }
-
-        // Get the Player Input Manager Unique tu each scene
     }
 
     private void Start()
@@ -60,8 +60,31 @@ public class PlayerManager : MonoBehaviour
         // Wait for these values GameController needs to be 
         while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
         {
-            //Debug.Log("Doing stuff Primary");
-            await Task.Delay(2);
+            await Task.Delay(1);
+        }
+        // Found Game Controller assing to local variable
+        gameController = GameController.Instance;
+
+        // Check the Scene Type.
+        switch (gameController.gameState)
+        {
+            case GameState.Race:
+                while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.lookingForPlayer == false)
+                {
+                    await Task.Delay(1);
+                }
+                Debug.Log("Racemode Manager Found           [Player Manager]");
+                break;
+            case GameState.Arena:
+                // Logic For Arena
+                break;
+            case GameState.StartScreen:
+                break;
+            case GameState.Lobby:
+                break;
+            default:
+                Debug.LogError("Player Manager has found an invalid game state          [Player Manager]");
+                break;
         }
 
         Debug.Log("Game Controller Found, Initializing event subscription... ");
@@ -111,7 +134,7 @@ public class PlayerManager : MonoBehaviour
             // Enable Bringing Players Over
             bringingPlayersOver = true;
 
-            // Spawn Players Already In the Player Data Manager
+            // Spawn Players Already In the Player Data Holder
             int players = playerDataHolder.players.Count;
 
             for (int i = 0; i < players; i++)
@@ -120,7 +143,7 @@ public class PlayerManager : MonoBehaviour
                 string playerControlScheme = playerDataHolder.GetData(i).input.currentControlScheme;
                 InputDevice playerDevice = playerDataHolder.GetData(i).device;
                 playerInputManager.JoinPlayer(i, i - playerDataHolder.GetPlayers().Count, playerControlScheme, playerDevice);
-                Debug.Log("Player #" + i + " has been spawned           [Experimental Player Manager]");
+                Debug.Log("Player #" + i + " has been spawned           [Player Manager]");
             }
 
             // Disable Bringing Players Over
@@ -143,8 +166,8 @@ public class PlayerManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
         }*/
 
-        Debug.Log("Experimental Player Manager correctly initialized...             [Experimental Player Manager]");
-        finishedSystemInitializing = true;
+        Debug.Log("Player Manager correctly initialized...             [Player Manager]");
+        initialized = true;
     }
 
     public void AddPlayer(PlayerInput player)
@@ -177,6 +200,14 @@ public class PlayerManager : MonoBehaviour
         playerObject.name = "Player #" + (playerID) + " controller";
 
         int layerToAdd = (int)Mathf.Log(playerLayers[playerID].value, 2);
+
+
+        //SetLayerForEachChild(layerToAdd, player.transform);
+        //playerParent.GetComponentInChildren<CinemachineFreeLook>().gameObject.layer = layerToAdd;
+        if(player.gameObject.GetComponent<UICameraView>() != null)
+        {
+            player.gameObject.GetComponent<UICameraView>().characterCam.cullingMask |= 1 << layerToAdd;
+        }
 
         switch (sceneCameraType)
         {
@@ -218,6 +249,16 @@ public class PlayerManager : MonoBehaviour
             //Debug.LogWarning("Disabled Joining");
         }
     }
+
+/*    private void SetLayerForEachChild(int layerID, Transform parent)
+    {
+        parent.gameObject.layer = layerID;
+
+        foreach (Transform child in parent)
+        {
+            SetLayerForEachChild(layerID, child);
+        }
+    }*/
 
     private void RemovePlayer(PlayerInput player)
     {

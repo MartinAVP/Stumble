@@ -12,11 +12,6 @@ public class CheckpointManager : MonoBehaviour
     public static CheckpointManager Instance { get; private set; }
     public bool initialized { get; private set; }
 
-    // Singleton
-/*    [Header("Debug")]
-    [SerializeField] private bool debug = false;*/
-    //[SerializeField] private Material checkPointVisualizerMaterial;
-
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -31,57 +26,31 @@ public class CheckpointManager : MonoBehaviour
 
         Task Setup = setup();
     }
-
     private async Task setup()
     {
         // Wait for these values GameController needs to exist and be enabled.
-        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.initialized == false)
+        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.lookingForCheckpoint == false)
         {
             // Await 5 ms and try finding it again.
             // It is made 5 seconds because it is
             // a core gameplay mechanic.
-            await Task.Delay(2);
+            await Task.Delay(1);
         }
 
         // Once it finds it initialize the scene
-        Debug.Log("Initializing Racemode Manager...         [Racemode Manager]");
+        Debug.Log("Initializing Checkpoint Manager...         [Checkpoint Manager]");
         //GameController.Instance.startSystems += LateStart;
 
-        InitializeManager();
         initialized = true;
+        InitializeManager();
         return;
     }
-
-/*    private void OnEnable()
-    {
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.startSecondarySystems += LateStart;
-        }
-    }*/
-/*    private void OnDisable()
-    {
-        Checkpoints.Clear();
-
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.startSecondarySystems -= LateStart;
-        }
-    }*/
 
     private void InitializeManager()
     {
         InitializeCheckpoints();
         InitializePlayers();
-/*        if (GameController.Instance == null)
-        {
-            InitializePlayers();
-        }*/
     }
-
-/*    private void LateStart()
-    {
-    }*/
     
     public void InitializeCheckpoints()
     {
@@ -110,7 +79,7 @@ public class CheckpointManager : MonoBehaviour
     {
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
-        List<PlayerData> tempPlayerList = PlayerDataManager.Instance.GetPlayers();
+        List<PlayerData> tempPlayerList = PlayerDataHolder.Instance.GetPlayers();
         List<Transform> checkPointSpawns = Checkpoints[0].GetCheckpointSpawns();
 
         for (int i = 0; i < tempPlayerList.Count; i++)
@@ -126,11 +95,12 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 
+
     public void ReachCheckpoint(PlayerData data, GameObject checkpoint)
     {
         // Check if the checkpoint id is bigger than the previous one
         int playerID = data.GetID();
-        int currentCheckpoint = findCheckpointPlayerIsin(playerID);
+        int currentCheckpoint = FindPlayerCheckpoint(playerID);
         int targetCheckpoint = GetCheckpointID(checkpoint);
 
         // Checkpoint is HIGHER than Current
@@ -151,8 +121,8 @@ public class CheckpointManager : MonoBehaviour
 
     public void Respawn(GameObject playerObject)
     {
-        int playerID = PlayerDataManager.Instance.GetPlayerData(playerObject.GetComponent<PlayerInput>()).GetID();
-        int currentCheckpoint = findCheckpointPlayerIsin(playerID);
+        int playerID = PlayerDataHolder.Instance.GetPlayerData(playerObject.GetComponent<PlayerInput>()).GetID();
+        int currentCheckpoint = FindPlayerCheckpoint(playerID);
 
         List<Transform> spawns = Checkpoints[currentCheckpoint].GetCheckpointSpawns();
         Transform spawn = GetNonBlockedSpawn(spawns);
@@ -206,7 +176,7 @@ public class CheckpointManager : MonoBehaviour
         //return spawns[0];
     }
 
-    private int findCheckpointPlayerIsin(int ID)
+    private int FindPlayerCheckpoint(int ID)
     {
         // Loop through each Checkpoint Data
         for (int i = 0; i < Checkpoints.Count; i++)
@@ -236,8 +206,8 @@ public class CheckpointManager : MonoBehaviour
     {
         // Check if the checkpoint id is bigger than the previous one
         int playerID = data.GetID();
-        int currentCheckpoint = findCheckpointPlayerIsin(playerID);
-        int targetCheckpoint = findCheckpointPlayerIsin(playerID) + 1;
+        int currentCheckpoint = FindPlayerCheckpoint(playerID);
+        int targetCheckpoint = FindPlayerCheckpoint(playerID) + 1;
 
         // Checkpoint is HIGHER than Current
         Checkpoints[currentCheckpoint].removePlayer(playerID);

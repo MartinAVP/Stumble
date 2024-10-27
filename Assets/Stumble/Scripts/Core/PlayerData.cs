@@ -14,6 +14,7 @@ public class PlayerData
         this.device = device;
         this.isHost = isHost;
         this.cosmeticData = cosmeticData;
+        this.points = 0;
     }
 
     // Main Data
@@ -22,6 +23,7 @@ public class PlayerData
     public PlayerInput input { get; set; }              // Should be static for every scene once the player joins
     public InputDevice device { get; set; }             // The Device the player is connected to
     public bool isHost { get; set; }
+    public int points { get; set; }
 
     // Add Cosmetics Here
     public CosmeticData cosmeticData { get; set; }
