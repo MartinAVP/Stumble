@@ -62,7 +62,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
 
     private void SelectArena()
     {
-
+        SceneManager.LoadScene("ArenaScene");
     }
 
     private void GoBackToModeSelection()
@@ -75,6 +75,11 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     {
         LoadingScreenManager.Instance.StartTransition(true);
         StartCoroutine(loadLevelDelay(name));
+        
+        if(MenuMusicController.Instance != null)
+        {
+            MenuMusicController.Instance.EndMusic(2.8f);
+        }
     }
 
     private IEnumerator loadLevelDelay(string name)

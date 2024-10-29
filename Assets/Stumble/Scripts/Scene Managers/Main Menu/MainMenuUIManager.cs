@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -14,6 +17,7 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private GameObject unityScreenPanel;
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject startScreenPanel;
+    [SerializeField] private GameObject optionsPanel;
 
     [Header("Main Buttons")]
     [SerializeField] private UnityEngine.UI.Button _startGameButton;
@@ -22,14 +26,60 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _achievementsButton;
     [SerializeField] private UnityEngine.UI.Button _ExitButton;
 
+    [Header("Options")]
+    [SerializeField] private UnityEngine.UI.Slider _generalVolume;
+    [SerializeField] private UnityEngine.UI.Slider _MusicVolume;
+    [SerializeField] private UnityEngine.UI.Slider _SFXVolume;
+    [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
+    [SerializeField] private TextMeshProUGUI _TargetFPSText;
+    [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
+
     private PlayerInputManager playerInputManager;
+    [SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
+
+    public static MainMenuUIManager Instance { get; private set; }
+    [HideInInspector] public bool initialized = false;
 
     private void Awake()
     {
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
+        //
+        Task Setup = setup();
     }
 
-    private void OnEnable()
+    private bool menuManagerFound = false;
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (MainMenuManager.Instance == null || MainMenuManager.Instance.enabled == false || MainMenuManager.Instance.initializedFinished == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Main Menu UI Manager...         [Main Menu UI Manager]");
+
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        menuManagerFound = true;
+
+        InitializeManagerSubs();
+        InitializeManager();
+        return;
+    }
+
+    private void InitializeManagerSubs()
     {
         playerInputManager.onPlayerJoined += joinHostPlayer;
 
@@ -39,21 +89,35 @@ public class MainMenuUIManager : MonoBehaviour
         _creditsButton?.onClick.AddListener(OpenCredits);
         _achievementsButton?.onClick.AddListener(OpenAchievements);
         _ExitButton?.onClick.AddListener(ExitGame);
+
+        _generalVolume.onValueChanged.AddListener(changeGeneralVolume);
+        _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
+        _SFXVolume.onValueChanged.AddListener(changeSFXVolume);
+        _TargetFPS.onValueChanged.AddListener(changeTargetFPS);
+        _ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
     }
 
     private void OnDisable()
     {
-        playerInputManager.onPlayerJoined -= joinHostPlayer;
+        if (menuManagerFound) {        
+            playerInputManager.onPlayerJoined -= joinHostPlayer;
 
-        // Buttons
-        _startGameButton?.onClick.RemoveAllListeners();
-        _optionsButton?.onClick.RemoveAllListeners();
-        _creditsButton?.onClick.RemoveAllListeners();
-        _achievementsButton?.onClick.RemoveAllListeners();
-        _ExitButton?.onClick.RemoveAllListeners();
+            // Buttons
+            _startGameButton?.onClick.RemoveAllListeners();
+            _optionsButton?.onClick.RemoveAllListeners();
+            _creditsButton?.onClick.RemoveAllListeners();
+            _achievementsButton?.onClick.RemoveAllListeners();
+            _ExitButton?.onClick.RemoveAllListeners();
+
+            _generalVolume.onValueChanged.RemoveAllListeners();
+            _MusicVolume.onValueChanged.RemoveAllListeners();
+            _SFXVolume.onValueChanged.RemoveAllListeners();
+            _TargetFPS.onValueChanged.RemoveAllListeners();
+            _ReturnToMenuFromOptions.onClick.RemoveAllListeners();
+        }
     }
 
-    private void Start()
+    private void InitializeManager()
     {
         // Initialize Panels
         unityScreenPanel.SetActive(true);
@@ -64,6 +128,13 @@ public class MainMenuUIManager : MonoBehaviour
         StartCoroutine(disableUnityTransition());
 
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
+
+        changeGeneralVolume(0);
+        changeMusicVolume(0);
+        changeSFXVolume(0);
+        changeTargetFPS(120);
+
+        initialized = true;
     }
 
     private void joinHostPlayer(PlayerInput player)
@@ -100,6 +171,8 @@ public class MainMenuUIManager : MonoBehaviour
 
     private void OpenOptions()
     {
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
+        ControllerForMenus.Instance.ChangeSelectedObject(_generalVolume.gameObject);
         Debug.Log("Open Options");
     }
 
@@ -117,5 +190,56 @@ public class MainMenuUIManager : MonoBehaviour
     {
         //Debug.Log("Exit Game");
         Application.Quit();
+    }
+
+    private void returnToMainMenuFromOptions()
+    {
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+    }
+
+    public void Slider(InputAction.CallbackContext context)
+    {
+        Vector2 raw = context.ReadValue<Vector2>();
+        if(raw.x > .5f)
+        {
+            if (multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>() != null)
+            {
+                multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>().value += raw.x * Time.deltaTime;
+            }
+        }
+    }
+
+    private void changeGeneralVolume(float value)
+    {
+        if(OptionsManager.Instance != null)
+        {
+            OptionsManager.Instance.SetGeneralVolume(value);
+        }
+    }
+
+    private void changeMusicVolume(float value)
+    {
+        if (OptionsManager.Instance != null)
+        {
+            OptionsManager.Instance.SetMusicVolume(value);
+        }
+    }
+
+    private void changeSFXVolume(float value)
+    {
+        if (OptionsManager.Instance != null)
+        {
+            OptionsManager.Instance.SetSFXVolume(value);
+        }
+    }
+
+    private void changeTargetFPS(float value)
+    {
+        int newValue = (int)value;
+        _TargetFPSText.text = "Limit FPS:               " + newValue;
+        if (OptionsManager.Instance != null)
+        {
+            OptionsManager.Instance.SetTargetFPS(newValue);
+        }
     }
 }

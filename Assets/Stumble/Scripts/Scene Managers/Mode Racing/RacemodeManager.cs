@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -16,7 +18,11 @@ public class RacemodeManager : MonoBehaviour
     public event Action onCountdownStart;
     public event Action onRaceStart;
 
+    private bool foundCinematicController = false;
+    private bool foundRaceUIManager = false;
+
     public static RacemodeManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -30,25 +36,49 @@ public class RacemodeManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        Task Setup = setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Racemode Manager...         [Racemode Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        initialized = true;
+        InitializeManager();
+        return;
     }
 
     private void OnEnable()
     {
-        GameController.Instance.startSystems += LateStart;
     }
 
     private void OnDisable()
     {
-        GameController.Instance.startSystems -= LateStart;
+/*        if (initialized)
+        {
+            //GameController.Instance.startSystems -= LateStart;
+        }*/
         
     }
 
-    private void LateStart()
+    private void InitializeManager()
     {
-        UnityEngine.Debug.Log("Late Start Called on Race manager");
+        //UnityEngine.Debug.Log("Late Start Called on Race manager");
         stopwatch = new Stopwatch();
 
-        // Note: In order to have a cinematic or countdown at the start,
+/*        // Note: In order to have a cinematic or countdown at the start,
         // Both the RacemodeUIManager and the CinematicController have to be in
         // in the scene, if one of them is missing the race will start without these.
         if (CinematicController.Instance != null && RacemodeUIManager.Instance != null)
@@ -69,27 +99,84 @@ public class RacemodeManager : MonoBehaviour
         {
             // Start the Race Directly
             StartRace();
+        }*/
+
+        // Lock all players in place
+        LockPlayersMovement(true);
+
+        if(CinematicController.Instance != null && CinematicController.Instance.enabled == true)
+        {
+            foundCinematicController = true;
+        }
+        if(RacemodeUIManager.Instance != null && RacemodeUIManager.Instance.enabled == true)
+        {
+            if (RacemodeUIManager.Instance.HasAllCountDownValues())
+            {
+                foundRaceUIManager = true;
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("RaceUIManager does not have all the countdown values, skipping countdown and cinematic.");
+            }
         }
 
-/*        // Lock all players in place
-        LockPlayersMovement(true);*/
+        // Start Start Process
+        //StartCoroutine(StartCinematic());
+        Task MainRace = MainRaceController();
     }
 
-    public IEnumerator StartCinematic()
+    private async Task MainRaceController()
     {
-        CinematicController.Instance.StartTimeline();
-        yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+        // Base Delay
+        await Task.Delay(5);
 
-        // On Cinematic End
+        if (foundCinematicController)
+        {
+            CinematicController.Instance.StartTimeline();
+            //yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+            await Task.Delay(CinematicController.Instance.GetTimelineLenght.ConvertTo<int>() * 1000);
+
+            // On Cinematic End
+        }
+
+        //Debug.Log("Racing Comenzed");
+        onCountdownStart?.Invoke();
+
+        if (foundRaceUIManager)
+        {
+            //yield return new WaitForSeconds(5.0f);
+            await Task.Delay(5 * 1000);
+        }
+
+        StartRace();
+    }
+
+/*    public IEnumerator StartCinematic()
+    {
+        yield return new WaitForEndOfFrame();
+        if (foundCinematicController)
+        {
+            CinematicController.Instance.StartTimeline();
+            yield return new WaitForSeconds(CinematicController.Instance.GetTimelineLenght);
+
+            // On Cinematic End
+        }
+        yield return new WaitForSeconds(0);
         StartCoroutine(ComenzeRacing());
     }
 
     public IEnumerator ComenzeRacing()
     {
+        Debug.Log("Racing Comenzed");
         onCountdownStart?.Invoke();
-        yield return new WaitForSeconds(5.0f);
+
+        if (foundRaceUIManager)
+        {
+            yield return new WaitForSeconds(5.0f);
+        }
+
         StartRace();
-    }
+    }*/
 
     public void StartRace()
     {
@@ -101,7 +188,7 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.LogWarning("Race has been initialized");
 
         // Unlock all Player Movement
-/*        LockPlayersMovement(false);*/
+        LockPlayersMovement(false);
     }
 
     public void ReachFinishLine(PlayerData player)
@@ -184,22 +271,43 @@ public class RacemodeManager : MonoBehaviour
 
     private void LockPlayersMovement(bool value)
     {
-        if (PlayerDataManager.Instance == null) { Debug.LogWarning("Could not find the PlayerData Manager"); return; }
+        if (PlayerDataManager.Instance != null)
+        {
+            Debug.Log("Locking in " + PlayerDataManager.Instance.GetPlayers().Count);
+            if (value)
+            {
+                foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+                {
+                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+                }
+            }
+            else
+            {
+                foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+                {
+                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
+                }
+            }
+        }
+        else // No Player Data Manager
+        {
+            ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
 
-        Debug.Log("Locking in " + PlayerDataManager.Instance.GetPlayers().Count);
-        if (value)
-        {
-            foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
+            if (value)
             {
-                data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+                foreach (ThirdPersonMovement player in players)
+                {
+                    player.lockMovement = true;
+                }
+            }
+            else
+            {
+                foreach (ThirdPersonMovement player in players)
+                {
+                    player.lockMovement = false;
+                }
             }
         }
-        else
-        {
-            foreach (PlayerData data in PlayerDataManager.Instance.GetPlayers())
-            {
-                data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
-            }
-        }
+
     }
 }

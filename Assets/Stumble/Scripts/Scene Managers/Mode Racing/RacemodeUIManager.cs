@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +21,8 @@ public class RacemodeUIManager : MonoBehaviour
     [SerializeField] private Sprite countdownGo;
 
     public static RacemodeUIManager Instance { get; private set; }
+    public bool initialized { get; private set; }
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -31,23 +34,46 @@ public class RacemodeUIManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        Task Setup = setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.initialized == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(1);
+        }
+
+        // Once it finds it initialize the sceneW
+        Debug.Log("Initializing Racemode UI Manager...         [Racemode UI Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        InitializeManager();
+        initialized = true;
+        RacemodeManager.Instance.onCountdownStart += StartRace;
+        return;
     }
 
     private void OnEnable()
     {
         //RaceManager.Instance.onCompleteFinish += DisplayEndScores;
-        RacemodeManager.Instance.onCountdownStart += StartRace;
     }
 
     private void OnDisable()
     {
         //RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        RacemodeManager.Instance.onCountdownStart -= StartRace;
+        if (initialized)
+        {
+            RacemodeManager.Instance.onCountdownStart -= StartRace;
+        }
     }
 
-
-
-    private void Start()
+    private void InitializeManager()
     {
         if (LoadingScreenManager.Instance != null)
         {
@@ -62,15 +88,6 @@ public class RacemodeUIManager : MonoBehaviour
 
     }
 
-    public bool HasAllCountDownValues()
-    {
-        if(countdownPanel != null && countdownTime != null &&
-            countdownThree != null && countdownTwo != null && countdownOne != null && countdownGo != null)
-        {
-            return true;
-        }
-        return false;
-    }
 
     private void StartRace()
     {
@@ -101,6 +118,15 @@ public class RacemodeUIManager : MonoBehaviour
 
     }
 
+    public bool HasAllCountDownValues()
+    {
+        if (countdownPanel != null && countdownTime != null &&
+            countdownThree != null && countdownTwo != null && countdownOne != null && countdownGo != null)
+        {
+            return true;
+        }
+        return false;
+    }
 /*    public void DisplayEndScores(SortedDictionary<float, PlayerData> players)
     {
 

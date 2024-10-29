@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,11 +20,10 @@ public class PlayerDataManager : MonoBehaviour
     public event Action<PlayerInput> onPlayerAdded;
     public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
+    public event Action<PlayerData> onHostChanged;
 
-    // Scene Variables
-    // Eliminate this variable ASAP
-    public bool isLobby;
-    //private bool addOnJoin = true;
+    // Data Manager is meant to act as a player
+    // storage system that is passes accross scenes.
 
     public static PlayerDataManager Instance { get; private set; }
 
@@ -42,6 +42,21 @@ public class PlayerDataManager : MonoBehaviour
         }
 
         //SceneManager.sceneLoaded += OnSceneSwitch;
+        //players = new List<PlayerData>();
+        Task Setup = setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to be 
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
+        {
+            //Debug.Log("Doing stuff Primary");
+            await Task.Delay(1);
+        }
+
+        Debug.Log("Player Data Manager Found... Holds " + players.Count + " Players          [Player Data Manager]");
+        
     }
 
     private void OnEnable()
@@ -67,24 +82,24 @@ public class PlayerDataManager : MonoBehaviour
         playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();*/
     }
 
-/*    private void OnDisable()
-    {
-        playerInputManager.onPlayerJoined -= AddPlayer;
-        playerInputManager.onPlayerLeft -= RemovePlayer;
-        InputSystem.onDeviceChange -= OnDeviceChange;
-    }*/
-
+    /*    private void OnDisable()
+        {
+            playerInputManager.onPlayerJoined -= AddPlayer;
+            playerInputManager.onPlayerLeft -= RemovePlayer;
+            InputSystem.onDeviceChange -= OnDeviceChange;
+        }*/
+/*
     private void OnSceneSwitch(Scene scene, LoadSceneMode mode)
     {
         //playerManager.OnAllPlayersBroughtInSpawned -= UnLockPlayerAdd;
-        /*
-                playerInputManager.onPlayerJoined -= AddPlayer;
-                playerInputManager.onPlayerLeft -= RemovePlayer;
-                InputSystem.onDeviceChange -= OnDeviceChange;*/
+
+        playerInputManager.onPlayerJoined -= AddPlayer;
+        playerInputManager.onPlayerLeft -= RemovePlayer;
+        InputSystem.onDeviceChange -= OnDeviceChange;
 
         //playerManager.OnAllPlayersBroughtInSpawned.RemoveAllListeners();
 
-/*        LockPlayerAdd();
+        LockPlayerAdd();
 
         Debug.Log("Scene Switched");
         playerInputManager = FindObjectOfType<PlayerInputManager>();
@@ -94,24 +109,25 @@ public class PlayerDataManager : MonoBehaviour
         InputSystem.onDeviceChange += OnDeviceChange;
 
         playerManager = FindObjectOfType<ExperimentalPlayerManager>();
-        playerManager.OnAllPlayersBroughtInSpawned.AddListener(UnLockPlayerAdd);*/
-    }
-
-/*    private void LockPlayerAdd()
-    {
-        addOnJoin = false;
-        Debug.Log("Locking Adding Players");
-    }
-
-    private void UnLockPlayerAdd()
-    {
-        addOnJoin = true;
-        Debug.Log("Unlocking Adding Players");
+        playerManager.OnAllPlayersBroughtInSpawned.AddListener(UnLockPlayerAdd);
     }*/
+    /*    private void LockPlayerAdd()
+        {
+            addOnJoin = false;
+            Debug.Log("Locking Adding Players");
+        }
+
+        private void UnLockPlayerAdd()
+        {
+            addOnJoin = true;
+            Debug.Log("Unlocking Adding Players");
+        }*/
 
     public void AddPlayer(PlayerInput input)
     {
         //if(!addOnJoin) { return; }
+        //Debug.Log("Called");
+        //Debug.Log(input.transform.name);
         GameObject player = input.transform.parent.gameObject;
 
         PlayerData tempPlayerData;
@@ -161,6 +177,7 @@ public class PlayerDataManager : MonoBehaviour
         if(playerInputManager.playerCount > 0)
         {
             players[0].SetHost(true);
+            onHostChanged?.Invoke(players[0]);
         }
 
     }
@@ -259,10 +276,10 @@ public class PlayerDataManager : MonoBehaviour
     {
         return players;
     }
-    public void ClearPlayers()
+/*    public void ClearPlayers()
     {
         players.Clear();
-    }
+    }*/
 
     public int GetPlayersWithInGameCharacter()
     {

@@ -16,6 +16,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     public Transform cam;
     public PlayerMovement playerMovementSettings;
 
+    public event Action OnJump;
+    public event Action OnDive;
+
     #region Horizontal Movement
     [Header("Movement")]
     private float accelerationSpeed = 10f;
@@ -33,7 +36,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     [Header("Bumping")]
     private float bumpForce = 20f;
     private float bumpUpwardForce = .2f;
-    private Vector3 _bumpHorizontalVelocity = Vector3.zero;
+    [HideInInspector] public Vector3 _bumpHorizontalVelocity = Vector3.zero;
     #endregion
 
     #region Rotating
@@ -97,7 +100,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     private void OnEnable()
     {
-        Application.targetFrameRate = 30;
+        // Michael 10/12/2024
+        //Application.targetFrameRate = 30;
 
         if(playerMovementSettings == null)
         {
@@ -174,8 +178,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+/*            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;*/
             return;
         }
 
@@ -186,9 +190,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
         {
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
+            cam = Camera.main.transform;
         }
 
-        Debug.Log("I got here 2");
+        //Debug.Log("I got here 2");
     }
 
     private Transform hasCamera()
@@ -257,6 +262,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Add to the Vertical Velocity Value
         verticalVelocity = 0;
         verticalVelocity += jumpPower;
+
+        OnJump?.Invoke();
     }
 
     public void Dive(InputAction.CallbackContext context)
@@ -273,6 +280,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             // Prevent Proning when already in prone
             if (isProne) { return; }
             toggleProne(true);
+
+            OnDive?.Invoke();
         }
     }
     #endregion
@@ -402,7 +411,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             actualBraking = (deccelerationSpeed * 2) * moveDir.magnitude * airDragMultiplier * Time.deltaTime;
 
-            print(_bumpHorizontalVelocity);
+            //print(_bumpHorizontalVelocity);
         }
 
         // Player input detected, move player
@@ -514,7 +523,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void isGrounded()
     {
-        Vector3 start1, start2, start3, start4, extra1, extra2 = Vector3.zero;
+        Vector3 start1, start2, start3, start4 = Vector3.zero;
         //Vector3 start5, start6, start7, start8 = Vector3.zero;
 
         // Player not proning

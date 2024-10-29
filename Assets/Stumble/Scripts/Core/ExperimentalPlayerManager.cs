@@ -2,8 +2,8 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -40,48 +40,59 @@ public class ExperimentalPlayerManager : MonoBehaviour
     private Dictionary<InputDevice, PlayerInput> deviceSaver = new Dictionary<InputDevice, PlayerInput>(); // Dictionary that holds player devices in case of kicking enabled
 
     private bool bringingPlayersOver = false;
+    [HideInInspector] public bool finishedSystemInitializing = false;
+
+    public static ExperimentalPlayerManager Instance { get; private set; }
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
         // Get the Player Input Manager Unique tu each scene
-        playerInputManager = GetComponent<PlayerInputManager>();
-        Debug.Log("================= " + SceneManager.GetActiveScene().name + " =================");
     }
 
     private void Start()
     {
-        // [!] Note: Anything using the gameController has to be
-        // in start. If added to OnEnbale will give error
-        gameController.startSystems += LateStart;
+        Task Setup = setup();
     }
 
-    private void OnEnable()
+    // Note: Setup is the function used to wait until it finds a GameController
+    private async Task setup()
     {
-        // Events
+        // Wait for these values GameController needs to be 
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
+        {
+            //Debug.Log("Doing stuff Primary");
+            await Task.Delay(3);
+        }
+
+
+        Debug.Log("Game Controller Found, Initializing event subscription... ");
         gameController = GameController.Instance;
+        playerDataManager = PlayerDataManager.Instance;
+        playerInputManager = GetComponent<PlayerInputManager>();
+
+        //gameController.startSystems += LateStart;
+        playerInputManager.onPlayerJoined += AddPlayer;
         playerInputManager.onPlayerLeft += RemovePlayer;
 
-        playerDataManager = PlayerDataManager.Instance;
-        // If the player Data Manager Exists, Rely on that
-        // Before spawning the players
-/*        if (playerDataManager != null)
-        {
-            // Player Data Manager
-            playerDataManager.onPlayerAdded += AddPlayer;
-            Debug.LogWarning("Subscribed to Data Manager");
-        }
-        else
-        {
-            // Player Input Manager
-            Debug.LogWarning("Using player Input Manager");
-        }*/
-        playerInputManager.onPlayerJoined += AddPlayer;
+        LateStart();
+
     }
 
     private void OnDisable()
     {
-        gameController.startSystems -= LateStart;
-        //fuck michael - Angel 10/09/2024
+        if (gameController != null)
+        {
+            //gameController.startSystems -= LateStart;
+        //Fuck michael - Angel 10/09/2024
 /*        if (playerDataManager != null)
         {
             playerDataManager.onPlayerAdded -= AddPlayer;
@@ -91,12 +102,14 @@ public class ExperimentalPlayerManager : MonoBehaviour
             playerInputManager.onPlayerJoined -= AddPlayer;
         }*/
 
-        playerInputManager.onPlayerJoined -= AddPlayer;
-        playerInputManager.onPlayerLeft -= RemovePlayer;
+            playerInputManager.onPlayerJoined -= AddPlayer;
+            playerInputManager.onPlayerLeft -= RemovePlayer;
+        }
     }
 
     private void LateStart()
     {
+        Debug.Log("Initializing Experimental Player Manager...         [Experimental Player Manager]");
         InitializePlayers();
     }
 
@@ -119,14 +132,14 @@ public class ExperimentalPlayerManager : MonoBehaviour
 
             bringingPlayersOver = true;
 
-            if(GameController.Instance.gameState == GameState.Podium)
+/*            if(GameController.Instance.gameState == GameState.Podium)
             {
-                Debug.Log("Podium Starter");
-            }
+                //Debug.Log("Podium Starter");
+            }*/
 
             // Spawn Players Already In the Player Data Manager
             int players = playerDataManager.players.Count;
-            Debug.Log("Spawning" + players + " players in the scene");
+            //Debug.Log("Spawning" + players + " players in the scene");
             for (int i = 0; i < players; i++)
             {
                 int playersInGame = i;
@@ -134,11 +147,11 @@ public class ExperimentalPlayerManager : MonoBehaviour
                 InputDevice playerDevice = playerDataManager.GetPlayerData(i).device;
                 //playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
                 playerInputManager.JoinPlayer(i, i - playerDataManager.GetPlayers().Count, playerControlScheme, playerDevice);
-                Debug.Log("Spawning a new Player " + i);
+                Debug.Log("Player #" + i + " has been spawned           [Experimental Player Manager]");
             }
 
             bringingPlayersOver = false;
-            Debug.Log("Added all players brought");
+            //Debug.Log("Added all players brought");
             //OnAllPlayersBroughtInSpawned?.Invoke();
         }
         else // Not Player Data Manager
@@ -158,7 +171,8 @@ public class ExperimentalPlayerManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
         }
 
-        Debug.Log("Finished Experimental Player manager");
+        Debug.Log("Experimental Player Manager correctly initialized...             [Experimental Player Manager]");
+        finishedSystemInitializing = true;
     }
 
     public void AddPlayer(PlayerInput player)
@@ -186,9 +200,11 @@ public class ExperimentalPlayerManager : MonoBehaviour
             {
                 //Debug.Log("Player has a PlayerCosmetics Item");
                 // Add Cosmetic [Prototype]
-                if (GameController.Instance.gameState == GameState.Lobby) {
+                //Debug.Log(GameController.Instance.gameState.ToString());
+                if (GameController.Instance.gameState == GameState.Lobby || BackupKicker.Instance != null) {
                     // Set the default cosmetic if the scene is Lobby
                     CosmeticManager.Instance.setDefaultCosmetic(playerDataManager.GetPlayerData(player));
+                    Debug.Log("Set the default player for Player #" + player.playerIndex);
                 }
                 else
                 {
