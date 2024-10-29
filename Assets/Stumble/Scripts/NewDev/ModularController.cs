@@ -16,7 +16,7 @@ public class ModularController : MonoBehaviour
     public static ModularController Instance;
     private void Awake()
     {
-        if (Instance == null) { Instance = this; }
+        if (Instance == null) { Instance = this; DontDestroyOnLoad(this.gameObject); }
     }
 
     private void Start()
@@ -61,10 +61,11 @@ public class ModularController : MonoBehaviour
         levelId++;
 
         // Check if last scene
-        if(levelId == gamesLib.activeGamemodes.Count)
+        if(levelId >= gamesLib.activeGamemodes.Count)
         {
             // Load Podium Scene
-            Debug.Log("Loading Podium Scene");
+            Debug.LogError("Loading Podium Scene");
+            return;
         }
 
         // Load The Next Scene

@@ -24,14 +24,12 @@ public class PlayerManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private bool kickPlayerOnDisconntect = false;      // Kick players when they leave from the game
     [SerializeField] private SceneCameraType sceneCameraType;   
-/*    [SerializeField] public bool lockMovementOnSpawn = false;*/
     [Space]
 
     // UI
     public InputSystemUIInputModule UIEventSystem;
     private Dictionary<InputDevice, PlayerInput> deviceSaver = new Dictionary<InputDevice, PlayerInput>(); //    Dictionary that holds player devices in case of kicking enabled
     private bool bringingPlayersOver = false;
-
 
     [HideInInspector] public bool initialized = false;
 
@@ -65,6 +63,8 @@ public class PlayerManager : MonoBehaviour
         // Found Game Controller assing to local variable
         gameController = GameController.Instance;
 
+        Debug.Log("Game Controller Found, Starting Scene Initialization           [Player Manager]");
+
         // Check the Scene Type.
         switch (gameController.gameState)
         {
@@ -81,6 +81,11 @@ public class PlayerManager : MonoBehaviour
             case GameState.StartScreen:
                 break;
             case GameState.Lobby:
+                while (LobbyManager.Instance == null || LobbyManager.Instance.enabled == false || LobbyManager.Instance.initialized == false)
+                {
+                    await Task.Delay(1);
+                }
+                Debug.Log("Lobby Manager Found           [Player Manager]");
                 break;
             default:
                 Debug.LogError("Player Manager has found an invalid game state          [Player Manager]");
@@ -154,17 +159,6 @@ public class PlayerManager : MonoBehaviour
             //Debug.LogWarning("No player data manager was found, using automatic player join");
             playerInputManager.joinBehavior = PlayerJoinBehavior.JoinPlayersWhenJoinActionIsTriggered;
         }
-/*
-        if (!cursorEnabled)
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-        else
-        {
-            cursorEnabled = true;
-            Cursor.lockState = CursorLockMode.None;
-        }*/
 
         Debug.Log("Player Manager correctly initialized...             [Player Manager]");
         initialized = true;

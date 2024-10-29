@@ -58,6 +58,7 @@ public class RacemodeManager : MonoBehaviour
     private RacemodeUIManager racemodeUIManager;
     private CinematicController cinematicController;
     private ScoreboardManager scoreboardManager;
+    private GameMusicController gameMusicController;
 
     private async Task setup()
     {
@@ -143,6 +144,18 @@ public class RacemodeManager : MonoBehaviour
             Debug.LogWarning("Scoreboard Manager not Found, Skipping...    [Racemode Manager]");
         }
 
+        // Music Manager
+        if (GameMusicController.Instance != null && GameMusicController.Instance.enabled == true)
+        {
+            gameMusicController = GameMusicController.Instance;
+            gameMusicController.setup();
+            Debug.Log("Found Game Music Controller...         [Racemode Manager]");
+        }
+        else
+        {
+            Debug.LogWarning("Game Music Controller not Found, Skipping...    [Racemode Manager]");
+        }
+
         InitializeManager();
         return;
     }
@@ -156,34 +169,6 @@ public class RacemodeManager : MonoBehaviour
         Debug.Log("PreTask");
         StartCoroutine(MainRaceController());
     }
-/*
-    private async Task MainRaceController()
-    {
-        // Base Delay
-        Debug.Log("InTask");
-        LockPlayersMovement(true);
-        await Task.Delay(5);
-
-        if (cinematicController != null)
-        {
-            Debug.Log("Initializing Cinematic");
-            cinematicController.StartTimeline();
-            await Task.Delay(cinematicController.GetTimelineLenght.ConvertTo<int>() * 1000);
-
-            // On Cinematic End
-        }
-        onCountdownStart?.Invoke();
-
-        if (racemodeUIManager != null)
-        {
-            Debug.Log("Initializing Race Countdown");
-            //yield return new WaitForSeconds(5.0f);
-            racemodeUIManager.StartRace();
-            await Task.Delay(5 * 1000);
-        }
-
-        StartRace();
-    }*/
 
     private IEnumerator MainRaceController()
     {
@@ -365,8 +350,8 @@ public class RacemodeManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         scoreboardManager.DisplayScoreboard();
-/*        UpdateScoresToAllPlayers(0);
-        DisplayScoresToAllPlayers();*/
+        /*        UpdateScoresToAllPlayers(0);
+                DisplayScoresToAllPlayers();*/
         yield return new WaitForSeconds(4f);
         //uiComponent.UpdateScore(12, 3);
         AddPoints();
@@ -383,59 +368,21 @@ public class RacemodeManager : MonoBehaviour
         }
 
         // Start the brough Overs to the next scene
-/*        GameObject ranking = new GameObject("Ranking");
-        //ranking.AddComponent(typeof(PodiumRanking));
-        PodiumRanking rank = ranking.AddComponent<PodiumRanking>();
-        rank.UpdatePositions(this.positions);
+        /*        GameObject ranking = new GameObject("Ranking");
+                //ranking.AddComponent(typeof(PodiumRanking));
+                PodiumRanking rank = ranking.AddComponent<PodiumRanking>();
+                rank.UpdatePositions(this.positions);
 
-        DontDestroyOnLoad(ranking);*/
-        
-        if(ModularController.Instance != null)
+                DontDestroyOnLoad(ranking);*/
+
+        yield return new WaitForSeconds(1.5f);
+
+        // Check if the Modular Controller Exists
+        if (ModularController.Instance != null)
         {
             ModularController.Instance.AdvanceLevels();
         }
-
-        yield return new WaitForSeconds(1.5f);
-        //SceneManager.LoadScene("Podium");
     }
-    /*    private void DisplayScoresToAllPlayers() { 
-            foreach(PlayerData player in PlayerDataHolder.Instance.GetPlayers())
-            {
-                player.playerInScene.GetComponentInChildren<PlayerUIComponent>().DisplayScores();
-            }
-        }
-        private void UpdateScoresToAllPlayers(float duration)
-        {
-            foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
-            {
-                player.playerInScene.GetComponentInChildren<PlayerUIComponent>().UpdateScore(player.points, duration);
-            }
-        }*/
-    /*    public List<UICameraView> GetCharacterImages()
-        {
-            List<UICameraView> uiCamViews = new List<UICameraView>();
-
-            foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
-            {
-                uiCamViews.Add(player.playerInScene.GetComponentInChildren<UICameraView>());
-            }
-
-            return uiCamViews;
-        }
-    */
-    /*    private void SetPlayerScores()
-        {
-            int index = 0;
-            foreach(PlayerData data in positions.Values)
-            {
-                switch (index)
-                {
-                    case 0:
-
-                        break;
-                }
-            }
-        }*/
 
     private void AddPoints()
     {

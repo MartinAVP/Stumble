@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerUIComponent : MonoBehaviour
 {
-    public Transform Character;
+/*    public Transform Character;
     public TextMeshProUGUI ScoreText;
 
     private PlayerDataHolder playerDataHolder;
@@ -112,5 +112,5 @@ public class PlayerUIComponent : MonoBehaviour
     {
         BottomLeft,
         BottomRight,
-    }
+    }*/
 }
