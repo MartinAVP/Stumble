@@ -7,7 +7,7 @@ using TMPro;
 public class BorderAnimation : MonoBehaviour
 {
     //public Sprite sprites;
-    public image Border;
+    public Image Border;
 
     public List<Sprite> Border_Frames;
     public float frameDelay = .1f;
@@ -16,12 +16,7 @@ public class BorderAnimation : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < Border_Frames.Count; i++)
-        {
-            image.sprite = Border_Frames[i]; 
-        }
-        Border_Frames[0].SetActive(true);
-
+        StartCoroutine(Animate());
     }
 
 
@@ -39,14 +34,7 @@ public class BorderAnimation : MonoBehaviour
         available = false;
         for (int i = 0;i < Border_Frames.Count; i++)
         {
-            if (i == 0)
-            {
-                Border_Frames[Border_Frames.count].SetActive(true);
-            }
-            { }
-
-            Border_Frames[i-1].SetActive(false);
-            Border_Frames[i].SetActive(true);
+            Border.sprite = Border_Frames[i];
             yield return new WaitForSecondsRealtime(frameDelay);
         } 
         available = true;
