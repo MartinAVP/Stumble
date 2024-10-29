@@ -334,7 +334,7 @@ public class RacemodeManager : MonoBehaviour
         {
             // End
             // Display the Scores
-            Debug.Log("Race Values: " + positions.Count);
+            //Debug.Log("Race Values: " + positions.Count);
             scoreboardManager.UpdatePositionsFromTime(positions);
             StartCoroutine(EndGameDelay());
             onCompleteFinish?.Invoke(positions);
