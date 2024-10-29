@@ -12,16 +12,16 @@ public class BorderAnimation : MonoBehaviour
     public List<Sprite> Border_Frames;
     public float frameDelay = .1f;
 
-    private bool available = true;
+    public bool available = true;
 
     void Start()
     {
-        StartCoroutine(Animate());
+        Border.enabled = false;
     }
 
 
     void FixedUpdate()
-    {
+    {       
         if (available)
         {
             StartCoroutine(Animate());
@@ -29,7 +29,18 @@ public class BorderAnimation : MonoBehaviour
         }
     }
 
-    private IEnumerator Animate()
+
+    void IPointerEnterHandler()
+    {
+        Border.enabled = true;  
+    }
+
+    void IPointerExitHandler()
+    {
+        Border.enabled = false;
+    }
+
+    public IEnumerator Animate()
     {
         available = false;
         for (int i = 0;i < Border_Frames.Count; i++)
