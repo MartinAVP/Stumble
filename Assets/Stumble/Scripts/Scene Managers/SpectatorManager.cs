@@ -12,6 +12,8 @@ public class SpectatorManager : MonoBehaviour
     private Dictionary<int, int> spectating = new Dictionary<int, int>();
     private int playerCount;
 
+    private GameController gameController;
+
     public static SpectatorManager Instance { get; private set; }
     public bool initialized { get; private set; }
 
@@ -33,9 +35,25 @@ public class SpectatorManager : MonoBehaviour
 
     private async Task setup()
     {
-        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.lookingForSpectator == false)
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
         {
             await Task.Delay(1);
+        }
+        gameController = GameController.Instance;
+
+        if(gameController.gameState == GameState.Race)
+        {
+            while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.lookingForSpectator == false)
+            {
+                await Task.Delay(1);
+            }
+        }
+        else if (gameController.gameState == GameState.Arena)
+        {
+            while (ArenamodeManager.Instance == null || ArenamodeManager.Instance.enabled == false || ArenamodeManager.Instance.lookingForSpectator == false)
+            {
+                await Task.Delay(1);
+            }
         }
 
         // Once it finds it initialize the scene

@@ -11,7 +11,14 @@ public class Checkpoint : MonoBehaviour
         {
             // Which player triggered it?
             PlayerData data = PlayerDataHolder.Instance.GetPlayerData(other.GetComponent<PlayerInput>());
-            CheckpointManager.Instance.ReachCheckpoint(data, this.gameObject);
+            if(GameController.Instance.gameState == GameState.Race)
+            {
+                CheckpointManager.Instance.ReachCheckpoint(data, this.gameObject);
+            }
+/*            if(GameController.Instance.gameState == GameState.Arena)
+            {
+                ArenamodeManager.Instance.PlayerOnKillZone(data.playerInScene);
+            }*/
         }
     }
 }
