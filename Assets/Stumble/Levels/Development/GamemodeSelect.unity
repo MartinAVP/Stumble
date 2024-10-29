@@ -947,6 +947,7 @@ MonoBehaviour:
   FirstSelectedItem: {fileID: 1332072741}
   eventSystem: {fileID: 603972403}
   hostUsingController: 0
+  giveHostCursorAccess: 1
 --- !u!1 &373404248
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,7 +1466,6 @@ GameObject:
   m_Component:
   - component: {fileID: 882810259}
   - component: {fileID: 882810258}
-  - component: {fileID: 882810257}
   - component: {fileID: 882810260}
   m_Layer: 0
   m_Name: Main Camera
@@ -1474,14 +1474,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &882810257
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 882810256}
-  m_Enabled: 1
 --- !u!20 &882810258
 Camera:
   m_ObjectHideFlags: 0
@@ -2525,6 +2517,7 @@ MonoBehaviour:
   sceneCameraType: 2
   lockMovementOnSpawn: 0
   UIEventSystem: {fileID: 603972402}
+  finishedSystemInitializing: 0
 --- !u!114 &1261205137
 MonoBehaviour:
   m_ObjectHideFlags: 0

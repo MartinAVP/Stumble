@@ -3,18 +3,17 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
 
-/*
-[CustomEditor(typeof(ExperimentalPlayerManager))]
-public class PlayerManagerEditor : Editor
+//[CustomEditor(typeof(ExperimentalPlayerManager))]
+/*public class PlayerManagerEditor : Editor
 {
-    public override void OnInspectorGUI()
+*//*    public override void OnInspectorGUI()
     {
         ExperimentalPlayerManager myScript = (ExperimentalPlayerManager)target;
 
         // Draw default inspector fields
         DrawDefaultInspector();
 
-        myScript.alwaysVisibleValue1 = EditorGUILayout.FloatField("Always Visible Value 1", myScript.alwaysVisibleValue1);
+*//*        myScript.alwaysVisibleValue1 = EditorGUILayout.FloatField("Always Visible Value 1", myScript.alwaysVisibleValue1);
         myScript.alwaysVisibleValue2 = EditorGUILayout.FloatField("Always Visible Value 2", myScript.alwaysVisibleValue2);*//*
 
         // Conditional logic to show/hide additional fields
@@ -31,6 +30,5 @@ public class PlayerManagerEditor : Editor
         {
             EditorUtility.SetDirty(myScript);
         }
-    }
-}
-*/
+    }*//*
+}*/

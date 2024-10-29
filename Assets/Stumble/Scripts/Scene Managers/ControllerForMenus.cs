@@ -1,6 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
@@ -14,6 +13,7 @@ public class ControllerForMenus : MonoBehaviour
     [SerializeField] public MultiplayerEventSystem eventSystem;
 
     public bool hostUsingController;
+    public bool giveHostCursorAccess = true;
     public static ControllerForMenus Instance { get; private set; }
 
     private void Awake()
@@ -32,12 +32,37 @@ public class ControllerForMenus : MonoBehaviour
 
     void Start()
     {
+        setup();
+    }
+
+    private async Task setup()
+    {
+        // Note: This system relies on the Main Menu UI Manager & Player Data Manager.
+        // If any of these components is missing it will not work.
+        while (MainMenuUIManager.Instance == null || MainMenuUIManager.Instance.enabled == false || MainMenuUIManager.Instance.initialized == false
+            || PlayerDataManager.Instance == null || PlayerDataManager.Instance.enabled == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Controller For Menus...         [Controller for Menus]");
+        InitializeUIController();
+        return;
+    }
+
+    private void InitializeUIController()
+    {
         playerDataManager = PlayerDataManager.Instance;
+        playerInputManager.onPlayerJoined += AddPlayer;
 
         if (playerDataManager != null)
         {
             //Debug.Log(playerDataManager.GetPlayers().Count);
-            if(playerDataManager.GetPlayers().Count > 0)
+            if (playerDataManager.GetPlayers().Count > 0)
             {
                 //PlayerInput player = playerDataManager.GetPlayerData(0).GetInput();
                 if (playerDataManager.GetPlayerData(0).GetInput().currentControlScheme == "Controller")
@@ -48,14 +73,11 @@ public class ControllerForMenus : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        playerInputManager.onPlayerJoined += AddPlayer;
-    }
-
     private void OnDisable()
     {
-        playerInputManager.onPlayerJoined -= AddPlayer;
+        if (playerInputManager != null) {
+            playerInputManager.onPlayerJoined -= AddPlayer;
+        }
     }
 
     private void AddPlayer(PlayerInput player)
@@ -72,8 +94,11 @@ public class ControllerForMenus : MonoBehaviour
             }
             else
             {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
+                if (giveHostCursorAccess)
+                {
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.None;
+                }
             }
         }
     }

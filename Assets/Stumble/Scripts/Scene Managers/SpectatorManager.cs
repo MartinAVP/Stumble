@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +12,7 @@ public class SpectatorManager : MonoBehaviour
     private int playerCount;
 
     public static SpectatorManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -24,9 +26,30 @@ public class SpectatorManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        setup();
     }
 
-    private void Start()
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.initialized == false)
+        {
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(2);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Spectator Manager...         [Spectator Manager]");
+        initialized = true;
+
+        InitializeManager();
+        return;
+    }
+
+    private void InitializeManager()
     {
         playerCount = PlayerDataManager.Instance.GetPlayers().Count;
 
@@ -36,6 +59,7 @@ public class SpectatorManager : MonoBehaviour
 
     private void Update()
     {
+        if (!initialized) { return; }
         foreach (KeyValuePair<int, int> kvp in spectating)
         {
             //Debug.Log($"Key: {kvp.Key}, Value: {kvp.Value}");
