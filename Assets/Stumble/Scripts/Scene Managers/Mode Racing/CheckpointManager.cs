@@ -13,8 +13,8 @@ public class CheckpointManager : MonoBehaviour
     public bool initialized { get; private set; }
 
     // Singleton
-    [Header("Debug")]
-    [SerializeField] private bool debug = false;
+/*    [Header("Debug")]
+    [SerializeField] private bool debug = false;*/
     //[SerializeField] private Material checkPointVisualizerMaterial;
 
     private void Awake()
@@ -29,7 +29,7 @@ public class CheckpointManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

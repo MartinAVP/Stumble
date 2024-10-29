@@ -43,7 +43,7 @@ public class PlayerDataManager : MonoBehaviour
 
         //SceneManager.sceneLoaded += OnSceneSwitch;
         //players = new List<PlayerData>();
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

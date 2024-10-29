@@ -35,7 +35,7 @@ public class RacemodeUIManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
