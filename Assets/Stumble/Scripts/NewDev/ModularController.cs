@@ -31,7 +31,7 @@ public class ModularController : MonoBehaviour
         // Set the ID of Level to -1. Meaning Menu, no level
         levelId = -1;
     }
-    
+/*    
     private void OnGUI()
     {
         // Set the position and size of the button
@@ -40,7 +40,7 @@ public class ModularController : MonoBehaviour
             InitializeParty();
             //Debug.Log("Select Random Gamemodes");
         }
-    }
+    }*/
 
     /// <summary>
     ///  Initialize Party starts the main gamemode with preselected gamemode Quantity
@@ -66,6 +66,9 @@ public class ModularController : MonoBehaviour
             // Load Podium Scene
             Debug.LogError("Loading Podium Scene");
             SceneManager.LoadScene("Podium");
+
+            // Reset Level ID
+            levelId = 0;
             return;
         }
 

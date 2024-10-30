@@ -184,6 +184,18 @@ public class PodiumManager : MonoBehaviour
         yield return new WaitForSeconds(20f);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
+
+        if(ModularController.Instance != null)
+        {
+            // Reset all player Points
+            foreach(PlayerData data in PlayerDataHolder.Instance.GetPlayers())
+            {
+                data.points = 0;
+            }
+
+
+        }
+
         SceneManager.LoadScene("GamemodeSelect");
     }
 
