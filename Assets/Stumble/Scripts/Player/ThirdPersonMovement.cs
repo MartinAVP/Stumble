@@ -187,7 +187,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
         }
-        else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
+        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
         {
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
             cam = Camera.main.transform;

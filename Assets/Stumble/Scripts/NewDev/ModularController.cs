@@ -65,6 +65,7 @@ public class ModularController : MonoBehaviour
         {
             // Load Podium Scene
             Debug.LogError("Loading Podium Scene");
+            SceneManager.LoadScene("Podium");
             return;
         }
 

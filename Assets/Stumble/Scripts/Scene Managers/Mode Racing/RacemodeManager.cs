@@ -251,43 +251,6 @@ public class RacemodeManager : MonoBehaviour
 
     private void LockPlayersMovement(bool value)
     {
-/*        if (PlayerDataHolder.Instance != null)
-        {
-            Debug.Log("Locking in " + PlayerDataHolder.Instance.GetPlayers().Count);
-            if (value)
-            {
-                foreach (PlayerData data in PlayerDataHolder.Instance.GetPlayers())
-                {
-                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
-                }
-            }
-            else
-            {
-                foreach (PlayerData data in PlayerDataHolder.Instance.GetPlayers())
-                {
-                    data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = false;
-                }
-            }
-        }
-        else // No Player Data Manager
-        {
-            ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
-
-            if (value)
-            {
-                foreach (ThirdPersonMovement player in players)
-                {
-                    player.lockMovement = true;
-                }
-            }
-            else
-            {
-                foreach (ThirdPersonMovement player in players)
-                {
-                    player.lockMovement = false;
-                }
-            }
-        }*/
         ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
 
         if (value)

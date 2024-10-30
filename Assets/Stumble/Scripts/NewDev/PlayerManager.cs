@@ -23,7 +23,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private bool kickPlayerOnDisconntect = false;      // Kick players when they leave from the game
-    [SerializeField] private SceneCameraType sceneCameraType;   
+    [SerializeField] public SceneCameraType sceneCameraType;   
     [Space]
 
     // UI
@@ -86,6 +86,13 @@ public class PlayerManager : MonoBehaviour
                     await Task.Delay(1);
                 }
                 Debug.Log("Lobby Manager Found           [Player Manager]");
+                break;
+            case GameState.Podium:
+/*                while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false)
+                {
+                    await Task.Delay(1);
+                }*/
+                Debug.Log("Podium Manager Found           [Player Manager]");
                 break;
             default:
                 Debug.LogError("Player Manager has found an invalid game state          [Player Manager]");
