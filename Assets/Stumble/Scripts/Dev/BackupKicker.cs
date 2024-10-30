@@ -14,10 +14,11 @@ public class BackupKicker : MonoBehaviour
 
     public List<GameObject> players = new List<GameObject>();
 
-    [HideInInspector] public bool LockKicker = false;
-
     private PlayerDataHolder playerDataHolder;
     private PlayerInputManager playerInputManager;
+
+    [HideInInspector] public bool LockKicker = false;
+    [HideInInspector] public bool joiningPlayers = false;
 
     public static BackupKicker Instance { get; private set; }
     public bool initialized { get; private set; }
@@ -54,7 +55,7 @@ public class BackupKicker : MonoBehaviour
 
     public void StartMultiplayer()
     {
-
+        joiningPlayers = true;
         PlayerDataManagerInitialize();
         startJoiningPlayers();
     }
@@ -92,6 +93,8 @@ public class BackupKicker : MonoBehaviour
 
     private void FinalizeInitialization()
     {
+        joiningPlayers = false;
+
         endJoiningPlayers();
         foreach (var player in players)
         {
@@ -223,6 +226,7 @@ class BackupKickerEditor : Editor
     {
         DrawDefaultInspector();
 
+        BackupKicker kicker = target.GetComponent<BackupKicker>();
 /*        if (GUILayout.Button("Start Player Joining System"))
         {
             if (Application.isPlaying)
@@ -233,30 +237,36 @@ class BackupKickerEditor : Editor
 
         }*/
         
-        if(target.GetComponent<BackupKicker>().LockKicker == true)
+        if(kicker.LockKicker)
         {
-            if(target.GetComponent<BackupKicker>().playerFaker > 1)
+            if(kicker.playerFaker > 1)
             {
-                if (GUILayout.Button("Start Player Joining"))
+                if (!kicker.joiningPlayers)
                 {
-                    if (Application.isPlaying)
+                    if (GUILayout.Button("Start Player Joining"))
                     {
-                        target.GetComponent<BackupKicker>().StartMultiplayer();
-                    }
-                    //Debug.Log("It's alive: " + target);
+                        if (Application.isPlaying)
+                        {
+                            kicker.StartMultiplayer();
+                        }
+                        //Debug.Log("It's alive: " + target);
 
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Start Game Scene"))
+                    {
+                        if (Application.isPlaying)
+                        {
+                            kicker.StartGameScene();
+                        }
+                        //Debug.Log("It's alive: " + target);
+
+                    }
                 }
 
-                if (GUILayout.Button("Start Game Scene"))
-                {
-                    if (Application.isPlaying)
-                    {
-                        target.GetComponent<BackupKicker>().StartGameScene();
-                    }
-                    //Debug.Log("It's alive: " + target);
-
-                }
-                int players = target.GetComponent<BackupKicker>().playersActive;
+                int players = kicker.playersActive;
                 GUILayout.Label("Debug Information");
                 GUILayout.Label("Current Have: " + players + " players joined");
 
@@ -267,7 +277,7 @@ class BackupKickerEditor : Editor
                 {
                     if (Application.isPlaying)
                     {
-                        target.GetComponent<BackupKicker>().StartSinglePlayer();
+                        kicker.StartSinglePlayer();
                     }
                     //Debug.Log("It's alive: " + target);
 

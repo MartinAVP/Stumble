@@ -14,15 +14,14 @@ using Debug = UnityEngine.Debug;
 public class ArenamodeManager : MonoBehaviour
 {
     private Stopwatch stopwatch = new Stopwatch();
-    public SortedDictionary<float, PlayerData> positions = new SortedDictionary<float, PlayerData>();
+    public SortedDictionary<int, PlayerData> positions = new SortedDictionary<int, PlayerData>();
 
     public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
     public event Action onLastManStanding;
     public event Action onCountdownStart;
     public event Action onArenaStart;
 
-    private bool foundCinematicController = false;
-    private bool foundRaceUIManager = false;
+    private bool gameEnding = false;
 
     [Range(1, 8)]
     [SerializeField] private int Lives;
@@ -154,7 +153,7 @@ public class ArenamodeManager : MonoBehaviour
         if (GameMusicController.Instance != null && GameMusicController.Instance.enabled == true)
         {
             gameMusicController = GameMusicController.Instance;
-            gameMusicController.setup();
+            //gameMusicController.setup();
             Debug.Log("Found Game Music Controller...         [Arenamode Manager]");
         }
         else
@@ -162,7 +161,10 @@ public class ArenamodeManager : MonoBehaviour
             Debug.LogWarning("Game Music Controller not Found, Skipping...    [Arenamode Manager]");
         }
 
+        Debug.Log("End Task #1");
+        AddPlayersToDictionary();
         InitializeManager();
+        Debug.Log("End Task #2");
         return;
     }
 
@@ -171,6 +173,7 @@ public class ArenamodeManager : MonoBehaviour
         // Lock all players in place
         Debug.Log("PrePreTask");
         LockPlayersMovement(true);
+
 
         Debug.Log("PreTask");
         StartCoroutine(MainRaceController());
@@ -236,9 +239,6 @@ public class ArenamodeManager : MonoBehaviour
     {
         // Invoke Event
         onArenaStart?.Invoke();
-        Debug.Log("Pre - Dic");
-        AddPlayersToDictionary();
-        Debug.Log("Post - Dic");
 
         // Start the Timer
         stopwatch.Start();
@@ -315,52 +315,14 @@ public class ArenamodeManager : MonoBehaviour
         }
     }
 
-    public void ReachFinishLine(PlayerData player)
-    {
-
-        // Check if the player has already finished
-        foreach (PlayerData data in positions.Values)
-        {
-            // Player has already reached the finish line
-            if (data == player) return;
-        }
-
-        // Add player to the finish
-        positions.Add(GetElapsedTime(), player);
-        UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
-
-        // Freeze player position
-        // Unprone
-        if (player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().isProne)
-        {
-            player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().toggleProne(false);
-        }
-        // Lock Movement
-        player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
-
-        // Check if the last player reached the checkpoint
-        if (positions.Count == PlayerDataHolder.Instance.GetPlayers().Count)
-        {
-            // End
-            // Display the Scores
-            //Debug.Log("Race Values: " + positions.Count);
-            scoreboardManager.UpdatePositionsFromTime(positions);
-            StartCoroutine(EndGameDelay());
-            onCompleteFinish?.Invoke(positions);
-        }
-
-        // Add a Listener to when the player wants to start spectating
-        player.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(startSpectating);
-    }
-
     private void AddPlayersToDictionary()
     {
         // Add Player Lives
         foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
         {
-            playerLives.Add(player.input.playerIndex, Lives);
+            playerLives.Add(player.input.playerIndex, Lives + 1);
         }
-        Debug.Log(playerLives.Count + " in the dictionary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        //Debug.Log(playerLives.Count + " in the dictionary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
     private PlayerUIComponent uiComponent;
@@ -442,34 +404,47 @@ public class ArenamodeManager : MonoBehaviour
 
         // Remove a Life;
         if (PlayerDataHolder.Instance == null) { UnityEngine.Debug.LogError("Arena completely relies on player data holder"); return; }
-
+        Debug.Log(playerLives.Count + "Dictionary Size #2");
 
         int id = playerObj.GetComponent<PlayerInput>().playerIndex;
-        Debug.Log(id);
-        //playerLives[id] = playerLives[id] - 1;
-        UnityEngine.Debug.Log("Player #" + id + " now has " + playerLives[id]);
-        int currentLives = playerLives[playerObj.GetComponent<PlayerInput>().playerIndex];
+        //Debug.Log(id);
+        // Remove a Life
+        playerLives[id] = playerLives[id] - 1;
+        int currentLives = playerLives[id];
+
+        for (int i = 0; i < playerLives.Count; i++) {
+            Debug.Log("LOGGER: Player #" + i + " now has " + playerLives[i] + " lives");
+        }
 
         // Update UI
         //ArenamodeUIManager.Instance.UpdatePlayersAlive(GetPlayersAlive().ToString());
+        Debug.Log("Player #" + id + " now has " + playerLives[id] + " lives");
 
         // End Game Check
         if (GetPlayersAlive() == 1)
         {
-            positions.Add(0, PlayerDataHolder.Instance.GetPlayerData(GetLastPlayer()));
-            StartCoroutine(EndGameDelay());
-            onLastManStanding?.Invoke();
+            Debug.Log("There is 1 player left");
+            if (!gameEnding)
+            {
+                gameEnding = true;
+                positions.Add(0, PlayerDataHolder.Instance.GetPlayerData(GetLastPlayer()));
+                scoreboardManager.UpdatePositions(positions);
+                StartCoroutine(EndGameDelay());
+                onLastManStanding?.Invoke();
+            }
         }
 
         if (IsLastPlayerStanding())
         {
+            Debug.Log("This player is the last one standing");
             Respawn(playerObj);
             return;
         }
 
-        if (currentLives <= 0)
+        // Player's Last Life.
+        if (playerLives[id] <= 0)
         {
-            //Debug.Log("Making Player #" + id + "a spectator");
+            Debug.Log("Making Player #" + id + "a spectator");
             PlayerData data = PlayerDataHolder.Instance.GetPlayerData(playerObj.GetComponent<PlayerInput>());
 
             Debug.Log(data.GetPlayerInScene().name);
@@ -488,6 +463,44 @@ public class ArenamodeManager : MonoBehaviour
             Respawn(playerObj);
         }
     }
+
+/*    public void ReachFinishLine(PlayerData player)
+    {
+
+        // Check if the player has already finished
+        foreach (PlayerData data in positions.Values)
+        {
+            // Player has already reached the finish line
+            if (data == player) return;
+        }
+
+        // Add player to the finish
+        positions.Add(GetElapsedTime(), player);
+        UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
+
+        // Freeze player position
+        // Unprone
+        if (player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().isProne)
+        {
+            player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().toggleProne(false);
+        }
+        // Lock Movement
+        player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
+
+        // Check if the last player reached the checkpoint
+        if (positions.Count == PlayerDataHolder.Instance.GetPlayers().Count)
+        {
+            // End
+            // Display the Scores
+            //Debug.Log("Race Values: " + positions.Count);
+            scoreboardManager.UpdatePositions(positions);
+            StartCoroutine(EndGameDelay());
+            onCompleteFinish?.Invoke(positions);
+        }
+
+        // Add a Listener to when the player wants to start spectating
+        player.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(startSpectating);
+    }*/
 
     public void Respawn(GameObject playerObject)
     {
