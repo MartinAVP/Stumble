@@ -160,14 +160,14 @@ public class PodiumManager : MonoBehaviour
 
         LockPlayersMovement(false);
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
         yield return new WaitForSeconds(.5f);
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
 
         if (cinematicController != null)
         {
             Debug.Log("Initializing Cinematic");
             cinematicController.StartTimeline();
-            yield return new WaitForSeconds(cinematicController.GetTimelineLenght.ConvertTo<int>());
+            yield return new WaitForSeconds(cinematicController.GetTimelineLenght.ConvertTo<int>() + .2f);
             LockPlayersMovement(false);
         }
 
