@@ -88,10 +88,12 @@ public class PlayerManager : MonoBehaviour
                 Debug.Log("Lobby Manager Found           [Player Manager]");
                 break;
             case GameState.Podium:
-/*                while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false)
+                while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false ||
+                    PodiumManager.Instance.lookingForPlayer == false)
                 {
+                    Debug.Log(PodiumManager.Instance.gameObject.name + " " + PodiumManager.Instance.enabled + " " + PodiumManager.Instance.initialized + " " + PodiumManager.Instance.lookingForPlayer);
                     await Task.Delay(1);
-                }*/
+                }
                 Debug.Log("Podium Manager Found           [Player Manager]");
                 break;
             default:

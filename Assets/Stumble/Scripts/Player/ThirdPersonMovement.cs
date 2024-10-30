@@ -221,6 +221,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         isFloored = _grounded;
     }
 
+    private void LateUpdate()
+    {
+        if(this.transform.position.y < -50)
+        {
+            controller.enabled = false;
+            this.transform.position = new Vector3(0, 20, 0);
+            verticalVelocity = 0;
+            horizontalVelocity = 0;
+            toggleProne(false);
+            controller.enabled = true;
+        }
+    }
+
     private void OnDestroy()
     {
         MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.Final, Movement);

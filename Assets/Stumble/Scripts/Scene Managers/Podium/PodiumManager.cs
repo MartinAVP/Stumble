@@ -21,7 +21,6 @@ public class PodiumManager : MonoBehaviour
 
     //PlayerDataManager dataManager;
 
-    public static PodiumManager Instance { get; private set; }
     public bool initialized { get; private set; }
 
     public bool lookingForPlayer { get; private set; } = false;
@@ -39,6 +38,7 @@ public class PodiumManager : MonoBehaviour
     private PodiumUIManager podiumUIManager;
     private CinematicController cinematicController;
     private PodiumMusicController podiumMusicController;
+    public static PodiumManager Instance { get; private set; }          
 
     private void Awake()
     {
@@ -51,7 +51,10 @@ public class PodiumManager : MonoBehaviour
         {
             Instance = this;
         }
+    }
 
+    private void Start()
+    {
         Task Setup = setup();
     }
 
@@ -76,7 +79,7 @@ public class PodiumManager : MonoBehaviour
         lookingForPlayer = true;
         while (PlayerManager.Instance == null || PlayerManager.Instance.enabled == false || PlayerManager.Instance.initialized == false)
         {
-            await Task.Delay(2);
+            await Task.Delay(1);
         }
         lookingForPlayer = false;
         playerManager = PlayerManager.Instance;
@@ -206,6 +209,7 @@ public class PodiumManager : MonoBehaviour
 
     private void CalculateFinalPositionPlacing()
     {
+        // Calculate
         foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
         {
             positions.Add(player, player.points);
