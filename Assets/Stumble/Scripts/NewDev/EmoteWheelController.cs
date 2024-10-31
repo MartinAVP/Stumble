@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,14 +10,18 @@ public class EmoteWheelController : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     private string controlScheme;
     [SerializeField] private GameObject pointerCenter;
-    [SerializeField] private Transform viewer;
     [SerializeField] private Transform[] wheelPieces;
+    [SerializeField] private GameObject emoteWheelPanel;
+
+    public event Action<int> PlayEmote;
 
     private bool isActive = false;
+    public int currentEmoteID = 0;
 
     private void Start()
     {
-        controlScheme = this.GetComponent<PlayerInput>().currentControlScheme;
+        emoteWheelPanel.SetActive(false);
+        controlScheme = this.GetComponent<PlayerInput>().currentControlScheme; //
 
         if (controlScheme == "Keyboard")
         {
@@ -30,16 +35,11 @@ public class EmoteWheelController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if(!isActive) { return; }
         //Debug.Log(playerCamera.ScreenToViewportPoint(Input.mousePosition));
         Debug.DrawRay(pointerCenter.transform.GetComponent<RectTransform>().anchoredPosition, playerCamera.ScreenToViewportPoint(Input.mousePosition), Color.red);
 
         Vector3 targetDir = (playerCamera.ScreenToViewportPoint(Input.mousePosition) - new Vector3(.5f, .5f, 0f)) * 2;
-
-        Vector3 cross = Vector3.Cross(targetDir, playerCamera.transform.forward);
-        viewer.GetComponent<RectTransform>().anchoredPosition = cross;
-        //Debug.Log(targetDir);
-        //float Angle = Vector2.Angle(pointerCenter.transform.position, targetDir);
-        //Debug.Log(Angle(targetDir));
 
         Quaternion quaternion = Quaternion.identity;
         quaternion.eulerAngles = new Vector3(0, 0, Angle(targetDir) * -1);
@@ -53,19 +53,26 @@ public class EmoteWheelController : MonoBehaviour
 
         //wheelPieces[GetSelectedID(Angle(targetDir))].GetComponent<Image>().color = Color.red;
         wheelPieces[GetSelected(Angle(targetDir), wheelPieces.Length)].GetComponent<Image>().color = Color.red;
+        currentEmoteID = GetSelected(Angle(targetDir), wheelPieces.Length);
     }
 
     public void EmoteWheelKeybind(InputAction.CallbackContext callback)
     {
         if (callback.performed)
         {
-
+            emoteWheelPanel.SetActive(true);
         }
 
         if (callback.canceled)
         {
-
+            emoteWheelPanel.SetActive(false);
+            PlayEmote?.Invoke(currentEmoteID);
         }
+    }
+
+    public void EmoteWheelQuickAccess(InputAction.CallbackContext callback)
+    {
+
     }
 
 

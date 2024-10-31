@@ -2167,7 +2167,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 443923669}
   pointerCenter: {fileID: 258685554}
-  viewer: {fileID: 1179162560}
   wheelPieces:
   - {fileID: 1127340951}
   - {fileID: 2085260179}
@@ -2177,6 +2176,7 @@ MonoBehaviour:
   - {fileID: 1787223954}
   - {fileID: 911385862}
   - {fileID: 715430943}
+  emoteWheelPanel: {fileID: 2083396245}
 --- !u!1 &823586885
 GameObject:
   m_ObjectHideFlags: 0
@@ -2929,6 +2929,46 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.0000000066382264
       objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionId
+      value: 093a83a5-1565-48ae-8efa-85110caae65f
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionName
+      value: Player/Emote Wheel[/Keyboard/b]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 757212564}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: EmoteWheelKeybind
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: EmoteWheelController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3133056857776034522, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6630179507401876442, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
       propertyPath: m_Depth
       value: -4
@@ -3018,33 +3058,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9135386031132358245, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 757212564}
-    - targetCorrespondingSourceObject: {fileID: 7309950206181849037, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 962091939}
   m_SourcePrefab: {fileID: 100100000, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
---- !u!1 &962091938 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7309950206181849037, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
-  m_PrefabInstance: {fileID: 962091937}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &962091939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 962091938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4049e3ce09095a74db1cf907cf196790, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 962091942}
---- !u!95 &962091942 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 4540238675680927351, guid: c80181df3253f3d4384514588b8abaf8, type: 3}
-  m_PrefabInstance: {fileID: 962091937}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &981703833
 GameObject:
   m_ObjectHideFlags: 0
@@ -4985,7 +4999,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1916347303}
   serializedVersion: 2
-  m_LocalRotation: {x: 3e-45, y: 1e-45, z: -0, w: 1}
+  m_LocalRotation: {x: -1e-45, y: 1e-45, z: 0, w: 1}
   m_LocalPosition: {x: 14.599998, y: 8.2, z: 20.300003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
