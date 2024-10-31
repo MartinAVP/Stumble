@@ -246,6 +246,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             this.transform.position = new Vector3(0, 20, 0);
             verticalVelocity = 0;
             horizontalVelocity = 0;
+            CancelVelocity();
             toggleProne(false);
             controller.enabled = true;
         }
@@ -282,6 +283,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Check if player is prone, unprone if proned;
         if (isProne) {
             //Debug.Log("Un Toggle Prone");
+            // Cancel velocity when standing up
+            CancelVelocity();
             toggleProne(false);
             return; 
         }
@@ -799,9 +802,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         else // Stand Up
         {
-            _bumpHorizontalVelocity = Vector3.zero;
-            horizontalVelocity = 0;
-
             // Check if the player is already Diving and Prevent from Diving Again;
             if (isProne)
             {
@@ -827,6 +827,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
             playerHeight = controller.height;
         }
+    }
+
+    private void CancelVelocity()
+    {
+        _bumpHorizontalVelocity = Vector3.zero;
+        horizontalVelocity = 0;
     }
 
     // Slap Force
@@ -873,7 +879,11 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
-        if(isProne) { toggleProne(false); }
+        if(isProne) 
+        { 
+            toggleProne(false); 
+        }
+        diveWasCanceled = false;
         Vector3 bumpVelocity = direction * magnitude;
 
         _bumpHorizontalVelocity += new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
