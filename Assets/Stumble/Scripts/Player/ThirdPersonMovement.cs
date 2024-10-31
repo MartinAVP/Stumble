@@ -317,6 +317,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Move with base after all other movement seems to yield a slightly smoother result? - Michael
         MoveWithBase();
 
+        print("player pos " + transform.position.y);
+
         // Slide Prototype Logic - Not Working.
 /*        Vector3 slideVector = groundedVector;
         // Not on a surface
