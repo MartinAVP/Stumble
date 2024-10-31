@@ -685,17 +685,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                 if (cancelVelocity)
                 {
                     Vector3 platformVelocity = currentPlatform.LinearVelocity;
+                    float platformVerticalVelocity = platformVelocity.y;
                     
                     if(platformVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
                         platformVelocity = platformVelocity.normalized * Vector3.Dot(_bumpHorizontalVelocity.normalized, platformVelocity);
 
                     _bumpHorizontalVelocity -= platformVelocity;
+                    verticalVelocity -= platformVerticalVelocity;
                 }
             }
             else if(currentPlatform != null)
             {
-                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
                 _bumpHorizontalVelocity += platformVelocity;
+                verticalVelocity += platformVelocity.y;
                 currentPlatform = null;
             }
 
@@ -704,8 +706,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             if(currentPlatform != null)
             {
-                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
                 _bumpHorizontalVelocity += platformVelocity;
+                verticalVelocity += platformVelocity.y;
             }
 
             currentPlatform = null;
