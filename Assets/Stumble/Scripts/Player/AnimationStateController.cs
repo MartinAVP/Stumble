@@ -51,7 +51,7 @@ public class AnimationStateController : MonoBehaviour
         thirdPersonMovement.OnSlap += Slap;
         if(emoteWheel != null)
         {
-            emoteWheel.PlayEmote += 
+            emoteWheel.PlayEmote += PlayEmote;
         }
         animator.SetFloat("slideFactor", slideFactor);
     }
@@ -102,7 +102,11 @@ public class AnimationStateController : MonoBehaviour
 
     private void PlayEmote(int id)
     {
-        animator.SetFloat("EmoteID", id);
+/*        animator.SetBool("isPerformingEmote", false);*/
+        animator.SetInteger("EmoteID", id);
+        //animator.SetBool("isPerformingEmote", true);
+        animator.SetTrigger("ExecuteEmote");
+
     }
 
     private void CalculateExtraFactors()

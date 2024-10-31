@@ -52,8 +52,12 @@ public class EmoteWheelController : MonoBehaviour
         }
 
         //wheelPieces[GetSelectedID(Angle(targetDir))].GetComponent<Image>().color = Color.red;
-        wheelPieces[GetSelected(Angle(targetDir), wheelPieces.Length)].GetComponent<Image>().color = Color.red;
-        currentEmoteID = GetSelected(Angle(targetDir), wheelPieces.Length);
+        int id = GetSelected(Angle(targetDir), wheelPieces.Length);
+
+        wheelPieces[id].GetComponent<Image>().color = Color.red;
+        currentEmoteID = id;
+
+        Debug.Log(id);
     }
 
     public void EmoteWheelKeybind(InputAction.CallbackContext callback)
@@ -61,10 +65,12 @@ public class EmoteWheelController : MonoBehaviour
         if (callback.performed)
         {
             emoteWheelPanel.SetActive(true);
+            isActive = true;
         }
 
         if (callback.canceled)
         {
+            isActive = false;
             emoteWheelPanel.SetActive(false);
             PlayEmote?.Invoke(currentEmoteID);
         }
