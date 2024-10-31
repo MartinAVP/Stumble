@@ -20,10 +20,6 @@ public class GameMusicController : MonoBehaviour
     public bool initialized { get; private set; } = false;
 
     // Start is called before the first frame update
-    void Start()
-    {
-
-    }
 
     private void Singleton()
     {
@@ -34,30 +30,18 @@ public class GameMusicController : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(this);
         }
     }
 
     private void Awake()
     {
         Singleton();
-        Task Setup = setup();
     }
 
-    private async Task setup()
-    {
-        // Wait for these values GameController needs to exist and be enabled.
-        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.initialized == false)
-        {
-            // Await 5 ms and try finding it again.
-            // It is made 5 seconds because it is
-            // a core gameplay mechanic.
-            await Task.Delay(1);
-        }
+    public void setup() {
 
         // Once it finds it initialize the scene
         Debug.Log("Initializing Game Music Manager...         [Game Music Manager]");
-        //GameController.Instance.startSystems += LateStart;
 
         RacemodeManager.Instance.onRaceStart += InitializeGameMusic;
         RacemodeManager.Instance.onCountdownStart += InitializeCountdown;

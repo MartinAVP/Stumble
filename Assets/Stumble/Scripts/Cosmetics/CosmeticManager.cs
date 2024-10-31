@@ -54,7 +54,7 @@ public class CosmeticManager : MonoBehaviour
 
     private void AddPlayer(PlayerInput player)
     {
-        PlayerDataManager playerDataManager = PlayerDataManager.Instance; 
+        PlayerDataHolder playerDataManager = PlayerDataHolder.Instance; 
         // Player Data Manager Exists
         if (playerDataManager != null)
         {
@@ -64,8 +64,11 @@ public class CosmeticManager : MonoBehaviour
         else // No Data Manager
         {
             // Set Default color to all players
-            Debug.LogWarning("No Player Data Manager, Using default Color");
-            player.gameObject.transform.parent.GetComponentInChildren<MeshRenderer>().material = colors[0].colorMaterial;
+            if(GameController.Instance != null)
+            {
+                Debug.LogWarning("No Player Data Manager, Using default Color");
+                player.gameObject.transform.parent.GetComponentInChildren<MeshRenderer>().material = colors[0].colorMaterial;
+            }
         }
 
         //Debug.Log("Contents of Dictionary;");
@@ -369,7 +372,7 @@ public class CosmeticManager : MonoBehaviour
     /// <returns></returns>
     private bool IsColorInUse(CosmeticColor color)
     {
-        List<PlayerData> players = PlayerDataManager.Instance.GetPlayers();
+        List<PlayerData> players = PlayerDataHolder.Instance.GetPlayers();
         for (int i = 0; i < players.Count; i++)
         {
             int colorID = players[i].GetCosmeticData().colorIndex;
@@ -548,7 +551,7 @@ public class CosmeticManager : MonoBehaviour
     public void MoveCosmetic(Vector2 value, PlayerInput input)
     {
         //while(value != Vector2.zero) { Debug.Log("Diablo"); }
-        PlayerData data = PlayerDataManager.Instance.GetPlayerData(input);
+        PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
         if(data == null)
         {
             Debug.LogError("The Device is not finding a player attached");

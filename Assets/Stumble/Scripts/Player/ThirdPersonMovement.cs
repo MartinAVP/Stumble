@@ -18,6 +18,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     public event Action OnJump;
     public event Action OnDive;
+    public event Action OnSlap;
 
     #region Horizontal Movement
     [Header("Movement")]
@@ -37,6 +38,15 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float bumpForce = 20f;
     private float bumpUpwardForce = .2f;
     [HideInInspector] public Vector3 _bumpHorizontalVelocity = Vector3.zero;
+    #endregion
+
+    #region Slaping
+    private float slapForce = 10f;
+    private float slapUpWardForce = 1.0f;
+    private float slapDistance = 1.5f;
+    private float slapCooldown = 1.0f;
+
+    private bool canSlap = true;
     #endregion
 
     #region Rotating
@@ -119,6 +129,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         bumpForce = playerMovementSettings.bumpForce;
         bumpUpwardForce = playerMovementSettings.bumpUpwardForce;
 
+        // Slaping
+        slapForce = playerMovementSettings.slapForce;
+        slapUpWardForce = playerMovementSettings.slapUpWardForce;
+        slapDistance = playerMovementSettings.slapDistance;
+        slapCooldown = playerMovementSettings.slapCooldown;
+
         // Roatation
         turnSmoothTime = playerMovementSettings.turnSmoothTime;
 
@@ -188,7 +204,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
         }
-        else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
+        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
         {
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
             cam = Camera.main.transform;
@@ -220,6 +236,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
 
         isFloored = _grounded;
+    }
+
+    private void LateUpdate()
+    {
+        if(this.transform.position.y < -50)
+        {
+            controller.enabled = false;
+            this.transform.position = new Vector3(0, 20, 0);
+            verticalVelocity = 0;
+            horizontalVelocity = 0;
+            toggleProne(false);
+            controller.enabled = true;
+        }
     }
 
     private void OnDestroy()
@@ -272,7 +301,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if(lockMovement) return;
 
         // Prevent Diving when on the ground
-        //if (_grounded) return;
+        if (_grounded) return;
 
         //Debug.Log("Dive");
         // Change Model
@@ -283,6 +312,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             toggleProne(true);
 
             OnDive?.Invoke();
+        }
+    }
+
+    public void Slap(InputAction.CallbackContext context)
+    {
+        if (lockMovement) return;
+
+        if (context.started)
+        {
+            OnSlap?.Invoke();
+            SlapPlayer();
         }
     }
     #endregion
@@ -788,6 +828,38 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             playerHeight = controller.height;
         }
     }
+
+    // Slap Force
+    // Slap Cooldown
+    // Slap Distance
+
+/*      slapForce = playerMovementSettings.slapForce;
+        slapUpWardForce = playerMovementSettings.slapUpWardForce;
+        slapDistance = playerMovementSettings.slapForce;
+        slapCooldown = playerMovementSettings.slapForce;*/
+
+    private void SlapPlayer()
+    {
+        if (!canSlap) { return; }
+        canSlap = false;
+        RaycastHit hit;
+        if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
+        {
+            if (hit.transform.GetComponent<IBumper>() != null)
+            {
+                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
+                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+            }
+        }
+        StartCoroutine(SlapCooldown(slapCooldown));
+    }
+
+    private IEnumerator SlapCooldown(float time)
+    {
+        yield return new WaitForSeconds(time);
+        canSlap = true;
+
+    }
     #endregion
 
     // Interfaces
@@ -801,6 +873,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
+        if(isProne) { toggleProne(false); }
         Vector3 bumpVelocity = direction * magnitude;
 
         _bumpHorizontalVelocity += new Vector3(bumpVelocity.x, 0, bumpVelocity.z);

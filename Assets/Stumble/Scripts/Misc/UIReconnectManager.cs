@@ -12,7 +12,7 @@ public class UIReconnectManager : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerDataManager.Instance.onPlayerInputDeviceDisconnect += OnPlayerDisconnected;
+        //PlayerDataManager.Instance.onPlayerInputDeviceDisconnect += OnPlayerDisconnected;
         PlayerDataManager.Instance.onPlayerInputDeviceReconnect += OnPlayerReconnected;
     }
 
