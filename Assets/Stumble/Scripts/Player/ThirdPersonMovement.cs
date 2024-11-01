@@ -340,8 +340,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         _bumpHorizontalVelocity.y = 0;
 
-        print("Bump velocity: " + _bumpHorizontalVelocity +
-            "Horizontal Velocity: " + horizontalVelocity);
+/*        print("Bump velocity: " + _bumpHorizontalVelocity +
+            "Horizontal Velocity: " + horizontalVelocity);*/
 
         ApplyGravity();
         ApplyVerticalMovement();
@@ -360,7 +360,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Move with base after all other movement seems to yield a slightly smoother result? - Michael
         MoveWithBase();
 
-        print("player pos " + transform.position.y);
+        //print("player pos " + transform.position.y);
 
         // Slide Prototype Logic - Not Working.
 /*        Vector3 slideVector = groundedVector;
@@ -483,7 +483,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Decellerate the player based on multiplier
         else
         {
-            print("Braking: " + actualBraking);
+            //print("Braking: " + actualBraking);
             horizontalVelocity -= actualBraking;
 
             if (horizontalVelocity <= 0.05f)
@@ -715,7 +715,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         if (_grounded == false) { _grounded = controller.isGrounded; };
 
-        print("Is player grounded? " + _grounded);
+        //print("Is player grounded? " + _grounded);
 
         //return _grounded;
     }
