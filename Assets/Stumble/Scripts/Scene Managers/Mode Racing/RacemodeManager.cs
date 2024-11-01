@@ -280,7 +280,10 @@ public class RacemodeManager : MonoBehaviour
         }
 
         // Add player to the finish
-        positions.Add(GetElapsedTime(), player);
+        if (!positions.ContainsValue(player))
+        {
+            positions.TryAdd(GetElapsedTime(), player);
+        }
         UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
 
         // Freeze player position
@@ -301,13 +304,13 @@ public class RacemodeManager : MonoBehaviour
             scoreboardManager.UpdatePositionsFromTime(positions);
             StartCoroutine(EndGameDelay());
             onCompleteFinish?.Invoke(positions);
+
+            return;
         }
 
         // Add a Listener to when the player wants to start spectating
         player.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(startSpectating);
     }
-
-    private PlayerUIComponent uiComponent;
 
     private IEnumerator EndGameDelay()
     {

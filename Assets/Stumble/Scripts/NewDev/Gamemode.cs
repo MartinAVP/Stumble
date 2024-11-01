@@ -10,7 +10,7 @@ public class Gamemode : ScriptableObject
     public string description;
     public GamemodeType type;
     public Texture2D modulePreview;
-    public SceneAsset scene;
+    public string scene;
     public bool disabled;
 }
 
