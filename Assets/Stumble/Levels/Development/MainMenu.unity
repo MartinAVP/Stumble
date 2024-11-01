@@ -2141,6 +2141,51 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &616144049
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 616144051}
+  - component: {fileID: 616144050}
+  m_Layer: 0
+  m_Name: PlayerDataHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &616144050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616144049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904ade058bc8ff34bb798805474f8e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  players: []
+--- !u!4 &616144051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616144049}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1067.5455, y: 545.41064, z: -28.683819}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &681426883
 GameObject:
   m_ObjectHideFlags: 0
@@ -6104,7 +6149,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1936146202}
   - component: {fileID: 1936146201}
-  - component: {fileID: 1936146203}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -6141,19 +6185,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1936146203
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1936146200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1e2c218cdf2832408350fa6a1d4e1c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  players: []
 --- !u!1 &1957871623
 GameObject:
   m_ObjectHideFlags: 0
@@ -6410,9 +6441,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2009228512}
   - component: {fileID: 2009228511}
-  - component: {fileID: 2009228510}
   - component: {fileID: 2009228509}
   - component: {fileID: 2009228513}
+  - component: {fileID: 2009228514}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -6480,33 +6511,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &2009228510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2009228508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fab2a7d83c1e52844bd0ef72a9811b6f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerLayers:
-  - serializedVersion: 2
-    m_Bits: 128
-  - serializedVersion: 2
-    m_Bits: 256
-  - serializedVersion: 2
-    m_Bits: 512
-  - serializedVersion: 2
-    m_Bits: 1024
-  cursorEnabled: 1
-  kickPlayerOnDisconntect: 0
-  sceneCameraType: 2
-  lockMovementOnSpawn: 0
-  UIEventSystem: {fileID: 787255502}
-  finishedSystemInitializing: 0
 --- !u!114 &2009228511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6548,6 +6552,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initializedFinished: 0
+--- !u!114 &2009228514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009228508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f20e4ac20076240bd6141a401a8e6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerLayers:
+  - serializedVersion: 2
+    m_Bits: 128
+  - serializedVersion: 2
+    m_Bits: 256
+  - serializedVersion: 2
+    m_Bits: 512
+  - serializedVersion: 2
+    m_Bits: 1024
+  kickPlayerOnDisconntect: 0
+  sceneCameraType: 2
+  UIEventSystem: {fileID: 0}
+  initialized: 0
 --- !u!1 &2099424829
 GameObject:
   m_ObjectHideFlags: 0
@@ -6928,6 +6957,7 @@ SceneRoots:
   - {fileID: 787255501}
   - {fileID: 1508838398}
   - {fileID: 1936146202}
+  - {fileID: 616144051}
   - {fileID: 745095521}
   - {fileID: 681426886}
   - {fileID: 1590067027}

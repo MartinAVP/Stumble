@@ -21,6 +21,14 @@ public class PlayerMovement : ScriptableObject
     [Range(0f, 5f)]public float bumpUpwardForce = .2f;
     #endregion
 
+    #region Slaping
+    [Header("Slaping")]
+    public float slapForce = 10f;
+    public float slapUpWardForce = 1.0f;
+    public float slapDistance = 1.5f;
+    public float slapCooldown = 1.0f;
+    #endregion
+
     #region Rotating
     [Header("Rotation")]
     public float turnSmoothTime = 0.1f;

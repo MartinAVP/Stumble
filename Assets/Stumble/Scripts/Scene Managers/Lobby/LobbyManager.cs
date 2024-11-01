@@ -11,10 +11,16 @@ public class LobbyManager : MonoBehaviour
     // Start is called before the first frame update
 
     private PlayerInputManager playerInputManager;
+
+    [SerializeField] private List<PlayerLobbySlotUI> playerLobbySlotUi;
+    [SerializeField] private List<LobbyRoom> lobbyRooms = new List<LobbyRoom>();
+
+    public int rooms = 4;
+    [Space]
+    [SerializeField] private GameObject lobbyRoomPrefab;
+
     public static LobbyManager Instance;
-
     [HideInInspector] public bool initialized = false;
-
 
     private void Awake()
     {
@@ -28,32 +34,32 @@ public class LobbyManager : MonoBehaviour
         }
 
         playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        InitializeLobby();
         Task Setup = setup();
     }
-
-/*    public void StartGame()
-    {
-        SceneManager.LoadScene("Lobby");
-    }*/
 
     private async Task setup()
     {
         // Wait for these values GameController needs to exist and be enabled.
-        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
         {
-            // Await 5 ms and try finding it again.
-            // It is made 5 seconds because it is
-            // a core gameplay mechanic.
-            await Task.Delay(140);
+            await Task.Delay(1);
         }
 
         // Once it finds it initialize the scene
         Debug.Log("Initializing Lobby Manager...         [Lobby Manager]");
         initialized = true;
-        //InitializeManager();
+
         return;
     }
 
+    private void InitializeLobby()
+    {
+        for (int i = 0; i < rooms; i++)
+        {
+            SpawnPlayerRoom(i);
+        }
+    }
 
     // Sub to Player Join Event
     private void OnEnable()
@@ -70,9 +76,24 @@ public class LobbyManager : MonoBehaviour
     private void AddPlayer(PlayerInput player)
     {
         GameObject playerObj = player.gameObject;
+        int playerID = player.playerIndex;
+
+        playerLobbySlotUi[playerID].PlayerJoined();
+        lobbyRooms[playerID].SetTextureForRenderCam(playerLobbySlotUi[playerID].camTexture);
+
         playerObj.GetComponent<CharacterController>().enabled = false;
-        playerObj.transform.position = spawns[playerInputManager.playerCount - 1].position;
-        playerObj.transform.rotation = spawns[playerInputManager.playerCount - 1].rotation;
+        playerObj.transform.position = lobbyRooms[playerID].roomSpawn.position;
+        playerObj.transform.rotation = lobbyRooms[playerID].roomSpawn.rotation;
         playerObj.GetComponent<CharacterController>().enabled = true;
+    }
+
+    private void SpawnPlayerRoom(int id)
+    {
+        GameObject room = Instantiate(lobbyRoomPrefab);
+        LobbyRoom lobbyRoom = room.GetComponent<LobbyRoom>();
+
+        Vector3 spawnPos = new Vector3(id * 10, 0, 0);
+        room.transform.position = spawnPos;
+        lobbyRooms.Add(lobbyRoom);
     }
 }
