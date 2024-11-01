@@ -103,10 +103,11 @@ public class ArenamodeManager : MonoBehaviour
         Debug.Log("Found Arena Spawn Manager...         [Arenamode Manager]");
 
         // Await for Spectator Manager to Initialize.
+        Debug.Log("Looking For Spectator Manager...         [Arenamode Manager]");
         lookingForSpectator = true;
         while (SpectatorManager.Instance == null || SpectatorManager.Instance.enabled == false || SpectatorManager.Instance.initialized == false)
         {
-            await Task.Delay(2);
+            await Task.Delay(1);
         }
         lookingForSpectator = false;
         speatorManager = SpectatorManager.Instance;
@@ -162,15 +163,15 @@ public class ArenamodeManager : MonoBehaviour
         }
 
         Debug.Log("End Task #1");
-        InitializeManager();
+        AddPlayersToDictionary();
         Debug.Log("End Task #2");
+        InitializeManager();
+        Debug.Log("End Task #3");
         return;
     }
 
     private void InitializeManager()
     {
-        AddPlayersToDictionary();
-
         // Lock all players in place
         Debug.Log("PrePreTask");
         LockPlayersMovement(true);
@@ -448,6 +449,11 @@ public class ArenamodeManager : MonoBehaviour
                 positions.Add(0, GetLastPlayer());
                 scoreboardManager.UpdatePositions(positions);
                 StartCoroutine(EndGameDelay());
+                Respawn(playerObj);
+/*                if(playerObj.GetComponent<ThirdPersonMovement>() != null)
+                {
+                    playerObj.GetComponent<ThirdPersonMovement>().lockVeritcalMovement = true;
+                }*/
                 onLastManStanding?.Invoke();
             }
         }
