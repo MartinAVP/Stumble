@@ -189,6 +189,10 @@ public class RacemodeManager : MonoBehaviour
 
         if (racemodeUIManager != null)
         {
+            if(gameMusicController != null)
+            {
+                gameMusicController.InitializeCountdown();
+            }
             Debug.Log("Initializing Race Countdown");
             //yield return new WaitForSeconds(5.0f);
             racemodeUIManager.StartRace();
@@ -230,6 +234,10 @@ public class RacemodeManager : MonoBehaviour
     {
         // Invoke Event
         onRaceStart?.Invoke();
+
+        if (gameMusicController != null) {
+            gameMusicController.InitializeGameMusic();
+        }
 
         // Start the Timer
         stopwatch.Start();

@@ -94,6 +94,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float playerHeight = 2;
     private float playerRadius = 0.5f;
     private bool diveWasCanceled = false;
+    private bool canDive = false;
     #endregion
 
     #region Platform
@@ -177,6 +178,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         MovingPlatformManager manager = MovingPlatformManager.Instance;
         MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Final, Movement);
 
+        // Dive Cooldown
+        StartCoroutine(DiveCooldown(2f));
+
         // Update Sensitivity
         updateSensitivity(baseVerticalViewSensitivity, baseInvertVerticalInput, baseHorizontalViewSensitivity, baseInvertHorizontalInput);
 
@@ -209,8 +213,14 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
             cam = Camera.main.transform;
         }
-
         //Debug.Log("I got here 2");
+    }
+
+    private IEnumerator DiveCooldown(float time)
+    {
+        canDive = false;
+        yield return new WaitForSeconds(time);
+        canDive = true;
     }
 
     private Transform hasCamera()
@@ -305,6 +315,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Prevent Diving when on the ground
         if (_grounded) return;
+
+        Debug.Log(canDive);
+        if (!canDive) { return; }
 
         //Debug.Log("Dive");
         // Change Model

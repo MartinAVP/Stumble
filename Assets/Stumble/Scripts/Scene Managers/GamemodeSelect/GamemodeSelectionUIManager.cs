@@ -29,7 +29,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
         GrandprixButton.GetComponent<ButtonHoverEvent>().onHover.AddListener(HoverOverGrandPrix);
         ArenaButton.GetComponent<ButtonHoverEvent>().onHover.AddListener(HoverOverArena);
 
-        GrandprixButton.onClick.AddListener(SelectGrandPrix);
+        //GrandprixButton.onClick.AddListener(SelectGrandPrix);
         ArenaButton.onClick.AddListener(SelectArena);
         SelectModes.onClick.AddListener(GoBackToModeSelection);
     }
@@ -54,11 +54,11 @@ public class GamemodeSelectionUIManager : MonoBehaviour
         backgroundVideo.Play();
     }
 
-    private void SelectGrandPrix()
+/*    private void SelectGrandPrix()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(GamemodeSelectPanel, GrandPrixLevelSelectionPanel, GamemodeSelectScreenManager.Direction.Left);
         ControllerForMenus.Instance.ChangeSelectedObject(Level1Button.gameObject);
-    }
+    }*/
 
     private void SelectArena()
     {

@@ -201,6 +201,10 @@ public class ArenamodeManager : MonoBehaviour
 
         if (arenamodeUIManager != null)
         {
+            if (gameMusicController != null)
+            {
+                gameMusicController.InitializeCountdown();
+            }
             Debug.Log("Initializing Race Countdown");
             //yield return new WaitForSeconds(5.0f);
             arenamodeUIManager.StartRace();
@@ -241,6 +245,10 @@ public class ArenamodeManager : MonoBehaviour
     {
         // Invoke Event
         onArenaStart?.Invoke();
+        if (gameMusicController != null)
+        {
+            gameMusicController.InitializeGameMusic();
+        }
 
         // Start the Timer
         stopwatch.Start();
