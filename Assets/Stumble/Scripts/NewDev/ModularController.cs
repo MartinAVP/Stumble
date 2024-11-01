@@ -73,7 +73,7 @@ public class ModularController : MonoBehaviour
         }
 
         // Load The Next Scene
-        Debug.Log("Loading New Active Gamemode " + gamesLib.activeGamemodes[levelId].scene.name + "   (" + (levelId + 1) + "/" + gamesLib.activeGamemodes.Count + ")");
-        SceneManager.LoadScene(gamesLib.activeGamemodes[levelId].scene.name);
+        Debug.Log("Loading New Active Gamemode " + gamesLib.activeGamemodes[levelId].scene + "   (" + (levelId + 1) + "/" + gamesLib.activeGamemodes.Count + ")");
+        SceneManager.LoadScene(gamesLib.activeGamemodes[levelId].scene);
     }
 }

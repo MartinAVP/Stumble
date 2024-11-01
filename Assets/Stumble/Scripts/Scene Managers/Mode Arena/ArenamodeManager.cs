@@ -25,7 +25,7 @@ public class ArenamodeManager : MonoBehaviour
 
     [Range(1, 8)]
     [SerializeField] private int Lives;
-    private IDictionary<int, int> playerLives = new Dictionary<int, int>();
+    private IDictionary<PlayerData, int> playerLives = new Dictionary<PlayerData, int>();
 
     public static ArenamodeManager Instance { get; private set; }
     public bool initialized { get; private set; }
@@ -162,7 +162,6 @@ public class ArenamodeManager : MonoBehaviour
         }
 
         Debug.Log("End Task #1");
-        AddPlayersToDictionary();
         InitializeManager();
         Debug.Log("End Task #2");
         return;
@@ -170,6 +169,8 @@ public class ArenamodeManager : MonoBehaviour
 
     private void InitializeManager()
     {
+        AddPlayersToDictionary();
+
         // Lock all players in place
         Debug.Log("PrePreTask");
         LockPlayersMovement(true);
@@ -320,9 +321,9 @@ public class ArenamodeManager : MonoBehaviour
         // Add Player Lives
         foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
         {
-            playerLives.Add(player.input.playerIndex, Lives + 1);
+            playerLives.Add(player, Lives + 1);
         }
-        //Debug.Log(playerLives.Count + " in the dictionary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        Debug.Log(playerLives.Count + " in the dictionary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
     private PlayerUIComponent uiComponent;
@@ -406,19 +407,36 @@ public class ArenamodeManager : MonoBehaviour
         if (PlayerDataHolder.Instance == null) { UnityEngine.Debug.LogError("Arena completely relies on player data holder"); return; }
         Debug.Log(playerLives.Count + "Dictionary Size #2");
 
-        int id = playerObj.GetComponent<PlayerInput>().playerIndex;
+        PlayerInput input = playerObj.GetComponent<PlayerInput>();
+        PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
+        int id = input.playerIndex;
         //Debug.Log(id);
         // Remove a Life
-        playerLives[id] = playerLives[id] - 1;
-        int currentLives = playerLives[id];
 
-        for (int i = 0; i < playerLives.Count; i++) {
-            Debug.Log("LOGGER: Player #" + i + " now has " + playerLives[i] + " lives");
+        if (playerLives.ContainsKey(data))
+        {
+            Debug.LogWarning("The key is in the dictionary");
         }
+        else
+        {
+            Debug.LogWarning("The key is not in the dictionary");
+
+            foreach (var item in playerLives.Keys)
+            {
+                Debug.Log("LOGGER: " + item.id + " is in the dictionary");
+            }
+        }
+
+        playerLives[data] = playerLives[data] - 1;
+        int currentLives = playerLives[data];
+
+/*        for (int i = 0; i < playerLives.Count; i++) {
+            Debug.Log("LOGGER: Player #" + i + " now has " + playerLives[i] + " lives");
+        }*/
 
         // Update UI
         //ArenamodeUIManager.Instance.UpdatePlayersAlive(GetPlayersAlive().ToString());
-        Debug.Log("Player #" + id + " now has " + playerLives[id] + " lives");
+        Debug.Log("Player #" + id + " now has " + playerLives[data] + " lives");
 
         // End Game Check
         if (GetPlayersAlive() == 1)
@@ -427,7 +445,7 @@ public class ArenamodeManager : MonoBehaviour
             if (!gameEnding)
             {
                 gameEnding = true;
-                positions.Add(0, PlayerDataHolder.Instance.GetPlayerData(GetLastPlayer()));
+                positions.Add(0, GetLastPlayer());
                 scoreboardManager.UpdatePositions(positions);
                 StartCoroutine(EndGameDelay());
                 onLastManStanding?.Invoke();
@@ -442,10 +460,10 @@ public class ArenamodeManager : MonoBehaviour
         }
 
         // Player's Last Life.
-        if (playerLives[id] <= 0)
+        if (playerLives[data] <= 0)
         {
             Debug.Log("Making Player #" + id + "a spectator");
-            PlayerData data = PlayerDataHolder.Instance.GetPlayerData(playerObj.GetComponent<PlayerInput>());
+            //PlayerData data = PlayerDataHolder.Instance.GetPlayerData(playerObj.GetComponent<PlayerInput>());
 
             Debug.Log(data.GetPlayerInScene().name);
             positions.Add(GetPlayersAlive(), data);
@@ -601,16 +619,17 @@ public class ArenamodeManager : MonoBehaviour
         return alive;
     }
 
-    private int GetLastPlayer()
+    private PlayerData GetLastPlayer()
     {
-        foreach (int playerID in playerLives.Keys)
+        foreach (PlayerData playerID in playerLives.Keys)
         {
             if (playerLives[playerID] > 0)
             {
                 return playerID;
             }
         }
-        return -1;
+
+        return null;
     }
 
     /*    public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
