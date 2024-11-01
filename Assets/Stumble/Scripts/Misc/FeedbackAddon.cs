@@ -24,49 +24,65 @@ public class FeedbackAddon : PodiumManager
         exitButton.onClick.RemoveAllListeners();
     }
 
-    private async Task setup()
-    {
-        // Wait for these values GameController needs to exist and be enabled.
-        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+    /*    private async Task setup()
         {
-            // Await 2 ms and try finding it again.
-            // It is made 2 seconds because it is
-            // a core gameplay mechanic.
-            await Task.Delay(1);
+            // Wait for these values GameController needs to exist and be enabled.
+            while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+            {
+                // Await 2 ms and try finding it again.
+                // It is made 2 seconds because it is
+                // a core gameplay mechanic.
+                await Task.Delay(1);
+            }
+
+            // Once it finds it initialize the scene
+            UnityEngine.Debug.Log("Initializing Podium Manager...         [Podium Manager]");
+            //GameController.Instance.startSystems += LateStart;
+
+            InitializeManager();
+            //initialized = true;
+            return;
         }
 
-        // Once it finds it initialize the scene
-        UnityEngine.Debug.Log("Initializing Podium Manager...         [Podium Manager]");
-        //GameController.Instance.startSystems += LateStart;
+        private void Start()
+        {
+            feedbackPanel.SetActive(false);
+        }
 
-        InitializeManager();
-        //initialized = true;
-        return;
-    }
+        private void InitializeManager()
+        {
+            //Debug.Log("I've been executed");
+            StartCountdown();
+        }
 
-    private void Start()
-    {
-        feedbackPanel.SetActive(false);
-    }
+        public override void StartCountdown()
+        {
+            StartCoroutine(returnToMenuCooldown());
+        }
 
-    private void InitializeManager()
-    {
-        //Debug.Log("I've been executed");
-        StartCountdown();
-    }
+        private IEnumerator returnToMenuCooldown()
+        {
+            yield return new WaitForSeconds(.8f);
+            if (CinematicController.Instance != null)
+            {
+                CinematicController.Instance.StartTimeline();
+            }
+            yield return new WaitForSeconds(20f);
+            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+            yield return new WaitForSeconds(2f);
+            feedbackPanel.SetActive(true);
 
-    public override void StartCountdown()
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }*/
+
+    public override void StartEndingSequence()
     {
         StartCoroutine(returnToMenuCooldown());
     }
 
     private IEnumerator returnToMenuCooldown()
     {
-        yield return new WaitForSeconds(.8f);
-        if (CinematicController.Instance != null)
-        {
-            CinematicController.Instance.StartTimeline();
-        }
         yield return new WaitForSeconds(20f);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
@@ -77,7 +93,7 @@ public class FeedbackAddon : PodiumManager
     }
 
     private void openFeedbackForm(){
-        Application.OpenURL("https://www.youtube.com/watch?v=f_e3NbtwKAo");
+        Application.OpenURL("https://michaelszolowicz.com/stumblebumps-unite-playtest/");
     }
     private void BackToGame(){
         SceneManager.LoadScene("GamemodeSelect");

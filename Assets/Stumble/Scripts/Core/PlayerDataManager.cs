@@ -18,7 +18,7 @@ public class PlayerDataManager : MonoBehaviour
     // Subscribable Event
     public event Action<PlayerData> onPlayerConnect;
     public event Action<PlayerInput> onPlayerAdded;
-    public event Action<PlayerData> onPlayerInputDeviceDisconnect;
+    //public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
     public event Action<PlayerData> onHostChanged;
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,8 +17,10 @@ public class ArenamodeUIManager : MonoBehaviour
     [SerializeField] private Sprite countdownOne;
     [SerializeField] private Sprite countdownGo;
 
-    [Header("Players Alive")]
-    [SerializeField] private TextMeshProUGUI playersAlive;
+/*    [Header("Players Alive")]
+    [SerializeField] private TextMeshProUGUI playersAlive;*/
+
+    public bool initialized { get; private set; }
 
     private void Awake()
     {
@@ -30,44 +33,57 @@ public class ArenamodeUIManager : MonoBehaviour
         {
             Instance = this;
         }
-    }
-    private void OnEnable()
-    {
-        //RaceManager.Instance.onCompleteFinish += DisplayEndScores;
-        ArenamodeManager.Instance.onCountdownStart += StartArena;
-    }
 
-    private void OnDisable()
-    {
-        //RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        ArenamodeManager.Instance.onCountdownStart -= StartArena;
+        Task Setup = setup();
     }
-
-    public bool HasAllCountDownValues()
+    private async Task setup()
     {
-        if (countdownPanel != null && countdownTime != null &&
-            countdownThree != null && countdownTwo != null && countdownOne != null && countdownGo != null)
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ArenamodeManager.Instance == null || ArenamodeManager.Instance.enabled == false || ArenamodeManager.Instance.initialized == false)
         {
-            return true;
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(1);
         }
-        return false;
+
+        // Once it finds it initialize the sceneW
+        Debug.Log("Initializing Racemode UI Manager...         [Racemode UI Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        InitializeManager();
+        initialized = true;
+        /*        RacemodeManager.Instance.onCountdownStart += StartRace;*/
+        return;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void InitializeManager()
     {
-        if(LoadingScreenManager.Instance != null)
+        
+        if (LoadingScreenManager.Instance != null)
         {
+            Debug.LogWarning("No Loading Screen Manager Found");
             LoadingScreenManager.Instance.StartTransition(false);
         }
+        else
+        {
+            Debug.LogWarning("No Loading Screen Manager Found");
+        }
+
+        //EndScoreScreen?.SetActive(false);
+        if (countdownPanel != null)
+        {
+            countdownPanel?.SetActive(false);
+        }
+
     }
 
-    private void StartArena()
+    public void StartRace()
     {
-        StartCoroutine(StartArenaCountdown());
+        StartCoroutine(StartRaceCountdown());
     }
 
-    public IEnumerator StartArenaCountdown()
+    public IEnumerator StartRaceCountdown()
     {
         float waitTime = 1.2f;
 
@@ -91,14 +107,13 @@ public class ArenamodeUIManager : MonoBehaviour
 
     }
 
-    public void UpdatePlayersAlive(string quantity)
+    public bool HasAllCountDownValues()
     {
-        playersAlive.text = quantity;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (countdownPanel != null && countdownTime != null &&
+            countdownThree != null && countdownTwo != null && countdownOne != null && countdownGo != null)
+        {
+            return true;
+        }
+        return false;
     }
 }

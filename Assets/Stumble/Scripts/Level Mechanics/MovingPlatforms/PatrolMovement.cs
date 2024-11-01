@@ -57,10 +57,11 @@ public class PatrolMovement : MovingPlatform
             if (faceTowardNextNode == true)
             {
                 nodeRotation = Quaternion.LookRotation(nextNode.position - transform.position);
-                float rotationStrength = Mathf.Min(rotationSpeed * Time.fixedDeltaTime, 1);
+                float rotationStrength = Mathf.Min(rotationSpeed * Time.deltaTime, 1);
                 transform.rotation = Quaternion.Lerp(transform.rotation, nodeRotation, rotationStrength);
             }
 
+            
             transform.position = Vector3.MoveTowards(transform.position, nextNode.position, speed * Time.deltaTime);
         }
     }

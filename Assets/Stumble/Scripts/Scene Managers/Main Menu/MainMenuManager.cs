@@ -34,11 +34,8 @@ public class MainMenuManager : MonoBehaviour
     private async Task setup()
     {
         // Wait for these values GameController needs to exist and be enabled.
-        while (ExperimentalPlayerManager.Instance == null || ExperimentalPlayerManager.Instance.enabled == false || ExperimentalPlayerManager.Instance.finishedSystemInitializing == false)
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
         {
-            // Await 5 ms and try finding it again.
-            // It is made 5 seconds because it is
-            // a core gameplay mechanic.
             await Task.Delay(2);
         }
 
