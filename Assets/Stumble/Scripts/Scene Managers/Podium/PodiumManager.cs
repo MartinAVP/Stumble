@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using Debug = UnityEngine.Debug;
 
 public class PodiumManager : MonoBehaviour
@@ -18,6 +19,7 @@ public class PodiumManager : MonoBehaviour
     public event Action onPodiumStarted;
 
     public SortedDictionary<PlayerData, int> positions = new SortedDictionary<PlayerData, int>();
+    public List<PlayerData> newPositions = new List<PlayerData>();
 
     //PlayerDataManager dataManager;
 
@@ -222,19 +224,24 @@ public class PodiumManager : MonoBehaviour
     private void CalculateFinalPositionPlacing()
     {
         // Calculate
+        //positions.Clear();
+        newPositions.Clear();
         foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
         {
-            positions.Add(player, player.points);
+            newPositions.Add(player);
         }
+
+        // Sort players based on points in descending order
+        newPositions.Sort((a, b) => b.points.CompareTo(a.points)); // For ascending order, swap a and b
     }
 
     private void SetUIMessage()
     {
         int index = 0;
-        foreach (var player in positions)
+        foreach (var player in newPositions)
         {
             podiumUIManager.TogglePlace(index, true);
-            podiumUIManager.ChangePoints(index, player.Value);
+            podiumUIManager.ChangePoints(index, player.points);
             index++;
         }
     }
@@ -242,9 +249,9 @@ public class PodiumManager : MonoBehaviour
     private void SetPlayerSpawns()
     {
         int index = 0;
-        foreach (var player in positions)
+        foreach (var player in newPositions)
         {
-            podiumSpawnManager.SetPlayerSpawns(player.Key, index);
+            podiumSpawnManager.SetPlayerSpawns(player, index);
             index++;
         }
     }
