@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.GraphView.GraphView;
 using Debug = UnityEngine.Debug;
 
 public class PodiumManager : MonoBehaviour

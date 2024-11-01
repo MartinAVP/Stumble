@@ -20,8 +20,12 @@ public class PlaneBumper : MonoBehaviour
         if (Physics.Raycast(other.transform.position, invDirection, out hit, 100))
         {
             //Debug.Log("Hitted");
-            other.GetComponent<IBumper>().Bump(hit.normal, bounceForce);
-            Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
+            IBumper bumpedObject = other.GetComponent<IBumper>();
+            if(bumpedObject != null)
+            {
+                other.GetComponent<IBumper>().Bump(hit.normal, bounceForce);
+                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
+            }
         }
 
         // Sounds
