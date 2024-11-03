@@ -43,28 +43,28 @@ public class GameMusicController : MonoBehaviour
         // Once it finds it initialize the scene
         Debug.Log("Initializing Game Music Manager...         [Game Music Manager]");
 
-        RacemodeManager.Instance.onRaceStart += InitializeGameMusic;
-        RacemodeManager.Instance.onCountdownStart += InitializeCountdown;
+/*        RacemodeManager.Instance.onRaceStart += InitializeGameMusic;
+        RacemodeManager.Instance.onCountdownStart += InitializeCountdown;*/
         initialized = true;
         return;
     }
 
     public void OnDisable()
     {
-        if (initialized)
+/*        if (initialized)
         {
             RacemodeManager.Instance.onRaceStart -= InitializeGameMusic;
             RacemodeManager.Instance.onCountdownStart -= InitializeCountdown;
-        }
+        }*/
     }
 
-    private void InitializeCountdown()
+    public void InitializeCountdown()
     {
         //countdown.Play();
         StartCoroutine(StartCountdownSound());
     }
 
-    private void InitializeGameMusic()
+    public void InitializeGameMusic()
     {
         StartCoroutine(StartGameMusic());
     }
