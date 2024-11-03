@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class BoxBumper : Bumper
 {
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if(other.GetComponent<IBumper>() != null)
+        if(collision.gameObject.GetComponent<IBumper>() != null)
         {
             //Debug.Log("Collided");
 
             RaycastHit hit;
-            Vector3 direction = other.transform.position - transform.position;
-            Vector3 invDirection = transform.position - other.transform.position;
+            Vector3 direction = collision.gameObject.transform.position - transform.position;
+            Vector3 invDirection = transform.position - collision.gameObject.transform.position;
 
             //Vector3 dirVec = other.transform.TransformDirection(direction);
             Debug.DrawRay(this.transform.position, direction, Color.magenta, 100f);
-            if (Physics.Raycast(other.transform.position, invDirection, out hit, 100))
+            if (Physics.Raycast(collision.gameObject.transform.position, invDirection, out hit, 100))
             {
-                IBumper bumpedObject = other.GetComponent<IBumper>();
+                IBumper bumpedObject = collision.gameObject.GetComponent<IBumper>();
                 if (bumpedObject == null) return;
 
                 bumpedObject.Bump(hit.normal, bounceForce, this);
@@ -28,7 +28,7 @@ public class BoxBumper : Bumper
             // Sounds
             if(SFXManager.Instance != null)
             {
-                SFXManager.Instance.PlaySound("BumperBounce", other.transform);
+                SFXManager.Instance.PlaySound("BumperBounce", collision.gameObject.transform);
             }
         }
 

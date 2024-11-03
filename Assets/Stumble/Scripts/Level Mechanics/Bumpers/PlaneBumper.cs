@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlaneBumper : Bumper
@@ -7,9 +8,25 @@ public class PlaneBumper : Bumper
     private bool isSphereCollider = false;
     private bool isPlaneCollider = false;
 
+    [SerializeField] private SphereCollider sphere;
+    private bool dirtyOverlaps = true;
+    private Collider[] sphereOverlaps = new Collider[5];
+
+    private void FixedUpdate()
+    {
+       // dirtyOverlaps = true;
+    }
+
     public void Collision(Collider other)
     {
-        if (checkCollision() == false) { return; }
+        if (dirtyOverlaps)
+        {
+            Physics.OverlapSphereNonAlloc(sphere.transform.position, sphere.radius * sphere.transform.lossyScale, sphereOverlaps);
+            //dirtyOverlaps = false;
+        }
+
+        if (!sphereOverlaps.Contains(other)) return;
+
         RaycastHit hit;
         Vector3 direction = other.transform.position - transform.position;
         Vector3 invDirection = transform.position - other.transform.position;

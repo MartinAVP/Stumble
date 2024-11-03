@@ -16,25 +16,13 @@ public class PlaneBumperComponent : MonoBehaviour
     {
         if (type == collisionType.Plane)
         {
-            planeBumper.IsPlaneCollider = true;
             planeBumper.Collision(other);
-        }
-        else
-        {
-            planeBumper.IsSphereCollider = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (type == collisionType.Plane)
-        {
-            planeBumper.IsPlaneCollider = false;
-        }
-        else
-        {
-            planeBumper.IsSphereCollider = false;
-        }
+
     }
 
     protected enum collisionType

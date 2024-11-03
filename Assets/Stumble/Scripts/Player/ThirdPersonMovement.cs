@@ -897,17 +897,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         print("Player bumped.\n" +
             "Bump sourec: " + source.GetSourceType().ToString());
 
-        if(source.GetSourceType() == BumpSource.RigidbodyBumper)
-        {
-            if (isProne /* && (horizontalVelocity + _bumpHorizontalVelocity.magnitude) > 0 */)
-            {
-                // If prone and has the velocity to bump this object, go ahead and bump the source object.
-                source.Bump(transform.forward, (horizontalVelocity + _bumpHorizontalVelocity.magnitude) * bumpForce, this);
-                return;
-            }
-        }
-
-        // Default to letting the bumper bump us without question
         ApplyBumpVelocityToPlayer(direction, magnitude);
     }
 
@@ -956,7 +945,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                 }
             }
         }
+
+        Rigidbody otherRigidbody = hit.transform.GetComponent<Rigidbody>();
+        if(otherRigidbody != null)
+        {
+            otherRigidbody.AddForce(CompositeVelocity, ForceMode.Impulse);
+        }
     }
+    #endregion
+
+    #region Properties
+    public Vector3 CompositeVelocity { get { return (horizontalVelocity * transform.forward) + _bumpHorizontalVelocity + (verticalVelocity * Vector3.up); } }
     #endregion
 
 }
