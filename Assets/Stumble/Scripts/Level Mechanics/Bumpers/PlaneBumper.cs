@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlaneBumper : MonoBehaviour
+public class PlaneBumper : Bumper
 {
-    public bool isSphereCollider = false;
-    public bool isPlaneCollider = false;
-    public float bounceForce = 10f;
+    private bool isSphereCollider = false;
+    private bool isPlaneCollider = false;
 
     public void Collision(Collider other)
     {
@@ -19,8 +18,9 @@ public class PlaneBumper : MonoBehaviour
         Debug.DrawRay(this.transform.position, direction, Color.magenta, 100f);
         if (Physics.Raycast(other.transform.position, invDirection, out hit, 100))
         {
-            //Debug.Log("Hitted");
-            other.GetComponent<IBumper>().Bump(hit.normal, bounceForce);
+            IBumper bumpedObject = other.GetComponent<IBumper>();
+            if (bumpedObject == null) return;
+            bumpedObject.Bump(hit.normal, bounceForce, this);
             Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
         }
 
@@ -43,4 +43,7 @@ public class PlaneBumper : MonoBehaviour
         }
         return false;
     }
+
+    public bool IsSphereCollider {  get { return isSphereCollider; } set { isSphereCollider = value; } }
+    public bool IsPlaneCollider { get { return isPlaneCollider; } set { isPlaneCollider = value; }}
 }

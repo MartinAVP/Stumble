@@ -16,12 +16,12 @@ public class PlaneBumperComponent : MonoBehaviour
     {
         if (type == collisionType.Plane)
         {
-            planeBumper.isPlaneCollider = true;
+            planeBumper.IsPlaneCollider = true;
             planeBumper.Collision(other);
         }
         else
         {
-            planeBumper.isSphereCollider = true;
+            planeBumper.IsSphereCollider = true;
         }
     }
 
@@ -29,11 +29,11 @@ public class PlaneBumperComponent : MonoBehaviour
     {
         if (type == collisionType.Plane)
         {
-            planeBumper.isPlaneCollider = false;
+            planeBumper.IsPlaneCollider = false;
         }
         else
         {
-            planeBumper.isSphereCollider = false;
+            planeBumper.IsSphereCollider = false;
         }
     }
 

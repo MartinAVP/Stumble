@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoxBumper : MonoBehaviour
+public class BoxBumper : Bumper
 {
-    public float bounceForce;
     private void OnTriggerEnter(Collider other)
     {
         if(other.GetComponent<IBumper>() != null)
@@ -19,23 +18,10 @@ public class BoxBumper : MonoBehaviour
             Debug.DrawRay(this.transform.position, direction, Color.magenta, 100f);
             if (Physics.Raycast(other.transform.position, invDirection, out hit, 100))
             {
-                /*                Debug.Log("Hitted: " + hit.transform.name);
+                IBumper bumpedObject = other.GetComponent<IBumper>();
+                if (bumpedObject == null) return;
 
-                                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
-
-                                if (other.transform.GetComponent<Rigidbody>() != null)
-                                {
-                                    other.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                                    other.transform.GetComponent<Rigidbody>().AddForce(hit.normal * bounceForce, ForceMode.Impulse);
-                                }*/
-
-                // Potential Momentum Keep
-                Vector3 fwd = other.transform.forward.normalized;
-                fwd = fwd * other.GetComponent<ThirdPersonMovement>().horizontalVelocity / 100;
-                Vector3 dir = fwd + hit.normal;
-                //Vector3 dir = hit.normal;
-                //Vector3 dir = fwd + hit.normal;
-                other.GetComponent<IBumper>().Bump(dir, bounceForce);
+                bumpedObject.Bump(hit.normal, bounceForce, this);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 100f);
             }
 
@@ -45,6 +31,7 @@ public class BoxBumper : MonoBehaviour
                 SFXManager.Instance.PlaySound("BumperBounce", other.transform);
             }
         }
+
 
     }
 }

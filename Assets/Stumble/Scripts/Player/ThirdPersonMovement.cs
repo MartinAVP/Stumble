@@ -868,7 +868,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             if (hit.transform.GetComponent<IBumper>() != null)
             {
-                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
+                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, this);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
             }
         }
@@ -892,11 +892,30 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// counter a bumper with their own speed.
     /// Note: Current player speed does not affect the magnitude of the bump 
     /// </summary>
-    public void Bump(Vector3 direction, float magnitude)
+    public void Bump(Vector3 direction, float magnitude, IBumper source)
     {
-        if(isProne) 
-        { 
-            toggleProne(false); 
+        print("Player bumped.\n" +
+            "Bump sourec: " + source.GetSourceType().ToString());
+
+        if(source.GetSourceType() == BumpSource.RigidbodyBumper)
+        {
+            if (isProne /* && (horizontalVelocity + _bumpHorizontalVelocity.magnitude) > 0 */)
+            {
+                // If prone and has the velocity to bump this object, go ahead and bump the source object.
+                source.Bump(transform.forward, (horizontalVelocity + _bumpHorizontalVelocity.magnitude) * bumpForce, this);
+                return;
+            }
+        }
+
+        // Default to letting the bumper bump us without question
+        ApplyBumpVelocityToPlayer(direction, magnitude);
+    }
+
+    private void ApplyBumpVelocityToPlayer(Vector3 direction, float magnitude)
+    {
+        if (isProne)
+        {
+            toggleProne(false);
         }
         diveWasCanceled = false;
         Vector3 bumpVelocity = direction * magnitude;
@@ -904,7 +923,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         _bumpHorizontalVelocity += new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
 
         // If vertical velocity of the bumper is acting against this, then cancel this vertical velocity. Otherwise sum the velocities.
-        if(bumpVelocity.y * verticalVelocity <= 0)
+        if (bumpVelocity.y * verticalVelocity <= 0)
         {
             verticalVelocity = bumpVelocity.y;
         }
@@ -933,7 +952,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                     Vector3 bumpDirection = transform.forward.normalized + new Vector3(0, bumpUpwardForce, 0);
                     float bumpMagnitude = bumpForce;
 
-                    targetBumper.Bump(bumpDirection, bumpMagnitude);
+                    targetBumper.Bump(bumpDirection, bumpMagnitude, this);
                 }
             }
         }
