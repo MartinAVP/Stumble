@@ -18,7 +18,7 @@ public class PlayerDataManager : MonoBehaviour
     // Subscribable Event
     public event Action<PlayerData> onPlayerConnect;
     public event Action<PlayerInput> onPlayerAdded;
-    public event Action<PlayerData> onPlayerInputDeviceDisconnect;
+    //public event Action<PlayerData> onPlayerInputDeviceDisconnect;
     public event Action<PlayerData> onPlayerInputDeviceReconnect;
     public event Action<PlayerData> onHostChanged;
 
@@ -43,7 +43,7 @@ public class PlayerDataManager : MonoBehaviour
 
         //SceneManager.sceneLoaded += OnSceneSwitch;
         //players = new List<PlayerData>();
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

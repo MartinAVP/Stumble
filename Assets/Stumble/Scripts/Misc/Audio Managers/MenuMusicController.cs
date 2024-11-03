@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MenuMusicController : MonoBehaviour
 {
-
     public static MenuMusicController Instance { get; private set; }
 
     [SerializeField] private float delay;

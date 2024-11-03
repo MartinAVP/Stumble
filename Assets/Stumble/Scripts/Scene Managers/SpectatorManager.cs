@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ public class SpectatorManager : MonoBehaviour
     // First Value holds the player ID, Second Value holds the ID of the player is spectating
     private Dictionary<int, int> spectating = new Dictionary<int, int>();
     private int playerCount;
+
+    private GameController gameController;
 
     public static SpectatorManager Instance { get; private set; }
     public bool initialized { get; private set; }
@@ -27,31 +30,43 @@ public class SpectatorManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
     {
-        // Wait for these values GameController needs to exist and be enabled.
-        while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.initialized == false)
+        while (GameController.Instance == null || GameController.Instance.enabled == false || GameController.Instance.initialized == false)
         {
-            // Await 5 ms and try finding it again.
-            // It is made 5 seconds because it is
-            // a core gameplay mechanic.
-            await Task.Delay(2);
+            await Task.Delay(1);
+        }
+        gameController = GameController.Instance;
+
+        if(gameController.gameState == GameState.Race)
+        {
+            while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.lookingForSpectator == false)
+            {
+                await Task.Delay(1);
+            }
+        }
+        else if (gameController.gameState == GameState.Arena)
+        {
+            while (ArenamodeManager.Instance == null || ArenamodeManager.Instance.enabled == false || ArenamodeManager.Instance.lookingForSpectator == false)
+            {
+                await Task.Delay(1);
+            }
         }
 
         // Once it finds it initialize the scene
+        InitializeManager();
         Debug.Log("Initializing Spectator Manager...         [Spectator Manager]");
         initialized = true;
 
-        InitializeManager();
         return;
     }
 
     private void InitializeManager()
     {
-        playerCount = PlayerDataManager.Instance.GetPlayers().Count;
+        playerCount = PlayerDataHolder.Instance.GetPlayers().Count;
 
         spectating.Clear();
         spectators.Clear();
@@ -59,27 +74,24 @@ public class SpectatorManager : MonoBehaviour
 
     private void Update()
     {
-        if (!initialized) { return; }
+/*        if (!initialized) { return; }
         foreach (KeyValuePair<int, int> kvp in spectating)
         {
             //Debug.Log($"Key: {kvp.Key}, Value: {kvp.Value}");
-            PlayerData targetData = PlayerDataManager.Instance.GetPlayerData(kvp.Value);
-            PlayerData originData = PlayerDataManager.Instance.GetPlayerData(kvp.Key);
+*//*            PlayerData targetData = PlayerDataHolder.Instance.GetPlayerData(kvp.Value);
+            PlayerData originData = PlayerDataHolder.Instance.GetPlayerData(kvp.Key);*//*
 
             GameObject player = originData.GetPlayerInScene();
             //player.GetComponent<CharacterController>().enabled = false;
             player.transform.position = targetData.GetPlayerInScene().transform.position;
             //player.GetComponent<CharacterController>().enabled = true;
-        }
+        }*/
     }
 
     public void AddToSpectator(PlayerData data)
     {
-        //PlayerData data = PlayerDataManager.Instance.GetPlayerData(player.GetComponent<PlayerInput>());
-
         // Player already an spectator
         if (spectators.Contains(data.GetID())) { return; }
-        //if (playerCount - spectating.Count <= 1) { ArenaSpawnManager.Instance.RespawnPlayer(player); return; }
 
         spectators.Add(data.GetID());
         spectating.Add(data.GetID(), -1);
@@ -94,18 +106,29 @@ public class SpectatorManager : MonoBehaviour
         //data.GetPlayerInScene().SetActive(false);
         data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockVeritcalMovement = true;
         data.GetPlayerInScene().GetComponent<CapsuleCollider>().enabled = false;
-        data.GetPlayerInScene().transform.GetChild(0).gameObject.SetActive(false);
 
-        // turn off the third person movenet - Test
-        data.GetPlayerInScene().GetComponent<ThirdPersonMovement>().enabled = false;
+        int id = spectating[data.GetID()];
+
+        data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().LookAt = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
+        data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().Follow = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
+
         data.GetPlayerInScene().GetComponent<CharacterController>().center = Vector3.up * 300;
-        data.GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
-
-        Destroy(data.GetPlayerInScene().GetComponent<ThirdPersonMovement>());
-        Destroy(data.GetPlayerInScene().GetComponent<CharacterController>());
     }
 
     private int GetNextAvailableIndex(int currentlyAt)
+    {
+        int index = (currentlyAt + 1) % playerCount; // Wrap around using modulo
+
+        // Check if the index is busy
+        if (IsSpectator(index))
+        {
+            index = GetNextAvailableIndex(index); // Be cautious of potential infinite recursion
+        }
+
+        return index;
+    }
+
+/*    private int GetNextAvailableIndex(int currentlyAt)
     {
         // Add one to currently At
         int index = currentlyAt + 1;
@@ -122,16 +145,15 @@ public class SpectatorManager : MonoBehaviour
         }
         // 
         return index;
-    }
-
-    private int GetPreviousAvailableIndex(int currentlyAt)
+    }*/
+/*    private int GetPreviousAvailableIndex(int currentlyAt)
     {
         // Add one to currently At
         int index = currentlyAt - 1;
         // Loop through list
-        if (index <= spectators.Count)
+        if (index <= playerCount)
         {
-            index = spectators.Count;
+            index = playerCount;
         }
 
         // Check if the index is busy
@@ -141,12 +163,25 @@ public class SpectatorManager : MonoBehaviour
         }
         // 
         return index;
+    }*/
+
+    private int GetPreviousAvailableIndex(int currentlyAt)
+    {
+        int index = (currentlyAt - 1 + playerCount) % playerCount; // Wrap around
+
+        // Check if the index is busy
+        if (IsSpectator(index))
+        {
+            index = GetPreviousAvailableIndex(index); // Be cautious of potential infinite recursion
+        }
+
+        return index;
     }
 
     private void SwitchSpectatingPlayer(Vector2 value, PlayerInput input)
     {
         Debug.Log("Listener Called");
-        PlayerData data = PlayerDataManager.Instance.GetPlayerData(input);
+        PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
         if (data == null)
         {
             Debug.LogError("The Device is not finding a player attached");
@@ -156,12 +191,20 @@ public class SpectatorManager : MonoBehaviour
         if (value.x > .5f)
         {
             spectating[data.GetID()] = GetNextAvailableIndex(spectating[data.GetID()]);
+            int id = spectating[data.GetID()];
+
+            Debug.Log(data.GetPlayerInScene().name);
+            data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().LookAt = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
+            data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().Follow = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
         }
 
         // Left Selection
         if(value.x < -.5f)
         {
             spectating[data.GetID()] = GetPreviousAvailableIndex(spectating[data.GetID()]);
+            int id = spectating[data.GetID()];
+            data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().LookAt = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
+            data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().Follow = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
         }
 
     }

@@ -28,96 +28,30 @@ public class PodiumSpawnManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
     {
         // Wait for these values GameController needs to exist and be enabled.
-        while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false)
+        while (PodiumManager.Instance == null || PodiumManager.Instance.enabled == false || PodiumManager.Instance.initialized == false ||
+            PodiumManager.Instance.lookingForSpawnManager == false)
         {
-            // Await 5 ms and try finding it again.
-            // It is made 5 seconds because it is
-            // a core gameplay mechanic.
             await Task.Delay(1);
         }
 
-        // Once it finds it initialize the scene
         UnityEngine.Debug.Log("Initializing Podium Spawn Manager...         [Podium Spawn Manager]");
-        //GameController.Instance.startSystems += LateStart;
 
-        //InitializeManager();
+        //InitializePlayers();
         initialized = true;
-        LateStart();
         return;
     }
 
-/*    private void OnEnable()
-    {
-        GameController.Instance.startSecondarySystems += LateStart;
-    }*/
-
-    private void OnDisable()
-    {
-        if (initialized)
-        {
-            GameController.Instance.startSecondarySystems -= LateStart;
-        }
-    }
-
-    // Start is called before the first frame update
-    void LateStart()
-    {
-        if(PodiumRanking.Instance != null)
-        {
-            // Order player spawn based on podium
-            Debug.Log("Bringing over" +  PodiumRanking.Instance.positions.Count);
-/*            foreach (float key in PodiumRanking.Instance.positions.Keys)
-            {
-                PlayerData value;
-                if (PodiumRanking.Instance.positions.TryGetValue(key, out value))
-                {
-                    tempPlayerList.Add(value);
-                }
-                else
-                {
-                    //Console.WriteLine("Key " + key + " not found in the dictionary.");
-                }
-            }*/
-
-            foreach(PlayerData data in PodiumRanking.Instance.positions.Values)
-            {
-                tempPlayerList.Add(data);
-            }
-
-        }
-        else
-        {
-            tempPlayerList = PlayerDataManager.Instance.GetPlayers();
-        }
-
-        InitializePlayers();
-
-        StartCoroutine(extraLoadingScreenDelay());
-    }
-
-    private IEnumerator extraLoadingScreenDelay()
-    {
-        yield return new WaitForSeconds(1f);
-
-        if (LoadingScreenManager.Instance != null)
-        {
-            LoadingScreenManager.Instance.StartTransition(false);
-        }
-    }
-
-    public void InitializePlayers()
+/*    public void InitializePlayers()
     {
         // Get all the players that joined and add them to the first checkpoint.
         // In addition get them to the position of spawning
 
-        //Debug.Log("Changing Spawns");
-        //Debug.Log("There are " + tempPlayerList.Count);
         for (int i = 0; i < tempPlayerList.Count; i++)
         {
             Transform spawn = spawns[i].transform;
@@ -126,22 +60,18 @@ public class PodiumSpawnManager : MonoBehaviour
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.position = spawn.position;
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
             PlayerDataManager.Instance.GetPlayerData(tempPlayerList[i].GetID()).GetPlayerInScene().transform.rotation = spawn.rotation;
+        }
+    }*/
 
-            //Debug.Log("Player #" + i + " has been spawned by the manager");
-
-            //Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
-            //tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
+    public void SetPlayerSpawns(PlayerData data, int id)
+    {
+        if (id <= spawns.Count) { 
+            Transform spawn = spawns[id].transform;
+            // Parent Becomes spawn
+            PlayerDataHolder.Instance.GetPlayerData(data.input).GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
+            PlayerDataHolder.Instance.GetPlayerData(data.input).GetPlayerInScene().transform.position = spawn.position;
+            PlayerDataHolder.Instance.GetPlayerData(data.input).GetPlayerInScene().transform.rotation = spawn.rotation;
+            PlayerDataHolder.Instance.GetPlayerData(data.input).GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
         }
     }
-
-/*    public void RespawnPlayer(GameObject ob)
-    {
-        int index = UnityEngine.Random.Range(0, spawns.Count);
-        Transform spawn = spawns[index].transform;
-
-        ob.GetComponent<CharacterController>().enabled = false;
-        ob.transform.position = spawn.position;
-        ob.GetComponent<CharacterController>().enabled = true;
-        ob.transform.rotation = spawn.rotation;
-    }*/
 }

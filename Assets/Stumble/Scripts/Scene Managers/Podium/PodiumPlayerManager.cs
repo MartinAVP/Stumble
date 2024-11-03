@@ -21,7 +21,7 @@ public class PodiumPlayerManager : MonoBehaviour
         playerDataManager = PlayerDataManager.Instance;
 
         playerInputManager.onPlayerJoined += AddPlayer;
-        playerDataManager.onPlayerInputDeviceDisconnect += OnPlayerInputDisconnected;
+        //playerDataManager.onPlayerInputDeviceDisconnect += OnPlayerInputDisconnected;
         playerDataManager.onPlayerInputDeviceReconnect += OnPlayerInputReconnected;
     }
 
@@ -49,7 +49,7 @@ public class PodiumPlayerManager : MonoBehaviour
     {
         playerInputManager.onPlayerJoined -= AddPlayer;
 
-        playerDataManager.onPlayerInputDeviceDisconnect -= OnPlayerInputDisconnected;
+        //playerDataManager.onPlayerInputDeviceDisconnect -= OnPlayerInputDisconnected;
         playerDataManager.onPlayerInputDeviceReconnect -= OnPlayerInputReconnected;
     }
 
@@ -132,4 +132,25 @@ public class PodiumPlayerManager : MonoBehaviour
             Time.timeScale += 1;
         }
     }
+
+    private void LockPlayersMovement(bool value)
+    {
+        ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
+
+        if (value)
+        {
+            foreach (ThirdPersonMovement player in players)
+            {
+                player.lockMovement = true;
+            }
+        }
+        else
+        {
+            foreach (ThirdPersonMovement player in players)
+            {
+                player.lockMovement = false;
+            }
+        }
+    }
+
 }

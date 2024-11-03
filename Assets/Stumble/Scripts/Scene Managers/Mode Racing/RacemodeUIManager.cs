@@ -35,7 +35,7 @@ public class RacemodeUIManager : MonoBehaviour
             Instance = this;
         }
 
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()
@@ -55,7 +55,7 @@ public class RacemodeUIManager : MonoBehaviour
 
         InitializeManager();
         initialized = true;
-        RacemodeManager.Instance.onCountdownStart += StartRace;
+/*        RacemodeManager.Instance.onCountdownStart += StartRace;*/
         return;
     }
 
@@ -67,10 +67,10 @@ public class RacemodeUIManager : MonoBehaviour
     private void OnDisable()
     {
         //RaceManager.Instance.onCompleteFinish -= DisplayEndScores;
-        if (initialized)
+/*        if (initialized)
         {
             RacemodeManager.Instance.onCountdownStart -= StartRace;
-        }
+        }*/
     }
 
     private void InitializeManager()
@@ -89,7 +89,7 @@ public class RacemodeUIManager : MonoBehaviour
     }
 
 
-    private void StartRace()
+    public void StartRace()
     {
         StartCoroutine(StartRaceCountdown());
     }

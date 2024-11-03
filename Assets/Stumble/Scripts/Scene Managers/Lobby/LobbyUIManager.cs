@@ -14,7 +14,7 @@ public class LobbyUIManager : MonoBehaviour
 
     private void Awake()
     {
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

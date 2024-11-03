@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Slap",
+                    "type": "Button",
+                    "id": "eecc04e3-b50a-40d4-b593-3af76d42e4ad",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Look",
                     "type": "PassThrough",
                     "id": "3aff67fd-3609-465f-a0f3-dedaf932e206",
@@ -46,6 +55,15 @@
                     "type": "PassThrough",
                     "id": "4518f07f-15ae-46c7-83f3-b30873ee494d",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Emote Wheel",
+                    "type": "Button",
+                    "id": "093a83a5-1565-48ae-8efa-85110caae65f",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -187,7 +205,7 @@
                 {
                     "name": "",
                     "id": "6faea0c4-66be-43af-91f0-dd36c6f5e95f",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
@@ -198,7 +216,7 @@
                 {
                     "name": "",
                     "id": "c22eb6ad-29d9-4b9b-9734-a196a4874393",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "Controller",
@@ -337,6 +355,50 @@
                     "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "30a2b726-31a3-4303-8fdb-d3a9f42cab61",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Slap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "62d2b564-f6e8-400a-81ad-9e8a0b383e4e",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Controller",
+                    "action": "Slap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ef3cdd5b-de06-4726-8c83-7cbaa44b7fa3",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Emote Wheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d1e7ef2b-2000-4402-900c-fb1f270a7c72",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Emote Wheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

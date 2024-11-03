@@ -8,20 +8,12 @@ public class LevelDebugger : MonoBehaviour
 {
     private GUIStyle buttonStyle;
     private bool hasCursor = false;
-    private bool isRaceMode = false;
+    //private bool isRaceMode = false;
 
     private bool hasGravity = true;
-    [SerializeField] private bool isDebugging = true;
+    //[SerializeField] private bool isDebugging = true;
 
-    private void Start()
-    {
-        if(CheckpointManager.Instance != null)
-        {
-            isRaceMode = true;
-        }
-    }
-
-    private void Update()
+/*    private void Update()
     {
         if(!isDebugging) { return; }
         if (Input.GetKeyDown(KeyCode.Backspace))
@@ -38,8 +30,7 @@ public class LevelDebugger : MonoBehaviour
             }
             hasCursor = !hasCursor;
         }
-    }
-
+    }*/
 /*    void OnGUI()
     {
         if (!isDebugging) { return; }

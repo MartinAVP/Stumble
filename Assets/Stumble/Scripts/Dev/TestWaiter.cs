@@ -28,7 +28,7 @@ public class TestWaiter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

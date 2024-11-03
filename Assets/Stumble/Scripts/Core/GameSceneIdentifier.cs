@@ -10,7 +10,7 @@ public class GameSceneIdentifier : MonoBehaviour
 
     private void Start()
     {
-        setup();
+        Task Setup = setup();
     }
 
     private async Task setup()

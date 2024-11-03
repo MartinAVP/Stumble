@@ -12,9 +12,13 @@ public class BackupKicker : MonoBehaviour
     [Range(1,4)]
     [SerializeField] public int playerFaker = 1;
 
-    private List<GameObject> players = new List<GameObject>();
+    public List<GameObject> players = new List<GameObject>();
+
+    private PlayerDataHolder playerDataHolder;
+    private PlayerInputManager playerInputManager;
 
     [HideInInspector] public bool LockKicker = false;
+    [HideInInspector] public bool joiningPlayers = false;
 
     public static BackupKicker Instance { get; private set; }
     public bool initialized { get; private set; }
@@ -32,49 +36,72 @@ public class BackupKicker : MonoBehaviour
             Instance = this;
         }
     }
-
     [HideInInspector] public int playersActive = 0;
+
+    private void Start()
+    {
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+    }
+
+    public void StartSinglePlayer()
+    {
+        //Debug.Log("Howdy Neighbour");
+        //PlayerDataManagerInitialize();
+        startJoiningPlayers();
+        StartCoroutine(InitializeSinglePlayer());
+        //LogAllDevices();
+        //initialize();
+    }
+
+    public void StartMultiplayer()
+    {
+        joiningPlayers = true;
+        PlayerDataManagerInitialize();
+        startJoiningPlayers();
+    }
 
     public void startJoiningPlayers()
     {
-        PlayerInputManager playerInputManager = FindAnyObjectByType<PlayerInputManager>();
         playerInputManager.joinBehavior = PlayerJoinBehavior.JoinPlayersWhenButtonIsPressed;
         playerInputManager.EnableJoining();
 
         playerInputManager.onPlayerJoined += AddingPlayers;
     }
-
     public void endJoiningPlayers()
     {
         PlayerInputManager playerInputManager = FindAnyObjectByType<PlayerInputManager>();
         playerInputManager.onPlayerJoined -= AddingPlayers;
     }
-
     private void AddingPlayers(PlayerInput input)
     {
         playersActive++;
-        PlayerDataManager.Instance.AddPlayer(input);
+        PlayerDataHolder.Instance.AddPlayer(input);
         players.Add(input.transform.parent.gameObject);
     }
 
     private void PlayerDataManagerInitialize()
     {
-        if (PlayerDataManager.Instance == null)
+        if (PlayerDataHolder.Instance == null)
         {
             //List<GameObject> players = new List<GameObject>();
 
             GameObject controller = new GameObject("Player Data Manager Backup Kicker");
-            PlayerDataManager data = controller.AddComponent<PlayerDataManager>();
+            PlayerDataHolder data = controller.AddComponent<PlayerDataHolder>();
             GameObject playerPrefab = FindAnyObjectByType<PlayerInputManager>().playerPrefab;
         }
     }
 
-    private void GameControllerInitialize()
+    private void FinalizeInitialization()
     {
+        joiningPlayers = false;
+
+        endJoiningPlayers();
         foreach (var player in players)
         {
             Destroy(player);
         }
+
+        players.Clear();
 
         if (GameController.Instance == null)
         {
@@ -87,30 +114,15 @@ public class BackupKicker : MonoBehaviour
         Debug.LogWarning("Backup Kicked In Systems Starting...");
     }
 
-    public void start()
+    public void StartGameScene()
     {
-        //Debug.Log("Howdy Neighbour");
-        if(playerFaker == 1)
-        {
-            StartCoroutine(initializeCoroutine());
-        }
-        else
-        {
-            PlayerDataManagerInitialize();
-            startJoiningPlayers();
-        }
-        //LogAllDevices();
-        //initialize();
-    }
-
-    public void startBig()
-    {
-        GameControllerInitialize();
+        StartCoroutine(InitializeMultiplayer());
+        FinalizeInitialization();
     }
 
     string[] controlSchemes = { "Keyboard", "Controller", "Controller", "Controller" };
 
-    private void LogAllDevices()
+/*    private void LogAllDevices()
     {
         // Get all devices connected
         var devices = InputSystem.devices;
@@ -121,188 +133,85 @@ public class BackupKicker : MonoBehaviour
             Debug.Log($"Device: {device.displayName}, Type: {device.GetType().Name}");
         }
     }
-
-    private IEnumerator initializeCoroutine()
+*/
+    private IEnumerator InitializeMultiplayer()
     {
         yield return new WaitForSeconds(.1f);
-        if (PlayerDataManager.Instance == null)
+
+        //List<GameObject> players = new List<GameObject>();
+
+        GameObject controller = new GameObject("Player Data Holder Backup Kicker");
+        PlayerDataHolder data = controller.AddComponent<PlayerDataHolder>();
+        playerDataHolder = data;
+        GameObject playerPrefab = FindAnyObjectByType<PlayerInputManager>().playerPrefab;
+
+        //Debug.Log(players.Length);
+        /*            for (int i = 0; i < 4; i++)
+                    {
+                        if(i == 0)
+                        {
+                            GameObject fakePlayer = Instantiate(playerPrefab);
+                            PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
+                            data.AddPlayer(fakeInput);
+                        }
+                        //players.Add(fakePlayer);
+                        //players[i] = fakePlayer;
+                    }
+
+                    foreach (GameObject obj in players)
+                    {
+                        Destroy(obj);
+                    }
+                    // Optionally clear the list if you no longer need it
+                    players.Clear();*/
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        //Debug.Log("Out 0");
+        for (int i = 0; i < players.Count; i++)
         {
-            //List<GameObject> players = new List<GameObject>();
+            GameObject fakePlayer = Instantiate(playerPrefab);
+            PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
+            fakeInput.SwitchCurrentControlScheme(controlSchemes[i], Keyboard.current, Mouse.current);
 
-            GameObject controller = new GameObject("Player Data Manager Backup Kicker");
-            PlayerDataManager data = controller.AddComponent<PlayerDataManager>();
-            GameObject playerPrefab = FindAnyObjectByType<PlayerInputManager>().playerPrefab;
-
-            //Debug.Log(players.Length);
-            /*            for (int i = 0; i < 4; i++)
-                        {
-                            if(i == 0)
-                            {
-                                GameObject fakePlayer = Instantiate(playerPrefab);
-                                PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
-                                data.AddPlayer(fakeInput);
-                            }
-                            //players.Add(fakePlayer);
-                            //players[i] = fakePlayer;
-                        }
-
-                        foreach (GameObject obj in players)
-                        {
-                            Destroy(obj);
-                        }
-                        // Optionally clear the list if you no longer need it
-                        players.Clear();*/
-
+            //fakeInput.devi = InputSystem.devices[i];
+            //data.AddPlayer(fakeInput);
+            //Destroy(fakeInput.gameObject);
+            //data.AddPlayer(fakeInput);
+            Debug.Log("Adding a Player to Player Data Manager");
+            Debug.Log(data.GetPlayers().Count);
             yield return new WaitForEndOfFrame();
-            //Debug.Log("Out 0");
-            for (int i = 0; i < 1; i++)
-            {
-                GameObject fakePlayer = Instantiate(playerPrefab);
-                PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
-                //fakeInput.playerIndex = i;
-                //fakeInput.SwitchCurrentActionMap(controlSchemesInt[i]);
-                fakeInput.SwitchCurrentControlScheme(controlSchemes[i], Keyboard.current, Mouse.current);
-
-                //fakeInput.devi = InputSystem.devices[i];
-                //data.AddPlayer(fakeInput);
-                //Destroy(fakeInput.gameObject);
-                PlayerDataManager.Instance.AddPlayer(fakeInput);
-                Destroy(fakePlayer);
-                //Debug.Log($"Player {i} instantiated with PlayerInput index: {fakeInput.playerIndex} and is using {fakeInput.currentControlScheme}");
-                //players.Add(fakePlayer);
-            }
-
-            //Debug.Log("Out 1");
-
-            /*            while(players.Count != 0)
-                        {
-                            data.AddPlayer(players[0].GetComponentInChildren<PlayerInput>());
-                            Destroy(player);
-                        }
-
-                        int tempI = players.Count;
-                        for (int i = 0;i < players.Count; i++)
-                        {
-
-                        }*/
-
-            /*            foreach (GameObject player in players)
-                        {
-                            data.AddPlayer(player.GetComponentInChildren<PlayerInput>());
-                            Destroy(player);
-                        }*/
-
-
-            //Debug.Log("Out 2");
-            //Debug.LogError("Pause");
-            /*
-                        foreach(PlayerData playerData in data.GetPlayers())
-                        {
-                            Destroy(playerData.GetPlayerInScene());
-                        }*/
-
-            /*            GameObject fakePlayer = Instantiate(playerPrefab);
-                        PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
-                        data.AddPlayer(fakeInput);*/
-
             //Destroy(fakePlayer);
+            Debug.Log($"Player {i} instantiated with PlayerInput index: {fakeInput.playerIndex} and is using {fakeInput.currentControlScheme}");
+            //players.Add(fakePlayer);
         }
-        //Debug.LogError("Hello");
 
-        GameControllerInitialize();
+        yield return new WaitForEndOfFrame();
+        FinalizeInitialization();
     }
 
-    private async Task initialize()
+    private IEnumerator InitializeSinglePlayer()
     {
-        if(PlayerDataManager.Instance == null)
-        {
-            //List<GameObject> players = new List<GameObject>();
+        yield return new WaitForSeconds(.1f);
 
-            GameObject controller = new GameObject("Player Data Manager Backup Kicker");
-            PlayerDataManager data = controller.AddComponent<PlayerDataManager>();
-            GameObject playerPrefab = FindAnyObjectByType<PlayerInputManager>().playerPrefab;
+        GameObject controller = new GameObject("Player Data Holder Backup Kicker");
+        PlayerDataHolder data = controller.AddComponent<PlayerDataHolder>();
+        playerDataHolder = data;
+        GameObject playerPrefab = FindAnyObjectByType<PlayerInputManager>().playerPrefab;
 
-            //Debug.Log(players.Length);
-            /*            for (int i = 0; i < 4; i++)
-                        {
-                            if(i == 0)
-                            {
-                                GameObject fakePlayer = Instantiate(playerPrefab);
-                                PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
-                                data.AddPlayer(fakeInput);
-                            }
-                            //players.Add(fakePlayer);
-                            //players[i] = fakePlayer;
-                        }
+        yield return new WaitForEndOfFrame(); yield return new WaitForEndOfFrame();
 
-                        foreach (GameObject obj in players)
-                        {
-                            Destroy(obj);
-                        }
-                        // Optionally clear the list if you no longer need it
-                        players.Clear();*/
+        GameObject fakePlayer = Instantiate(playerPrefab);
+        PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
+        fakeInput.SwitchCurrentControlScheme(controlSchemes[0], Keyboard.current, Mouse.current);
 
-            await Task.Delay(3);
-            Debug.Log("Out 0");
-            for (int i = 0; i < 2; i++)
-            {
-                GameObject fakePlayer = Instantiate(playerPrefab);
-                PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
-                //fakeInput.playerIndex = i;
-                //fakeInput.SwitchCurrentActionMap(controlSchemesInt[i]);
-                fakeInput.SwitchCurrentControlScheme(controlSchemes[i]);
-                //data.AddPlayer(fakeInput);
-                //Destroy(fakeInput.gameObject);
-                PlayerDataManager.Instance.AddPlayer(fakeInput);
-                Destroy(fakePlayer);
-                Debug.Log($"Player {i} instantiated with PlayerInput index: {fakeInput.playerIndex} and is using {fakeInput.currentControlScheme}");
-                //players.Add(fakePlayer);
-            }
-            await Task.Delay(1);
-            Debug.Log("Out 1");
+        Debug.Log("Adding a Player to Player Data Manager");
+        Debug.Log(data.GetPlayers().Count);
+        Debug.Log($"Player {0} instantiated with PlayerInput index: {fakeInput.playerIndex} and is using {fakeInput.currentControlScheme}");
 
-/*            while(players.Count != 0)
-            {
-                data.AddPlayer(players[0].GetComponentInChildren<PlayerInput>());
-                Destroy(player);
-            }
+        yield return new WaitForEndOfFrame();
 
-            int tempI = players.Count;
-            for (int i = 0;i < players.Count; i++)
-            {
-
-            }*/
-
-/*            foreach (GameObject player in players)
-            {
-                data.AddPlayer(player.GetComponentInChildren<PlayerInput>());
-                Destroy(player);
-            }*/
-
-
-            Debug.Log("Out 2");
-            Debug.LogError("Pause");
-/*
-            foreach(PlayerData playerData in data.GetPlayers())
-            {
-                Destroy(playerData.GetPlayerInScene());
-            }*/
-
-/*            GameObject fakePlayer = Instantiate(playerPrefab);
-            PlayerInput fakeInput = fakePlayer.GetComponentInChildren<PlayerInput>();
-            data.AddPlayer(fakeInput);*/
-
-            //Destroy(fakePlayer);
-        }
-        Debug.LogError("Hello");
-
-        if(GameController.Instance == null)
-        {
-            GameObject controller = new GameObject("Game Controller Backup Kicker");
-            controller.AddComponent<GameController>();
-        }
-
-        Debug.LogWarning("Backup Kicked In Systems Starting...");
+        FinalizeInitialization();
     }
 }
 
@@ -317,6 +226,7 @@ class BackupKickerEditor : Editor
     {
         DrawDefaultInspector();
 
+        BackupKicker kicker = target.GetComponent<BackupKicker>();
 /*        if (GUILayout.Button("Start Player Joining System"))
         {
             if (Application.isPlaying)
@@ -327,30 +237,36 @@ class BackupKickerEditor : Editor
 
         }*/
         
-        if(target.GetComponent<BackupKicker>().LockKicker == true)
+        if(kicker.LockKicker)
         {
-            if(target.GetComponent<BackupKicker>().playerFaker > 1)
+            if(kicker.playerFaker > 1)
             {
-                if (GUILayout.Button("Start Player Joining"))
+                if (!kicker.joiningPlayers)
                 {
-                    if (Application.isPlaying)
+                    if (GUILayout.Button("Start Player Joining"))
                     {
-                        target.GetComponent<BackupKicker>().start();
-                    }
-                    //Debug.Log("It's alive: " + target);
+                        if (Application.isPlaying)
+                        {
+                            kicker.StartMultiplayer();
+                        }
+                        //Debug.Log("It's alive: " + target);
 
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Start Game Scene"))
+                    {
+                        if (Application.isPlaying)
+                        {
+                            kicker.StartGameScene();
+                        }
+                        //Debug.Log("It's alive: " + target);
+
+                    }
                 }
 
-                if (GUILayout.Button("Start Game Scene"))
-                {
-                    if (Application.isPlaying)
-                    {
-                        target.GetComponent<BackupKicker>().startBig();
-                    }
-                    //Debug.Log("It's alive: " + target);
-
-                }
-                int players = target.GetComponent<BackupKicker>().playersActive;
+                int players = kicker.playersActive;
                 GUILayout.Label("Debug Information");
                 GUILayout.Label("Current Have: " + players + " players joined");
 
@@ -361,7 +277,7 @@ class BackupKickerEditor : Editor
                 {
                     if (Application.isPlaying)
                     {
-                        target.GetComponent<BackupKicker>().start();
+                        kicker.StartSinglePlayer();
                     }
                     //Debug.Log("It's alive: " + target);
 

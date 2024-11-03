@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     public GameState gameState { get; private set; }
     public GameState viewer;
 
-    public event Action startSystems; 
+    public event Action startSystems;
     public event Action startSecondarySystems;
 
     [HideInInspector] public bool initialized = false;
@@ -64,7 +64,7 @@ public class GameController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         initialized = false;
-        Debug.Log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        //Debug.Log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         //Debug.Log($"Scene {scene.name} loaded with mode {mode}");
 
         // You can add additional logic here for when a scene is switched
