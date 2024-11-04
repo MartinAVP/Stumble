@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class HungryHippo : MonoBehaviour
 {
-   //timer for movement smoothness - delay is a lockout to prevent repeat calling
+    //timer for movement smoothness - delay is a lockout to prevent repeat calling
     private float timer;
     private bool delayed = false;
 
     public int mouthOpenAngle = 45;
     public float movementMultiplier = 0.5f;
-    
+
     public float speed;
 
 
     public float actionDuration = 2f;
     public int frameSkips = 5;
-    
+
 
 
     //standard delay inbetween each action
@@ -27,8 +27,8 @@ public class HungryHippo : MonoBehaviour
     public float maxDelay = 1f;
     private float inActionDelay = .000000000000000000000000000000000000000000000001f;
 
-    
-    
+
+
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
@@ -70,18 +70,18 @@ public class HungryHippo : MonoBehaviour
 
         if (triggered && available)
         {
-            
+
             StartCoroutine(HippoMotion());
-                       
+
         }
 
-        
+
         if (mouthOpenAngle != previousMouthAngle)
         {
             openRotation = Quaternion.Euler(-mouthOpenAngle, 0f, 0f);
             previousMouthAngle = mouthOpenAngle;
         }
-        
+
 
         if (reset)
         {
@@ -91,11 +91,11 @@ public class HungryHippo : MonoBehaviour
             transform.rotation = startingRotation;
             transform.position = startingPos;
         }
-        
+
 
     }
 
-    
+
     private IEnumerator HippoMotion()
     {
         available = false;
@@ -106,7 +106,7 @@ public class HungryHippo : MonoBehaviour
         {
             timer += Time.deltaTime;
             smoothing = Mathf.SmoothStep(0f, 1f, timer / actionDuration);
-            
+
             transform.rotation = Quaternion.Slerp(closedRotation, openRotation, smoothing);
             temp++;
             if (temp > frameSkips)
@@ -121,7 +121,7 @@ public class HungryHippo : MonoBehaviour
 
 
         //Debug.Log("mouth opened");
-        
+
         yield return new WaitForSecondsRealtime(inbetweenActionDelay);
 
         //Debug.Log("lunge");
@@ -164,7 +164,7 @@ public class HungryHippo : MonoBehaviour
         smoothing = 0;
 
         playerKillzone.SetActive(true);
-        
+
         //Debug.Log("mouth closed");
 
         yield return new WaitForSecondsRealtime(inbetweenActionDelay);
@@ -172,7 +172,7 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("retreat");
 
-        while (Vector3.Distance(transform.position, startingPos) > .1f)    
+        while (Vector3.Distance(transform.position, startingPos) > .1f)
         {
             timer += Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, startingPos, speed * Time.deltaTime);

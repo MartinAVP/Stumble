@@ -5,6 +5,8 @@ using UnityEngine;
 public class JacknBox_Button : MonoBehaviour
 {
     public CapsuleCollider jackInTheBox;
+    public GameObject Squish;
+
     private float jackInTheBoxControl;
 
     public float expandedRadius = 3f;
