@@ -8,7 +8,7 @@ public class BoxBumper : Bumper
     {
         if(collision.gameObject.GetComponent<IBumper>() != null)
         {
-            //Debug.Log("Collided");
+            Debug.Log("Collided");
 
             RaycastHit hit;
             Vector3 direction = collision.gameObject.transform.position - transform.position;
