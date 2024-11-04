@@ -16,13 +16,20 @@ public class PlaneBumperComponent : MonoBehaviour
     {
         if (type == collisionType.Plane)
         {
-            planeBumper.Collision(other);
+            planeBumper.Collision(other.gameObject);
+        }
+        else
+        {
+            planeBumper.AddSphereOverlap(other.gameObject);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-
+        if(type == collisionType.Sphere)
+        {
+            planeBumper.RemoveSphereOverlaps(other.gameObject);
+        }
     }
 
     protected enum collisionType

@@ -27,7 +27,12 @@ public class Bumper : MonoBehaviour, IBumper
     {
         if(!isRigidbodyBumper) return;
 
-        rb.AddForce(direction * magnitude, ForceMode.Impulse);
+        Vector3 impulse = direction * magnitude;
+
+        float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
+        rb.velocity = rb.velocity - direction  * velocityAlongImpulse;
+
+        rb.AddForce(impulse, ForceMode.Impulse);
     }
 
     public BumpSource GetSourceType()
