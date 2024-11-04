@@ -897,11 +897,22 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         print("Player bumped.\n" +
             "Bump sourec: " + source.GetSourceType().ToString());
 
+        if (source.GetSourceType() != BumpSource.StaticBumper &&
+            Vector3.Dot(direction, CompositeVelocity.normalized) < 0)
+        {
+            float impulseMagnitude = CompositeVelocity.magnitude;
+            if (isProne) impulseMagnitude *= bumpForce;
+
+            source.Bump(CompositeVelocity.normalized, impulseMagnitude, this);
+        }
+
         ApplyBumpVelocityToPlayer(direction, magnitude);
     }
 
     private void ApplyBumpVelocityToPlayer(Vector3 direction, float magnitude)
     {
+        if (magnitude < .01f) return;
+
         if (isProne)
         {
             toggleProne(false);
@@ -946,11 +957,13 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             }
         }
 
+        /*
         Rigidbody otherRigidbody = hit.transform.GetComponent<Rigidbody>();
         if(otherRigidbody != null)
         {
             otherRigidbody.AddForce(CompositeVelocity, ForceMode.Impulse);
         }
+        */
     }
 
     private void OnCollisionEnter(Collision collision)
