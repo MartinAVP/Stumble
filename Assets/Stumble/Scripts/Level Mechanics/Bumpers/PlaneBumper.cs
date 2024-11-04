@@ -35,12 +35,6 @@ public class PlaneBumper : Bumper
 
     public void Collision(GameObject other)
     {
-        print("Sphere Overlaps");
-        foreach(var overlap in sphereOverlaps)
-        {
-            print("Overlap: " + overlap.name);
-        }
-
         if (!sphereOverlaps.Contains(other)) return;
 
         IBumper bumpedObject = other.GetComponent<IBumper>();

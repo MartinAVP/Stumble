@@ -953,23 +953,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                 }
             }
         }
-
-        /*
-        Rigidbody otherRigidbody = hit.transform.GetComponent<Rigidbody>();
-        if(otherRigidbody != null)
-        {
-            otherRigidbody.AddForce(CompositeVelocity, ForceMode.Impulse);
-        }
-        */
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        //Rigidbody otherRigidbody = collision.transform.GetComponent<Rigidbody>();
-        //if (otherRigidbody != null)
-        //{
-        //    otherRigidbody.AddForce(CompositeVelocity, ForceMode.Impulse);
-        //}
     }
     #endregion
 
