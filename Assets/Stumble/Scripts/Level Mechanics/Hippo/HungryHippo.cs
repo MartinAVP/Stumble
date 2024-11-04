@@ -126,7 +126,7 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("lunge");
 
-        while (transform.position != endingPos.transform.position)
+        while (Vector3.Distance(transform.position, endingPos.transform.position) > .1f)
         {
             timer += Time.deltaTime;
             this.transform.position = Vector3.MoveTowards(transform.position, endingPos.transform.position, speed * Time.deltaTime);
@@ -138,6 +138,7 @@ public class HungryHippo : MonoBehaviour
                 temp = 0;
             }
         }
+        transform.position = endingPos.transform.position;
         timer = 0;
 
         //Debug.Log("lunge complete");
