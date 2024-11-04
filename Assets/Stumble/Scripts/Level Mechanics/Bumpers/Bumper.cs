@@ -18,14 +18,12 @@ public class Bumper : MonoBehaviour, IBumper
             isRigidbodyBumper = true;
             sourceType = BumpSource.RigidbodyBumper;
         }
-
-        print(name + " bumper awake.\n" +
-            "Is rigidbody bumper? " + isRigidbodyBumper.ToString());
     }
 
     public void Bump(Vector3 direction, float magnitude, IBumper source)
     {
         if(!isRigidbodyBumper) return;
+        if (magnitude < 0.1f) return;
 
         Vector3 impulse = direction * magnitude;
 

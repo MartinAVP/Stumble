@@ -894,9 +894,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     public void Bump(Vector3 direction, float magnitude, IBumper source)
     {
-        print("Player bumped.\n" +
-            "Bump sourec: " + source.GetSourceType().ToString());
-
         if (source.GetSourceType() != BumpSource.StaticBumper &&
             Vector3.Dot(direction, CompositeVelocity.normalized) < 0)
         {
