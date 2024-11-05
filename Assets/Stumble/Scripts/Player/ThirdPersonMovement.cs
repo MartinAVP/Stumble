@@ -928,13 +928,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void BumpBack(Vector3 direction, Vector3 position, IBumper source)
     {
-        if (source.GetBumpSource() != BumpSource.StaticBumper &&
-            Vector3.Dot(direction, CompositeVelocity.normalized) > 0)
+        if (source.GetBumpSource() != BumpSource.StaticBumper)
         {
-            float impulseMagnitude = CompositeVelocity.magnitude;
+            float impulseMagnitude = (horizontalVelocity + _bumpHorizontalVelocity.magnitude);
             if (isProne) impulseMagnitude *= bumpForce;
 
-            source.Bump(CompositeVelocity.normalized, position, impulseMagnitude, BumpSource.StaticBumper);
+            source.Bump(transform.forward, position, impulseMagnitude, BumpSource.StaticBumper);
         }
     }
     #endregion

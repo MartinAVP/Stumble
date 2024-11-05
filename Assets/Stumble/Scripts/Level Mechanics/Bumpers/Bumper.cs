@@ -24,12 +24,12 @@ public class Bumper : MonoBehaviour, IBumper
     public void Bump(Vector3 direction, float magnitude, BumpSource source)
     {
         if(!isRigidbodyBumper) return;
-        if (magnitude < 0.1f) return;
+        if (magnitude < 0f) return;
 
         Vector3 impulse = direction * magnitude;
 
-        float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
-        rb.velocity = rb.velocity - direction  * velocityAlongImpulse;
+        //float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
+        //rb.velocity = rb.velocity - direction  * velocityAlongImpulse;
 
         rb.AddForce(impulse, ForceMode.Impulse);
     }
@@ -37,12 +37,12 @@ public class Bumper : MonoBehaviour, IBumper
     public void Bump(Vector3 direction, Vector3 position, float magnitude, BumpSource source)
     {
         if (!isRigidbodyBumper) return;
-        if (magnitude < 0.1f) return;
+        if (magnitude < 0f) return;
 
         Vector3 impulse = direction * magnitude;
 
-        float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
-        rb.velocity = rb.velocity - direction * velocityAlongImpulse;
+        //float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
+        //rb.velocity = rb.velocity - direction * velocityAlongImpulse;
 
         rb.AddForceAtPosition(impulse, position, ForceMode.Impulse);
 
