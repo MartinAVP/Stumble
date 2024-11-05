@@ -251,7 +251,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(this.transform.position.y < -50)
+        if(this.transform.position.y < -100)
         {
             controller.enabled = false;
             this.transform.position = new Vector3(0, 20, 0);
@@ -325,7 +325,7 @@ public class ThirdPersonMovement : MonoBehaviour
         // Prevent Diving when on the ground
         if (_grounded) return;
 
-        Debug.Log(canDive);
+        //Debug.Log(canDive);
         if (!canDive) { return; }
 
         //Debug.Log("Dive");
