@@ -62,7 +62,10 @@ public class PlaneBumper : Bumper
 
     public override Vector3 GetBumpDirection(GameObject other)
     {
-        return transform.up;
+        if(sphereOverlaps.Contains(other))
+            return transform.up;
+        else
+            return Vector3.zero;
     }
 
     public bool IsSphereCollider {  get { return isSphereCollider; } set { isSphereCollider = value; } }

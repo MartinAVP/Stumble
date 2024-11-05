@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Cinemachine;
 using Unity.VisualScripting;
+using Unity.IO.LowLevel.Unsafe;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonMovement : MonoBehaviour
@@ -904,7 +905,7 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         print("Bump player: " + direction + " " + magnitude);
 
-        if (magnitude < .01f) return;
+        if (magnitude < .01f || direction.magnitude < .01f) return;
 
         if (isProne)
         {
