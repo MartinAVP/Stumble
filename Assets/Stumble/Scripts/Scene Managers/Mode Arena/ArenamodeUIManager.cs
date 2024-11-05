@@ -48,7 +48,7 @@ public class ArenamodeUIManager : MonoBehaviour
         }
 
         // Once it finds it initialize the sceneW
-        Debug.Log("Initializing Racemode UI Manager...         [Racemode UI Manager]");
+        Debug.Log("Initializing Arenamode UI Manager...         [Arenamode UI Manager]");
         //GameController.Instance.startSystems += LateStart;
 
         InitializeManager();

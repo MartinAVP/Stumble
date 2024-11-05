@@ -23,7 +23,7 @@ public class SpectatorManager : MonoBehaviour
         // If there is an instance, and it's not me, delete myself.
         if (Instance != null && Instance != this)
         {
-            Destroy(this);
+            //Destroy(this);
         }
         else
         {
@@ -41,20 +41,20 @@ public class SpectatorManager : MonoBehaviour
         }
         gameController = GameController.Instance;
 
-        if(gameController.gameState == GameState.Race)
+/*        if(gameController.gameState == GameState.Race)
         {
             while (RacemodeManager.Instance == null || RacemodeManager.Instance.enabled == false || RacemodeManager.Instance.lookingForSpectator == false)
             {
                 await Task.Delay(1);
             }
         }
-        else if (gameController.gameState == GameState.Arena)
+        if (gameController.gameState == GameState.Arena)
         {
             while (ArenamodeManager.Instance == null || ArenamodeManager.Instance.enabled == false || ArenamodeManager.Instance.lookingForSpectator == false)
             {
                 await Task.Delay(1);
             }
-        }
+        }*/
 
         // Once it finds it initialize the scene
         InitializeManager();
