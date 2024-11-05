@@ -1093,7 +1093,7 @@ Camera:
   m_Depth: 10
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4151
+    m_Bits: 20535
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -2723,7 +2723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CollideAgainst:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_IgnoreTag: Player
   m_TransparentLayers:
     serializedVersion: 2
@@ -4573,7 +4573,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7660645958948670914}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.51528144, y: -0.000000011620793, z: 0.0000000048595186, w: 0.857021}
+  m_LocalRotation: {x: 0.51528144, y: 0.000000015874303, z: -0.0000000066382264, w: 0.857021}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5786,9 +5786,9 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.2
-  m_SkinWidth: 0.01
-  m_MinMoveDistance: 0.001
+  m_StepOffset: 0.5
+  m_SkinWidth: 0.02
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &8110194548404611006
 CapsuleCollider:
@@ -5989,6 +5989,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: eecc04e3-b50a-40d4-b593-3af76d42e4ad
     m_ActionName: Player/Slap[/Keyboard/b]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 093a83a5-1565-48ae-8efa-85110caae65f
+    m_ActionName: Player/Emote Wheel[/Keyboard/b]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

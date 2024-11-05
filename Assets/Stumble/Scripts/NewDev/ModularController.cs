@@ -48,6 +48,19 @@ public class ModularController : MonoBehaviour
     public void InitializeParty()
     {
         gamesLib.SelectGamemodes(partyGameSize);
+
+        LoadingScreenManager.Instance.StartTransition(true);
+        StartCoroutine(loadLevelDelay());
+
+        if (MenuMusicController.Instance != null)
+        {
+            MenuMusicController.Instance.EndMusic(2.8f);
+        }
+    }
+
+    private IEnumerator loadLevelDelay()
+    {
+        yield return new WaitForSeconds(4f);
         AdvanceLevels();
     }
 

@@ -4,36 +4,26 @@ using UnityEngine;
 
 public class PlaneBumperComponent : MonoBehaviour
 {
-    private PlaneBumper planeBumper;
+    [SerializeField] private PlaneBumper planeBumper;
     [SerializeField] private collisionType type;
-
-    private void Start()
-    {
-        planeBumper = this.transform.parent.GetComponent<PlaneBumper>();
-    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (type == collisionType.Plane)
         {
-            planeBumper.isPlaneCollider = true;
-            planeBumper.Collision(other);
+            planeBumper.Collision(other.gameObject);
         }
         else
         {
-            planeBumper.isSphereCollider = true;
+            planeBumper.AddSphereOverlap(other.gameObject);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (type == collisionType.Plane)
+        if(type == collisionType.Sphere)
         {
-            planeBumper.isPlaneCollider = false;
-        }
-        else
-        {
-            planeBumper.isSphereCollider = false;
+            planeBumper.RemoveSphereOverlaps(other.gameObject);
         }
     }
 
