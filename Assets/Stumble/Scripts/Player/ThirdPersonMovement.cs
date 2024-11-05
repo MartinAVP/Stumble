@@ -112,7 +112,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private void OnEnable()
     {
         // Michael 10/12/2024
-        Application.targetFrameRate = 30;
+        //Application.targetFrameRate = 30;
 
         if(playerMovementSettings == null)
         {
