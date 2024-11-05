@@ -5,7 +5,6 @@ using UnityEngine;
 public class Bumper : MonoBehaviour, IBumper
 {
     public float bounceForce;
-    public float maxRigidbodySpeed = 50f;
     protected BumpSource sourceType = BumpSource.StaticBumper;
 
     private Rigidbody rb;
@@ -28,8 +27,12 @@ public class Bumper : MonoBehaviour, IBumper
 
         Vector3 impulse = direction * magnitude;
 
-        //float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
-        //rb.velocity = rb.velocity - direction  * velocityAlongImpulse;
+        if (direction.y * rb.velocity.y < 0)
+        {
+            Vector3 newVelocity = rb.velocity;
+            newVelocity.y = 0;
+            rb.velocity = newVelocity;
+        }
 
         rb.AddForce(impulse, ForceMode.Impulse);
     }
@@ -41,15 +44,14 @@ public class Bumper : MonoBehaviour, IBumper
 
         Vector3 impulse = direction * magnitude;
 
-        //float velocityAlongImpulse = Vector3.Dot(direction, rb.velocity);
-        //rb.velocity = rb.velocity - direction * velocityAlongImpulse;
+        if(direction.y * rb.velocity.y < 0)
+        {
+            Vector3 newVelocity = rb.velocity;
+            newVelocity.y = 0;
+            rb.velocity = newVelocity;
+        }
 
         rb.AddForceAtPosition(impulse, position, ForceMode.Impulse);
-
-        if(rb.velocity.magnitude > maxRigidbodySpeed)
-        {
-            rb.velocity = rb.velocity.normalized * maxRigidbodySpeed;
-        }
     }
 
     public float GetBumpMagnitude()

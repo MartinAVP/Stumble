@@ -928,12 +928,15 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void BumpBack(Vector3 direction, Vector3 position, IBumper source)
     {
-        if (source.GetBumpSource() != BumpSource.StaticBumper)
+        Debug.DrawLine(transform.position, transform.position + CompositeVelocity, Color.yellow, 5f);
+
+        if (source.GetBumpSource() != BumpSource.StaticBumper &&
+            Vector3.Dot(direction, CompositeVelocity.normalized) < 0)
         {
-            float impulseMagnitude = (horizontalVelocity + _bumpHorizontalVelocity.magnitude);
+            float impulseMagnitude = CompositeVelocity.magnitude;
             if (isProne) impulseMagnitude *= bumpForce;
 
-            source.Bump(transform.forward, position, impulseMagnitude, BumpSource.StaticBumper);
+            source.Bump(-direction, position, impulseMagnitude, BumpSource.StaticBumper);
         }
     }
     #endregion
@@ -971,9 +974,9 @@ public class ThirdPersonMovement : MonoBehaviour
         IBumper bumper = hit.gameObject.GetComponent<IBumper>();
         if (bumper != null)
         {
-            if(hit.point.y > transform.position.y - (playerHeight / 2) * .9f)
+            if(hit.point.y > (transform.position + controller.center).y - (controller.height / 2) - .05f)
             {
-                BumpBack((hit.transform.position - transform.position).normalized, hit.point, bumper);
+                BumpBack(bumper.GetBumpDirection(gameObject), hit.point, bumper);
             }
             Bump(bumper.GetBumpDirection(gameObject), bumper.GetBumpMagnitude());
         }
