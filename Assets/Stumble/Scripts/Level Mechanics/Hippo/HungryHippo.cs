@@ -101,7 +101,7 @@ public class HungryHippo : MonoBehaviour
         available = false;
         float smoothing;
         int temp = 0;
-
+        playerKillzone.SetActive(false);
         while (Quaternion.Angle(transform.rotation, openRotation) > 0.1f)
         {
             timer += Time.deltaTime;
@@ -169,7 +169,7 @@ public class HungryHippo : MonoBehaviour
         //Debug.Log("mouth closed");
 
         yield return new WaitForSecondsRealtime(inbetweenActionDelay);
-        playerKillzone.SetActive(false);
+        
 
         //Debug.Log("retreat");
 
