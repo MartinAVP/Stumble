@@ -336,6 +336,8 @@ public class ThirdPersonMovement : MonoBehaviour
             if (isProne) { return; }
             toggleProne(true);
 
+
+            //verticalVelocity = 0;
             OnDive?.Invoke();
         }
     }
