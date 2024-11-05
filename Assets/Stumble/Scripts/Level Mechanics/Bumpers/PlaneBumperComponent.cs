@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class PlaneBumperComponent : MonoBehaviour
 {
-    private PlaneBumper planeBumper;
+    [SerializeField] private PlaneBumper planeBumper;
     [SerializeField] private collisionType type;
-
-    private void Start()
-    {
-        planeBumper = this.transform.parent.GetComponent<PlaneBumper>();
-    }
 
     private void OnTriggerEnter(Collider other)
     {

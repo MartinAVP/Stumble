@@ -10,14 +10,12 @@ public class PlaneBumper : Bumper
     private bool isPlaneCollider = false;
 
     [SerializeField] private SphereCollider sphere;
-    private bool dirtyOverlaps = true;
 
     private List<GameObject> sphereOverlaps = new List<GameObject>();
     private LayerMask layerMask;
 
-    private void FixedUpdate()
+    private void Start()
     {
-        dirtyOverlaps = true;
         string[] maskedLayers = { "Default", "IgnoreRaycast" };
         layerMask = LayerMask.GetMask(maskedLayers);
         layerMask = ~(layerMask); // invert layer mask
@@ -39,7 +37,7 @@ public class PlaneBumper : Bumper
 
         IBumper bumpedObject = other.GetComponent<IBumper>();
         if (bumpedObject == null) return;
-        bumpedObject.Bump(transform.up, bounceForce, this);
+        bumpedObject.Bump(transform.up, bounceForce, sourceType);
         Debug.DrawRay(other.transform.position, transform.up, Color.magenta, 100f);
 
         // Sounds
@@ -60,6 +58,11 @@ public class PlaneBumper : Bumper
             return true;
         }
         return false;
+    }
+
+    public override Vector3 GetBumpDirection(GameObject other)
+    {
+        return transform.up;
     }
 
     public bool IsSphereCollider {  get { return isSphereCollider; } set { isSphereCollider = value; } }
