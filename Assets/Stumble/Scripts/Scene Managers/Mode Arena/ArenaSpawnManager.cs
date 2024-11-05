@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class ArenaSpawnManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class ArenaSpawnManager : MonoBehaviour
     public List<CheckpointData> Checkpoints;
 
     public static ArenaSpawnManager Instance { get; private set; }
+    public bool initialized { get; private set; }
 
     // Singleton
     private void Awake()
@@ -23,66 +25,37 @@ public class ArenaSpawnManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        Task Setup = setup();
     }
 
-    private void OnEnable()
+    private async Task setup()
     {
-        if (GameController.Instance != null)
+        // Wait for these values GameController needs to exist and be enabled.
+        while (ArenamodeManager.Instance == null || ArenamodeManager.Instance.enabled == false || ArenamodeManager.Instance.lookingForCheckpoint == false)
         {
-            GameController.Instance.startSecondarySystems += LateStart;
+            // Await 5 ms and try finding it again.
+            // It is made 5 seconds because it is
+            // a core gameplay mechanic.
+            await Task.Delay(1);
         }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Arena Spawn Manager...         [Arena Spawn Manager]");
+        //GameController.Instance.startSystems += LateStart;
+
+        initialized = true;
+        InitializeManager();
+        return;
     }
 
-    private void OnDisable()
+    private void InitializeManager()
     {
-        Checkpoints.Clear();
-
-        if (GameController.Instance != null)
-        {
-            GameController.Instance.startSecondarySystems -= LateStart;
-        }
-    }
-
-    private void Start()
-    {
-        initializeCheckpoints();
-        if (GameController.Instance == null)
-        {
-            InitializePlayers();
-        }
-    }
-
-    private void LateStart()
-    {
+        InitializeCheckpoints();
         InitializePlayers();
     }
 
-    // Start is called before the first frame update
-
-    public void InitializePlayers()
-    {
-        // Get all the players that joined and add them to the first checkpoint.
-        // In addition get them to the position of spawning
-        List<PlayerData> tempPlayerList = PlayerDataManager.Instance.GetPlayers();
-        List<Transform> checkPointSpawns = Checkpoints[0].GetCheckpointSpawns();
-
-        for (int i = 0; i < tempPlayerList.Count; i++)
-        {
-            Transform spawn = checkPointSpawns[i].transform;
-            // Parent Becomes spawn
-            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
-            tempPlayerList[i].GetPlayerInScene().transform.position = spawn.position;
-            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
-            tempPlayerList[i].GetPlayerInScene().transform.rotation = spawn.rotation;
-
-            Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
-            tempPlayerList[i].GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation);
-
-            Checkpoints[0].addPlayer(tempPlayerList[i].GetID());
-        }
-    }
-
-    public void initializeCheckpoints()
+    public void InitializeCheckpoints()
     {
         Checkpoints.Clear();
         // Get all checkpoints in scene and add them to the Data
@@ -105,17 +78,36 @@ public class ArenaSpawnManager : MonoBehaviour
             Checkpoints.Add(data);
         }
     }
-
-/*    public void RespawnPlayer(GameObject ob)
+    public void InitializePlayers()
     {
-        int index = UnityEngine.Random.Range(0, Checkpoints.Count);
-        Transform spawn = Checkpoints[index].transform;
+        // Get all the players that joined and add them to the first checkpoint.
+        // In addition get them to the position of spawning
+        List<PlayerData> tempPlayerList = PlayerDataHolder.Instance.GetPlayers();
+        List<Transform> checkPointSpawns = Checkpoints[0].GetCheckpointSpawns();
 
-        ob.GetComponent<CharacterController>().enabled = false;
-        ob.transform.position = spawn.position;
-        ob.GetComponent<CharacterController>().enabled = true;
-        ob.transform.rotation = spawn.rotation;
-    }*/
+        for (int i = 0; i < tempPlayerList.Count; i++)
+        {
+            Transform spawn = checkPointSpawns[i].transform;
+            // Parent Becomes spawn
+            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = false;
+            tempPlayerList[i].GetPlayerInScene().transform.position = spawn.position;
+            tempPlayerList[i].GetPlayerInScene().GetComponent<CharacterController>().enabled = true;
+            tempPlayerList[i].GetPlayerInScene().transform.rotation = spawn.rotation;
+
+            Checkpoints[0].addPlayer(tempPlayerList[i].GetID());
+        }
+    }
+
+    /*    public void RespawnPlayer(GameObject ob)
+        {
+            int index = UnityEngine.Random.Range(0, Checkpoints.Count);
+            Transform spawn = Checkpoints[index].transform;
+
+            ob.GetComponent<CharacterController>().enabled = false;
+            ob.transform.position = spawn.position;
+            ob.GetComponent<CharacterController>().enabled = true;
+            ob.transform.rotation = spawn.rotation;
+        }*/
 
 
     public Transform GetNonBlockedSpawn()

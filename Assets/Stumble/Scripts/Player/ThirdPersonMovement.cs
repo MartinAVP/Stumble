@@ -6,9 +6,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Cinemachine;
 using Unity.VisualScripting;
+using Unity.IO.LowLevel.Unsafe;
 
 [RequireComponent(typeof(CharacterController))]
-public class ThirdPersonMovement : MonoBehaviour, IBumper
+public class ThirdPersonMovement : MonoBehaviour
 {
     // Requierements
     public CharacterController controller;
@@ -18,6 +19,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
     public event Action OnJump;
     public event Action OnDive;
+    public event Action OnSlap;
 
     #region Horizontal Movement
     [Header("Movement")]
@@ -37,6 +39,15 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float bumpForce = 20f;
     private float bumpUpwardForce = .2f;
     [HideInInspector] public Vector3 _bumpHorizontalVelocity = Vector3.zero;
+    #endregion
+
+    #region Slaping
+    private float slapForce = 10f;
+    private float slapUpWardForce = 1.0f;
+    private float slapDistance = 1.5f;
+    private float slapCooldown = 1.0f;
+
+    private bool canSlap = true;
     #endregion
 
     #region Rotating
@@ -84,6 +95,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     private float playerHeight = 2;
     private float playerRadius = 0.5f;
     private bool diveWasCanceled = false;
+    private bool canDive = false;
     #endregion
 
     #region Platform
@@ -118,6 +130,12 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Bumping
         bumpForce = playerMovementSettings.bumpForce;
         bumpUpwardForce = playerMovementSettings.bumpUpwardForce;
+
+        // Slaping
+        slapForce = playerMovementSettings.slapForce;
+        slapUpWardForce = playerMovementSettings.slapUpWardForce;
+        slapDistance = playerMovementSettings.slapDistance;
+        slapCooldown = playerMovementSettings.slapCooldown;
 
         // Roatation
         turnSmoothTime = playerMovementSettings.turnSmoothTime;
@@ -161,6 +179,9 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         MovingPlatformManager manager = MovingPlatformManager.Instance;
         MovingPlatformEventBus.Subscribe(MovingPlatformEvent.Final, Movement);
 
+        // Dive Cooldown
+        StartCoroutine(DiveCooldown(2f));
+
         // Update Sensitivity
         updateSensitivity(baseVerticalViewSensitivity, baseInvertVerticalInput, baseHorizontalViewSensitivity, baseInvertHorizontalInput);
 
@@ -188,13 +209,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
         }
-        else if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.StaticCamera)
+        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
         {
             this.transform.GetComponent<PlayerInput>().camera = Camera.main;
             cam = Camera.main.transform;
         }
-
         //Debug.Log("I got here 2");
+    }
+
+    private IEnumerator DiveCooldown(float time)
+    {
+        canDive = false;
+        yield return new WaitForSeconds(time);
+        canDive = true;
     }
 
     private Transform hasCamera()
@@ -220,6 +247,20 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
 
         isFloored = _grounded;
+    }
+
+    private void LateUpdate()
+    {
+        if(this.transform.position.y < -50)
+        {
+            controller.enabled = false;
+            this.transform.position = new Vector3(0, 20, 0);
+            verticalVelocity = 0;
+            horizontalVelocity = 0;
+            CancelVelocity();
+            toggleProne(false);
+            controller.enabled = true;
+        }
     }
 
     private void OnDestroy()
@@ -250,9 +291,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Check when key is pressed once
         if (!context.started) return;
 
+        RaycastHit hit;
+        Vector3 delta = Vector3.up * 1.1f * (controller.height / 2);
+
+        if(Physics.Linecast(transform.position, transform.position + delta))
+        {
+            return;
+        }
+
         // Check if player is prone, unprone if proned;
         if (isProne) {
             //Debug.Log("Un Toggle Prone");
+            // Cancel velocity when standing up
+            CancelVelocity();
             toggleProne(false);
             return; 
         }
@@ -272,7 +323,10 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         if(lockMovement) return;
 
         // Prevent Diving when on the ground
-        //if (_grounded) return;
+        if (_grounded) return;
+
+        Debug.Log(canDive);
+        if (!canDive) { return; }
 
         //Debug.Log("Dive");
         // Change Model
@@ -283,6 +337,17 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             toggleProne(true);
 
             OnDive?.Invoke();
+        }
+    }
+
+    public void Slap(InputAction.CallbackContext context)
+    {
+        if (lockMovement) return;
+
+        if (context.started)
+        {
+            OnSlap?.Invoke();
+            SlapPlayer();
         }
     }
     #endregion
@@ -297,8 +362,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     {
         _bumpHorizontalVelocity.y = 0;
 
-        print("Bump velocity: " + _bumpHorizontalVelocity +
-            "Horizontal Velocity: " + horizontalVelocity);
+/*        print("Bump velocity: " + _bumpHorizontalVelocity +
+            "Horizontal Velocity: " + horizontalVelocity);*/
 
         ApplyGravity();
         ApplyVerticalMovement();
@@ -316,6 +381,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         // Move with base after all other movement seems to yield a slightly smoother result? - Michael
         MoveWithBase();
+
+        //print("player pos " + transform.position.y);
 
         // Slide Prototype Logic - Not Working.
 /*        Vector3 slideVector = groundedVector;
@@ -438,7 +505,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         // Decellerate the player based on multiplier
         else
         {
-            print("Braking: " + actualBraking);
+            //print("Braking: " + actualBraking);
             horizontalVelocity -= actualBraking;
 
             if (horizontalVelocity <= 0.05f)
@@ -640,17 +707,19 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
                 if (cancelVelocity)
                 {
                     Vector3 platformVelocity = currentPlatform.LinearVelocity;
+                    float platformVerticalVelocity = platformVelocity.y;
                     
                     if(platformVelocity.magnitude > _bumpHorizontalVelocity.magnitude)
                         platformVelocity = platformVelocity.normalized * Vector3.Dot(_bumpHorizontalVelocity.normalized, platformVelocity);
 
                     _bumpHorizontalVelocity -= platformVelocity;
+                    verticalVelocity -= platformVerticalVelocity;
                 }
             }
             else if(currentPlatform != null)
             {
-                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
                 _bumpHorizontalVelocity += platformVelocity;
+                verticalVelocity += platformVelocity.y;
                 currentPlatform = null;
             }
 
@@ -659,8 +728,8 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         {
             if(currentPlatform != null)
             {
-                //Vector3 platformVelocity = currentPlatform.LinearVelocity;
                 _bumpHorizontalVelocity += platformVelocity;
+                verticalVelocity += platformVelocity.y;
             }
 
             currentPlatform = null;
@@ -668,7 +737,7 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
 
         if (_grounded == false) { _grounded = controller.isGrounded; };
 
-        print("Is player grounded? " + _grounded);
+        //print("Is player grounded? " + _grounded);
 
         //return _grounded;
     }
@@ -757,9 +826,6 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
         }
         else // Stand Up
         {
-            _bumpHorizontalVelocity = Vector3.zero;
-            horizontalVelocity = 0;
-
             // Check if the player is already Diving and Prevent from Diving Again;
             if (isProne)
             {
@@ -786,6 +852,44 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
             playerHeight = controller.height;
         }
     }
+
+    private void CancelVelocity()
+    {
+        _bumpHorizontalVelocity = Vector3.zero;
+        horizontalVelocity = 0;
+    }
+
+    // Slap Force
+    // Slap Cooldown
+    // Slap Distance
+
+/*      slapForce = playerMovementSettings.slapForce;
+        slapUpWardForce = playerMovementSettings.slapUpWardForce;
+        slapDistance = playerMovementSettings.slapForce;
+        slapCooldown = playerMovementSettings.slapForce;*/
+
+    private void SlapPlayer()
+    {
+        if (!canSlap) { return; }
+        canSlap = false;
+        RaycastHit hit;
+        if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
+        {
+            if (hit.transform.GetComponent<IBumper>() != null)
+            {
+                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+            }
+        }
+        StartCoroutine(SlapCooldown(slapCooldown));
+    }
+
+    private IEnumerator SlapCooldown(float time)
+    {
+        yield return new WaitForSeconds(time);
+        canSlap = true;
+
+    }
     #endregion
 
     // Interfaces
@@ -799,18 +903,41 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
+        print("Bump player: " + direction + " " + magnitude);
+
+        if (magnitude < .01f || direction.magnitude < .01f) return;
+
+        if (isProne)
+        {
+            toggleProne(false);
+        }
+        diveWasCanceled = false;
         Vector3 bumpVelocity = direction * magnitude;
 
         _bumpHorizontalVelocity += new Vector3(bumpVelocity.x, 0, bumpVelocity.z);
 
         // If vertical velocity of the bumper is acting against this, then cancel this vertical velocity. Otherwise sum the velocities.
-        if(bumpVelocity.y * verticalVelocity <= 0)
+        if (bumpVelocity.y * verticalVelocity <= 0)
         {
             verticalVelocity = bumpVelocity.y;
         }
         else
         {
             verticalVelocity += bumpVelocity.y;
+        }
+    }
+
+    private void BumpBack(Vector3 direction, Vector3 position, IBumper source)
+    {
+        Debug.DrawLine(transform.position, transform.position + CompositeVelocity, Color.yellow, 5f);
+
+        if (source.GetBumpSource() != BumpSource.StaticBumper &&
+            Vector3.Dot(direction, CompositeVelocity.normalized) < 0)
+        {
+            float impulseMagnitude = CompositeVelocity.magnitude;
+            if (isProne) impulseMagnitude *= bumpForce;
+
+            source.Bump(-direction, position, impulseMagnitude, BumpSource.StaticBumper);
         }
     }
     #endregion
@@ -823,21 +950,51 @@ public class ThirdPersonMovement : MonoBehaviour, IBumper
     /// </summary>
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        if(hit.point.y > (transform.position.y + (playerHeight / 2) * .9f) &&
+            Vector3.Dot(hit.normal, Vector3.up) < 0 &&
+            verticalVelocity > 0)
+        {
+            verticalVelocity = 0;
+        }
+
         if (hit.transform.tag == "Player") {
             if (isProne)
             {
-                Debug.Log("Bump!");
-                IBumper targetBumper = hit.gameObject.GetComponent<IBumper>();
-                if (targetBumper != null)
+                //Debug.Log("Bump!");
+                ThirdPersonMovement targetPlayer = hit.gameObject.GetComponent<ThirdPersonMovement>();
+                if (targetPlayer != null)
                 {
                     Vector3 bumpDirection = transform.forward.normalized + new Vector3(0, bumpUpwardForce, 0);
                     float bumpMagnitude = bumpForce;
 
-                    targetBumper.Bump(bumpDirection, bumpMagnitude);
+                    targetPlayer.Bump(bumpDirection, bumpMagnitude);
                 }
             }
         }
+
+        IBumper bumper = hit.gameObject.GetComponent<IBumper>();
+        if (bumper != null)
+        {
+            if(hit.point.y > (transform.position + controller.center).y - (controller.height / 2) - .05f)
+            {
+                BumpBack(bumper.GetBumpDirection(gameObject), hit.point, bumper);
+            }
+            Bump(bumper.GetBumpDirection(gameObject), bumper.GetBumpMagnitude());
+        }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        IBumper bumper = other.gameObject.GetComponent<IBumper>();
+        if (bumper != null)
+        {
+            Bump(bumper.GetBumpDirection(gameObject), bumper.GetBumpMagnitude());
+        }
+    }
+    #endregion
+
+    #region Properties
+    public Vector3 CompositeVelocity { get { return (horizontalVelocity * transform.forward) + _bumpHorizontalVelocity + (verticalVelocity * Vector3.up); } }
     #endregion
 
 }

@@ -40,6 +40,7 @@ public class LoadingScreenManager : MonoBehaviour
 
     public void StartTransition(bool goIn)
     {
+        Debug.Log("Loading Screen Called");
         if (LoadingScreen == null) { Debug.LogError("No Loading Screen Defined"); return; }
         if (isLoadingScreen) // Loading Screen is filling the Screen
         {

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BlockFlip : MonoBehaviour
 {
+    //cabron jumpscare
     public bool flipping = false;
 
     public float rotationSpeed = 2f;
