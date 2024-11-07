@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class MainMenuUIManager : MonoBehaviour
+public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
 {
     [Header("Panels")]
     [Tooltip("Panel For Fading")]
@@ -190,6 +191,12 @@ public class MainMenuUIManager : MonoBehaviour
     {
         //Debug.Log("Exit Game");
         Application.Quit();
+    }
+
+    public void OnUpdateSelected(BaseEventData data)
+    {
+        Debug.Log("OnUpdateSelected called.");
+        Debug.Log(data.selectedObject.name);
     }
 
     private void returnToMainMenuFromOptions()
