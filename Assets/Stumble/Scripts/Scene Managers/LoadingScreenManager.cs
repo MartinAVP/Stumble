@@ -30,7 +30,7 @@ public class LoadingScreenManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
         }
         else
         {

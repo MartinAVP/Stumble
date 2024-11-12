@@ -19,7 +19,7 @@ public class GamemodeSelectScreenManager : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(this);
         }
     }
 

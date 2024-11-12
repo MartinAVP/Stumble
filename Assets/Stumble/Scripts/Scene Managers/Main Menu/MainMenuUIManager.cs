@@ -19,6 +19,7 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject startScreenPanel;
     [SerializeField] private GameObject optionsPanel;
+    [SerializeField] private GameObject transitionPanel;
 
     [Header("Main Buttons")]
     [SerializeField] private UnityEngine.UI.Button _startGameButton;
@@ -158,22 +159,30 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
             if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
         }
 
-        private IEnumerator disableUnityTransition()
+        private IEnumerator disableUnityTransition()S
         {
             yield return new WaitForSeconds(3f);
             unityScreenPanel.SetActive(false);
         }*/
 
-    private void StartGameCoroutine() {
+    public void StartGameCoroutine() {
+        Debug.Log("Clicked");
         StartCoroutine(StartGame());
     }
 
     private IEnumerator StartGame()
     {
         //Debug.Log("Start Game");
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("Lobby");
+        SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, transitionPanel, GamemodeSelectScreenManager.Direction.Left);
+        yield return new WaitForSeconds(.5f);
+        transitionPanel.SetActive(false);
+        //SceneManager.UnloadSceneAsync("MainMenu");
+        /*        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+                yield return new WaitForSeconds(2f);
+                SceneManager.LoadScene("Lobby");*/
     }
 
     private void OpenOptions()
