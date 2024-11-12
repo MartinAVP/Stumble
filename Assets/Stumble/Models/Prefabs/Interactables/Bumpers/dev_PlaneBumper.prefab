@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5092336525490625110}
   - component: {fileID: 5409223470646808116}
   - component: {fileID: 3228001231932882031}
+  - component: {fileID: 49463028001925881}
   m_Layer: 2
   m_Name: BoxCollision
   m_TagString: Untagged
@@ -66,7 +67,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc9aa74f33d2fc43b37f4855cb1acca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planeBumper: {fileID: 49463028001925881}
   type: 1
+--- !u!114 &49463028001925881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013819666687843648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c1bbb5a1bcdd64899ff1405b19f9ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bounceForce: 50
+  sphere: {fileID: 3275676003787417299}
 --- !u!1 &1044306014472951291
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,7 +92,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5332079312915838003}
-  - component: {fileID: 6974972691845786931}
   m_Layer: 0
   m_Name: dev_PlaneBumper
   m_TagString: Untagged
@@ -102,21 +117,6 @@ Transform:
   - {fileID: 5336905585046434207}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6974972691845786931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1044306014472951291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41c1bbb5a1bcdd64899ff1405b19f9ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isSphereCollider: 0
-  isPlaneCollider: 0
-  bounceForce: 50
 --- !u!1 &7908367284493069040
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 1189000016752334333}
   - component: {fileID: 9031853081800159738}
   m_Layer: 0
-  m_Name: Mesh[Needed]
+  m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -266,4 +266,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc9aa74f33d2fc43b37f4855cb1acca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planeBumper: {fileID: 49463028001925881}
   type: 0
