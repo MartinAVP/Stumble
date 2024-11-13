@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Runtime.CompilerServices;
 
 public class BorderAnimation : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class BorderAnimation : MonoBehaviour
     public float frameDelay = .1f;
 
     public bool available = true;
+    private int i = 0;
 
     void Start()
     {
@@ -21,18 +23,25 @@ public class BorderAnimation : MonoBehaviour
 
 
     void FixedUpdate()
-    {       
+    {
         if (available)
         {
             StartCoroutine(Animate());
+        }
+        /*
+        else if (!available && Border.sprite != Border_Frames[0] && i)
+        {
 
         }
+        */
     }
 
 
     void IPointerEnterHandler()
     {
-        Border.enabled = true;  
+        Border.enabled = true;
+        StartCoroutine(Animate());
+        Debug.Log("enabled, should animate");
     }
 
     void IPointerExitHandler()
@@ -43,7 +52,7 @@ public class BorderAnimation : MonoBehaviour
     public IEnumerator Animate()
     {
         available = false;
-        for (int i = 0;i < Border_Frames.Count; i++)
+        for (i = 0;i < Border_Frames.Count; i++)
         {
             Border.sprite = Border_Frames[i];
             yield return new WaitForSecondsRealtime(frameDelay);
@@ -51,5 +60,9 @@ public class BorderAnimation : MonoBehaviour
         available = true;
     }
 
+    public void AnimateDead()
+    {
+        StartCoroutine(Animate());
+    }
 }
 

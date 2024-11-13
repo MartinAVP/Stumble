@@ -30,7 +30,7 @@ public class ColorChangeChild : MonoBehaviour
         }
         if(endOfRound && triggered && !chosen)
         {
-            self.transform;
+            //self.transform;
         }
         
     }
