@@ -874,7 +874,7 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         if (!canSlap) { return; }
         canSlap = false;
-        RaycastHit hit;
+/*        RaycastHit hit;
         if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
         {
             if (hit.transform.GetComponent<IBumper>() != null)
@@ -882,9 +882,24 @@ public class ThirdPersonMovement : MonoBehaviour
                 hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
             }
+        }*/
+
+        RaycastHit[] hits = Physics.SphereCastAll(this.transform.forward, slapDistance, Vector3.up);
+        foreach(var singleHit in hits)
+        {
+            Debug.DrawLine(this.transform.position, singleHit.point, Color.red, 20f);
+            if (singleHit.transform.GetComponent<IBumper>() != null)
+            {
+                singleHit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                //Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+                Debug.DrawLine(this.transform.position, singleHit.point, Color.cyan);
+            }
         }
+
         StartCoroutine(SlapCooldown(slapCooldown));
     }
+
+    private Physics physics;
 
     private IEnumerator SlapCooldown(float time)
     {
