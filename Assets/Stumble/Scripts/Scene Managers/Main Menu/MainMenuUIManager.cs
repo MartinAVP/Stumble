@@ -173,19 +173,19 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
     private IEnumerator StartGame()
     {
         //Debug.Log("Start Game");
-        SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, transitionPanel, GamemodeSelectScreenManager.Direction.Left);
-        yield return new WaitForSeconds(.5f);
-        transitionPanel.SetActive(false);
+        /*        SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, transitionPanel, GamemodeSelectScreenManager.Direction.Left);
+                yield return new WaitForSeconds(.5f);
+                transitionPanel.SetActive(false);*/
         //SceneManager.UnloadSceneAsync("MainMenu");
-        /*        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-                yield return new WaitForSeconds(2f);
-                SceneManager.LoadScene("Lobby");*/
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Lobby");
     }
 
-    private void OpenOptions()
+    public void OpenOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
         ControllerForMenus.Instance.ChangeSelectedObject(_generalVolume.gameObject);
