@@ -870,29 +870,63 @@ public class ThirdPersonMovement : MonoBehaviour
         slapDistance = playerMovementSettings.slapForce;
         slapCooldown = playerMovementSettings.slapForce;*/
 
+    public List<GameObject> hitObjs = new List<GameObject>();
     private void SlapPlayer()
     {
         if (!canSlap) { return; }
         canSlap = false;
-/*        RaycastHit hit;
-        if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
-        {
-            if (hit.transform.GetComponent<IBumper>() != null)
-            {
-                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
-                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
-            }
-        }*/
+        /*        RaycastHit hit;
+                if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
+                {
+                    if (hit.transform.GetComponent<IBumper>() != null)
+                    {
+                        hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                        Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+                    }
+                }*/
 
-        RaycastHit[] hits = Physics.SphereCastAll(this.transform.forward, slapDistance, Vector3.up);
+        float offset = 1.1f;
+        Vector3 slapDir = this.transform.position + (this.transform.forward * offset);
+        Debug.DrawLine(this.transform.position, slapDir, Color.green, 20f);
+
+        //RaycastHit[] hits = Physics.OverlapSphere(slapDir, slapDistance);
+        hitObjs.Clear();
+        Collider[] hits = Physics.OverlapSphere(slapDir, slapDistance);
+        foreach (Collider hit in hits)
+        {
+            hitObjs.Add(hit.gameObject);
+        }
+
+
+        //CapsuleCollider collider = this.transform.GetComponent<CapsuleCollider>();
         foreach(var singleHit in hits)
         {
-            Debug.DrawLine(this.transform.position, singleHit.point, Color.red, 20f);
-            if (singleHit.transform.GetComponent<IBumper>() != null)
+            //if(singleHit.transform == this.transform) { break; }
+            Debug.Log("Hit: " + singleHit.gameObject.name);
+            //Debug.DrawLine(slapDir, singleHit.point, Color.red, 20f);
+            //Debug.DrawRay(slapDir, this.transform.forward - this.transform.position, Color.yellow, 20f);
+            //Debug.DrawRay(slapDir, singleHit.point, Color.cyan, 20f);
+            Debug.DrawLine(slapDir, singleHit.transform.position, Color.red, 20f);
+            GameObject obj = singleHit.gameObject;
+            if (obj.GetComponent<IBumper>() != null)
             {
-                singleHit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.green, 5f);
+                Debug.DrawLine(slapDir, singleHit.transform.position, Color.cyan, 20f);
+                singleHit.gameObject.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
                 //Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
-                Debug.DrawLine(this.transform.position, singleHit.point, Color.cyan);
+                //Debug.DrawLine(this.transform.position, singleHit.point, Color.cyan);
+            }
+            else if (singleHit.GetComponent<ThirdPersonMovement>() != null)
+            {
+                if(singleHit.GetComponent<ThirdPersonMovement>() != this){                
+                    Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.green, 5f);
+                    Debug.DrawLine(slapDir, singleHit.transform.position, Color.cyan, 20f);
+                    singleHit.GetComponent<ThirdPersonMovement>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
+                } // Prevent Auto Bumping
+            }
+            else
+            {
+                Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.red, 5f);
             }
         }
 

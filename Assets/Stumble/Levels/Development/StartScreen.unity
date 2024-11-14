@@ -1528,8 +1528,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1508838398}
   - component: {fileID: 1508838400}
-  - component: {fileID: 1508838399}
-  - component: {fileID: 1508838401}
   - component: {fileID: 1508838402}
   m_Layer: 0
   m_Name: UI Components
@@ -1553,35 +1551,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1508838399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508838397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4a552d490a31e24c842e719a8489b16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unityScreenPanel: {fileID: 900601363}
-  mainMenuPanel: {fileID: 0}
-  startScreenPanel: {fileID: 135900117}
-  optionsPanel: {fileID: 0}
-  _startGameButton: {fileID: 0}
-  _optionsButton: {fileID: 0}
-  _creditsButton: {fileID: 0}
-  _achievementsButton: {fileID: 0}
-  _ExitButton: {fileID: 0}
-  _generalVolume: {fileID: 0}
-  _MusicVolume: {fileID: 0}
-  _SFXVolume: {fileID: 0}
-  _TargetFPS: {fileID: 0}
-  _TargetFPSText: {fileID: 0}
-  _ReturnToMenuFromOptions: {fileID: 0}
-  multiplayerEventSystem: {fileID: 0}
-  initialized: 0
 --- !u!114 &1508838400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1596,22 +1565,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LoadingScreen: {fileID: 553099106}
   targetYPosition: 5600
---- !u!114 &1508838401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508838397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 540bd5164c12151459c7dd70aa53cad0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FirstSelectedItem: {fileID: 0}
-  eventSystem: {fileID: 787255503}
-  hostUsingController: 0
-  giveHostCursorAccess: 1
 --- !u!114 &1508838402
 MonoBehaviour:
   m_ObjectHideFlags: 0

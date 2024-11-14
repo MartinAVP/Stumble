@@ -87,12 +87,12 @@ public class EmoteWheelController : MonoBehaviour
 
         if (context.performed)
         {
-            Debug.Log("The Scheme is " + currentScheme);
+            //Debug.Log("The Scheme is " + currentScheme);
             if(currentScheme == scheme.Controller)
             {
                 Vector2 raw = context.ReadValue<Vector2>();
                 controllerV2 = raw.normalized;
-                Debug.Log("INPUT LOG: X:" + raw.x + " Y:" + raw.y);
+                //Debug.Log("INPUT LOG: X:" + raw.x + " Y:" + raw.y);
             }
         }
 

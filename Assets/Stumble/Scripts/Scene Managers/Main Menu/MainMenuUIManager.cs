@@ -96,7 +96,7 @@ public class MainMenuUIManager : MonoBehaviour
         _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
         _SFXVolume.onValueChanged.AddListener(changeSFXVolume);
         _TargetFPS.onValueChanged.AddListener(changeTargetFPS);
-        _ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
+        //_ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
     }
 
     private void OnDisable()
@@ -115,7 +115,7 @@ public class MainMenuUIManager : MonoBehaviour
             _MusicVolume.onValueChanged.RemoveAllListeners();
             _SFXVolume.onValueChanged.RemoveAllListeners();
             _TargetFPS.onValueChanged.RemoveAllListeners();
-            _ReturnToMenuFromOptions.onClick.RemoveAllListeners();
+            //_ReturnToMenuFromOptions.onClick.RemoveAllListeners();
         }
     }
 
@@ -135,43 +135,26 @@ public class MainMenuUIManager : MonoBehaviour
         //changeSFXVolume(0);
         changeTargetFPS(120);
 
+        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
+        //input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(Slider);
+
+        //Task task = ChangeCurrentSelected();
         initialized = true;
     }
 
     private void Start()
     {
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
-        Task Selection = ChangeCurrentSelected();
+
+        Debug.LogWarning("Selection Started");
 
         // Adding Slider Sub
-        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
         //InputActionMap inputActionMap = input.
         //if (input.currentControlScheme == "Controller") { return; }
 /*        input.actions["Move"].performed += Slider;
         input.actions["Select"].performed += Slider;*/
 
-        input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(Slider);
     }
-
-    /*    private void joinHostPlayer(PlayerInput player)
-        {
-            StartCoroutine(changeToMainMenu());
-        }
-
-        private IEnumerator changeToMainMenu()
-        {
-            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-            yield return new WaitForSeconds(3f);
-            mainMenuPanel.SetActive(true);
-            startScreenPanel.SetActive(false);
-            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
-        }
-
-        private IEnumerator disableUnityTransition()S
-        {
-            yield return new WaitForSeconds(3f);
-            unityScreenPanel.SetActive(false);
-        }*/
 
     public void StartGameCoroutine() {
         Debug.Log("Clicked");
@@ -216,25 +199,21 @@ public class MainMenuUIManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void OnUpdateSelected(BaseEventData data)
-    {
-        Debug.Log("OnUpdateSelected called.");
-        Debug.Log(data.selectedObject.name);
-    }
-
-    private void returnToMainMenuFromOptions()
+    public void returnToMainMenuFromOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeSelectedObject(_optionsButton.gameObject);
     }
 
     // IMoveHandler Implementation
-    [HideInInspector] public GameObject currentSelected;
+    public GameObject currentSelected;
     [HideInInspector] public UnityEvent<GameObject> OnChangedSelectedObject;
     private bool subToSlider = false;
-    private Slider activeSlide;
+    public Slider activeSlide;
     
-    private async Task ChangeCurrentSelected()
+/*    private async Task ChangeCurrentSelected()
     {
+        currentSelected = this.gameObject;
         while (true)
         {
             if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
@@ -243,11 +222,26 @@ public class MainMenuUIManager : MonoBehaviour
                 OnChangedSelectedObject.Invoke(currentSelected);
                 CheckSlider();
                 Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
+                await Task.Delay(100);
             }
 
+            Debug.Log("Loopin");
             await Task.Delay(200);
         }
 
+    }*/
+
+/*    private void FixedUpdate()
+    {
+        //if(currentSelected == null) { currentSelected = gameObject; }
+        if (currentSelected == null) { currentSelected = multiplayerEventSystem.currentSelectedGameObject; return; }
+        if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
+        {
+            currentSelected = multiplayerEventSystem.currentSelectedGameObject;
+            OnChangedSelectedObject.Invoke(currentSelected);
+            CheckSlider();
+            //Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
+        }
     }
 
     private void CheckSlider()
@@ -255,17 +249,8 @@ public class MainMenuUIManager : MonoBehaviour
         // Prevent this Method from running if the player is not using a controller.
         PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
         if (input.currentControlScheme != "Controller") { return; }
-        if(currentSelected.GetComponent<UnityEngine.UIElements.Slider>() != null)
-        {
-            Debug.Log("Slider Component Found");
-            activeSlide = currentSelected.GetComponent<Slider>();
-/*            subToSlider = true;
-            input.actions["Move"].performed += Slider;*/
-        }
-        else
-        {
-            activeSlide = null;
-        }
+        Debug.Log("Check #1");
+        GameObject obj = multiplayerEventSystem.currentSelectedGameObject;
     }
 
     public void SliderSubscribe()
@@ -285,7 +270,7 @@ public class MainMenuUIManager : MonoBehaviour
                 multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>().value += raw.x * Time.deltaTime;
             }
         }
-    }
+    }*/
 
 
     private void changeGeneralVolume(float value)

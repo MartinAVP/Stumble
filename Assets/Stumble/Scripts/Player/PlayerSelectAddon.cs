@@ -13,7 +13,7 @@ public class PlayerSelectAddon : MonoBehaviour
         if (context.performed)
         {
             Vector2 value = context.ReadValue<Vector2>();
-            //Debug.Log(value); 
+            Debug.Log(value); 
             OnSelectInput?.Invoke(value, this.GetComponent<PlayerInput>());
 
             if (CosmeticManager.Instance != null)
