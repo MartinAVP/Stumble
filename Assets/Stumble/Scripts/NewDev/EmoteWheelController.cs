@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 public class EmoteWheelController : MonoBehaviour
 {
@@ -14,6 +16,9 @@ public class EmoteWheelController : MonoBehaviour
     [SerializeField] private GameObject emoteWheelPanel;
 
     public event Action<int> PlayEmote;
+
+    private scheme currentScheme;
+    private Vector2 controllerV2 = Vector2.zero;
 
     private bool isActive = false;
     public int currentEmoteID = 0;
@@ -26,10 +31,12 @@ public class EmoteWheelController : MonoBehaviour
         if (controlScheme == "Keyboard")
         {
             Debug.Log("Keyboard");
+            currentScheme = scheme.Keyboard;
         }
         else if(controlScheme == "Controller")
         {
             Debug.Log("Controller");
+            currentScheme = scheme.Controller;
         }
     }
 
@@ -42,9 +49,17 @@ public class EmoteWheelController : MonoBehaviour
         Vector3 targetDir = (playerCamera.ScreenToViewportPoint(Input.mousePosition) - new Vector3(.5f, .5f, 0f)) * 2;
 
         Quaternion quaternion = Quaternion.identity;
+
+        if(currentScheme == scheme.Controller)
+        {
+            //targetDir = controllerV2.normalized;
+            targetDir = new Vector3(controllerV2.x, controllerV2.y, 0f);
+        }
+
         quaternion.eulerAngles = new Vector3(0, 0, Angle(targetDir) * -1);
 
-        pointerCenter.transform.rotation = quaternion;
+        //pointerCenter.transform.rotation = quaternion;
+        pointerCenter.GetComponent<RectTransform>().localRotation = quaternion;
 
         foreach (Transform t in wheelPieces)
         {
@@ -54,21 +69,34 @@ public class EmoteWheelController : MonoBehaviour
         //wheelPieces[GetSelectedID(Angle(targetDir))].GetComponent<Image>().color = Color.red;
         int id = GetSelected(Angle(targetDir), wheelPieces.Length);
 
-        wheelPieces[id].GetComponent<Image>().color = Color.red;
+        Debug.Log(id);
+        if(id == -1) { return; }
+        wheelPieces[id].GetComponent<Image>().color = Color.yellow;
         currentEmoteID = id;
 
-        Debug.Log(id);
+        //Debug.Log(id);
     }
 
-    public void EmoteWheelKeybind(InputAction.CallbackContext callback)
+    public void EmoteWheelKeybind(InputAction.CallbackContext context)
     {
-        if (callback.performed)
+        if (context.started)
         {
             emoteWheelPanel.SetActive(true);
             isActive = true;
         }
 
-        if (callback.canceled)
+        if (context.performed)
+        {
+            Debug.Log("The Scheme is " + currentScheme);
+            if(currentScheme == scheme.Controller)
+            {
+                Vector2 raw = context.ReadValue<Vector2>();
+                controllerV2 = raw.normalized;
+                Debug.Log("INPUT LOG: X:" + raw.x + " Y:" + raw.y);
+            }
+        }
+
+        if (context.canceled)
         {
             isActive = false;
             emoteWheelPanel.SetActive(false);
@@ -76,9 +104,37 @@ public class EmoteWheelController : MonoBehaviour
         }
     }
 
-    public void EmoteWheelQuickAccess(InputAction.CallbackContext callback)
+    public void EmoteWheelQuickAccess(InputAction.CallbackContext context)
     {
 
+        Vector2 raw = context.ReadValue<Vector2>();
+/*        Debug.Log(raw);
+
+        Debug.Log(raw.x);
+        Debug.Log(raw.y);*/
+
+        if (context.performed)
+        {
+            // X - Values
+            if (raw.x >= 0.5f && raw.y == 0)
+            {
+                PlayEmote?.Invoke(2);
+            }
+            if(raw.x <= -0.5f && raw.y == 0)
+            {
+                PlayEmote?.Invoke(6);
+            }
+
+            // Y - Values
+            if (raw.y >= 0.5f && raw.x == 0)
+            {
+                PlayEmote?.Invoke(0);
+            }
+            if (raw.y <= -0.5f && raw.x == 0)
+            {
+                PlayEmote?.Invoke(4);
+            }
+        }
     }
 
 
@@ -160,5 +216,11 @@ public class EmoteWheelController : MonoBehaviour
         {
             return Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg;
         }
+    }
+
+    private enum scheme
+    {
+        Keyboard,
+        Controller
     }
 }

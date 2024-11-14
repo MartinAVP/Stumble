@@ -27,7 +27,11 @@ public class ControllerForMenus : MonoBehaviour
             Instance = this;
         }
 
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+    }
+
+    private void OnEnable()
+    {
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
     }
 
     void Start()
@@ -39,12 +43,8 @@ public class ControllerForMenus : MonoBehaviour
     {
         // Note: This system relies on the Main Menu UI Manager & Player Data Manager.
         // If any of these components is missing it will not work.
-        while (MainMenuUIManager.Instance == null || MainMenuUIManager.Instance.enabled == false || MainMenuUIManager.Instance.initialized == false
-            || PlayerDataManager.Instance == null || PlayerDataManager.Instance.enabled == false)
+        while (PlayerDataHolder.Instance == null || PlayerDataHolder.Instance.enabled == false)
         {
-            // Await 5 ms and try finding it again.
-            // It is made 5 seconds because it is
-            // a core gameplay mechanic.
             await Task.Delay(2);
         }
 
@@ -61,7 +61,6 @@ public class ControllerForMenus : MonoBehaviour
 
         if (playerDataManager != null)
         {
-            //Debug.Log(playerDataManager.GetPlayers().Count);
             if (playerDataManager.GetPlayers().Count > 0)
             {
                 //PlayerInput player = playerDataManager.GetPlayerData(0).GetInput();
@@ -82,7 +81,8 @@ public class ControllerForMenus : MonoBehaviour
 
     private void AddPlayer(PlayerInput player)
     {
-        // Is the first player
+        //Debug.Log("PLAYER JOINED EPICly");
+        //Is the first player
         if(player.playerIndex == 0)
         {
             if(player.currentControlScheme == "Controller")

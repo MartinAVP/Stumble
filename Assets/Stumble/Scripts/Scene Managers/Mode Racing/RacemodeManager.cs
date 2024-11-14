@@ -148,7 +148,6 @@ public class RacemodeManager : MonoBehaviour
         if (GameMusicController.Instance != null && GameMusicController.Instance.enabled == true)
         {
             gameMusicController = GameMusicController.Instance;
-            gameMusicController.setup();
             Debug.Log("Found Game Music Controller...         [Racemode Manager]");
         }
         else
@@ -241,8 +240,8 @@ public class RacemodeManager : MonoBehaviour
 
         // Start the Timer
         stopwatch.Start();
-        Debug.Log(GetElapsedTime());
-        UnityEngine.Debug.LogWarning("Race has been initialized");
+        //Debug.Log(GetElapsedTime());
+        //UnityEngine.Debug.LogWarning("Race has been initialized");
 
         // Unlock all Player Movement
         LockPlayersMovement(false);

@@ -251,7 +251,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(this.transform.position.y < -50)
+        if(this.transform.position.y < -100)
         {
             controller.enabled = false;
             this.transform.position = new Vector3(0, 20, 0);
@@ -325,7 +325,7 @@ public class ThirdPersonMovement : MonoBehaviour
         // Prevent Diving when on the ground
         if (_grounded) return;
 
-        Debug.Log(canDive);
+        //Debug.Log(canDive);
         if (!canDive) { return; }
 
         //Debug.Log("Dive");
@@ -336,6 +336,8 @@ public class ThirdPersonMovement : MonoBehaviour
             if (isProne) { return; }
             toggleProne(true);
 
+
+            verticalVelocity = 1;
             OnDive?.Invoke();
         }
     }
@@ -875,9 +877,10 @@ public class ThirdPersonMovement : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
         {
-            if (hit.transform.GetComponent<IBumper>() != null)
+            ThirdPersonMovement thirdPersonMovement = hit.transform.GetComponent<ThirdPersonMovement>();
+            if (thirdPersonMovement != null)
             {
-                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                thirdPersonMovement.Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
             }
         }
