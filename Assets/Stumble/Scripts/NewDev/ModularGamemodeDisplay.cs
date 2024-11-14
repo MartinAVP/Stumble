@@ -60,19 +60,19 @@ public class ModularGamemodeDisplay : MonoBehaviour
         Debug.LogWarning(gamemodes.modules.Count);
 
         for (int i = 0; i < gamemodes.modules.Count; i++) {
-            Debug.Log("Spawning");
+            //Debug.Log("Spawning");
             GameObject map = Instantiate(MapPrefab, this.transform);
             MapCard mapCard = map.GetComponent<MapCard>();
             mapCard.gamemode = gamemodes.modules[i];
             mapCard.title.text = gamemodes.modules[i].name;
-            if (gamemodes.modules[i].modulePreview != null)
+/*            if (gamemodes.modules[i].modulePreview != null)
             {
                 mapCard.backgroundImage.sprite = gamemodes.modules[i].modulePreview;
             }
             else
             {
                 Debug.Log("Null Image");
-            }
+            }*/
             /*            if (gamemodes.modules[i].title != null)
                         {
                             mapCard.title.text = gamemodes.modules[i].title;

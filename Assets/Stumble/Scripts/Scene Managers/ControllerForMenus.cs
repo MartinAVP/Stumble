@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
-public class ControllerForMenus : MonoBehaviour
+public class ControllerForMenus : MonoBehaviour, IMoveHandler
 {
     private PlayerDataManager playerDataManager;
     private PlayerInputManager playerInputManager;
@@ -101,6 +104,28 @@ public class ControllerForMenus : MonoBehaviour
                 }
             }
         }
+    }
+
+    // IMoveHandler interface implementation
+    public void OnMove(AxisEventData eventData)
+    {
+        // Get the current selected GameObject
+        GameObject currentSelected = EventSystem.current.currentSelectedGameObject;
+
+/*        // Check if the selection has changed due to navigation
+        if (currentSelected != lastSelected)
+        {
+            // Handle logic for navigation change (not just selection)
+            Debug.Log("Navigated: " + currentSelected.name);
+
+            // Update the last selected element
+            lastSelected = currentSelected;
+        }
+        else
+        {
+            // The selection hasn't changed, but the user is still navigating
+            Debug.Log("Still Navigating: " + currentSelected.name);
+        }*/
     }
 
     public void ChangeSelectedObject(GameObject selected)

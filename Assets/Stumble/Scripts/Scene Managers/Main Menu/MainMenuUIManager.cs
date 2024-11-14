@@ -4,20 +4,20 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Slider = UnityEngine.UI.Slider;
 
-public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
+public class MainMenuUIManager : MonoBehaviour
 {
     [Header("Panels")]
     [Tooltip("Panel For Fading")]
-    [SerializeField] private GameObject unityScreenPanel;
     [SerializeField] private GameObject mainMenuPanel;
-    [SerializeField] private GameObject startScreenPanel;
     [SerializeField] private GameObject optionsPanel;
     [SerializeField] private GameObject transitionPanel;
 
@@ -122,9 +122,9 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
     private void InitializeManager()
     {
         // Initialize Panels
-        unityScreenPanel.SetActive(true);
-        mainMenuPanel.SetActive(false);
-        startScreenPanel.SetActive(true);
+        //unityScreenPanel.SetActive(true);
+        mainMenuPanel.SetActive(true);
+        //startScreenPanel.SetActive(true);
 
         // Disable the Transition
         //StartCoroutine(disableUnityTransition());
@@ -136,13 +136,21 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
         changeTargetFPS(120);
 
         initialized = true;
-
-        Debug.Log("My Pony");
     }
 
     private void Start()
     {
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
+        Task Selection = ChangeCurrentSelected();
+
+        // Adding Slider Sub
+        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
+        //InputActionMap inputActionMap = input.
+        //if (input.currentControlScheme == "Controller") { return; }
+/*        input.actions["Move"].performed += Slider;
+        input.actions["Select"].performed += Slider;*/
+
+        input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(Slider);
     }
 
     /*    private void joinHostPlayer(PlayerInput player)
@@ -188,7 +196,7 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
     public void OpenOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
-        ControllerForMenus.Instance.ChangeSelectedObject(_generalVolume.gameObject);
+        ControllerForMenus.Instance.ChangeSelectedObject(_TargetFPS.gameObject);
         Debug.Log("Open Options");
     }
 
@@ -219,17 +227,66 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
         GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
     }
 
-    public void Slider(InputAction.CallbackContext context)
+    // IMoveHandler Implementation
+    [HideInInspector] public GameObject currentSelected;
+    [HideInInspector] public UnityEvent<GameObject> OnChangedSelectedObject;
+    private bool subToSlider = false;
+    private Slider activeSlide;
+    
+    private async Task ChangeCurrentSelected()
     {
-        Vector2 raw = context.ReadValue<Vector2>();
-        if(raw.x > .5f)
+        while (true)
         {
+            if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
+            {
+                currentSelected = multiplayerEventSystem.currentSelectedGameObject;
+                OnChangedSelectedObject.Invoke(currentSelected);
+                CheckSlider();
+                Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
+            }
+
+            await Task.Delay(200);
+        }
+
+    }
+
+    private void CheckSlider()
+    {
+        // Prevent this Method from running if the player is not using a controller.
+        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
+        if (input.currentControlScheme != "Controller") { return; }
+        if(currentSelected.GetComponent<UnityEngine.UIElements.Slider>() != null)
+        {
+            Debug.Log("Slider Component Found");
+            activeSlide = currentSelected.GetComponent<Slider>();
+/*            subToSlider = true;
+            input.actions["Move"].performed += Slider;*/
+        }
+        else
+        {
+            activeSlide = null;
+        }
+    }
+
+    public void SliderSubscribe()
+    {
+
+    }
+
+    public void Slider(Vector2 raw, PlayerInput data)
+    {
+        Debug.Log("Slider Performed");
+        if(activeSlide == null) { return; }
+        if (raw.x > .5f)
+        {
+            Debug.Log("Slider++");
             if (multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>() != null)
             {
                 multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>().value += raw.x * Time.deltaTime;
             }
         }
     }
+
 
     private void changeGeneralVolume(float value)
     {
@@ -263,5 +320,14 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
         {
             OptionsManager.Instance.SetTargetFPS(newValue);
         }
+    }
+
+    private enum Menu
+    {
+        Main,
+        Options,
+        Controls,
+        Achievements,
+        Credits
     }
 }
