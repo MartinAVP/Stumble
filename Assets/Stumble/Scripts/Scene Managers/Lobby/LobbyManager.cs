@@ -115,7 +115,7 @@ public class LobbyManager : MonoBehaviour
 
     public void ReturnToMainMenu(PlayerInput input)
     {
-        if (PlayerDataHolder.Instance.GetPlayerData(input)?.isHost == false)
+        if (PlayerDataHolder.Instance.GetPlayerData(input).isHost == false)
         {
             return;
         }
@@ -127,6 +127,7 @@ public class LobbyManager : MonoBehaviour
     private IEnumerator delayReturn()
     {
         yield return new WaitForSeconds(2f);
+        PlayerDataHolder.Instance.ClearAllButHost(true);
         SceneManager.LoadScene("MainMenu");
     }
 }

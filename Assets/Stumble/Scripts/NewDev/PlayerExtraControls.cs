@@ -4,15 +4,17 @@ using UnityEngine;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.InputSystem;
 using System.Threading.Tasks;
+using UnityEngine.Events;
 
 public class PlayerExtraControls : MonoBehaviour
 {
 
     private GameController gameController;
-
     private LobbyManager lobbyManager;
-
     private PlayerInput input;
+
+    [HideInInspector] public UnityEvent<PlayerInput> pressContinue;
+    [HideInInspector] public UnityEvent<PlayerInput> pressBack;
 
     private void Awake()
     {
@@ -53,6 +55,7 @@ public class PlayerExtraControls : MonoBehaviour
             {
                 lobbyManager.StartGame(input);
             }
+            pressContinue.Invoke(input);
         }
     }
 
@@ -65,6 +68,7 @@ public class PlayerExtraControls : MonoBehaviour
             {
                 lobbyManager.ReturnToMainMenu(input);
             }
+            pressBack.Invoke(input);
         }
     }
 }

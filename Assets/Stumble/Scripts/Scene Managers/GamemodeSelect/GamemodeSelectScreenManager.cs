@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GamemodeSelectScreenManager : MonoBehaviour
 {
-    public enum Direction { Left, Right }
+    public enum Direction { Left, Right, Up, Down }
 
     public static GamemodeSelectScreenManager Instance { get; private set; }
 
@@ -39,7 +39,6 @@ public class GamemodeSelectScreenManager : MonoBehaviour
             ? new Vector3(Screen.width, 0, 0) // Incoming starts off-screen on the right
             : new Vector3(-Screen.width, 0, 0); // Incoming starts off-screen on the left
 
-        // Set the incoming screen to the starting position off-screen
         incoming.localPosition = initialIncomingPosition;
         incoming.gameObject.SetActive(true);
 

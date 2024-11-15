@@ -179,7 +179,7 @@ public class MainMenuUIManager : MonoBehaviour
     public void OpenOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
-        ControllerForMenus.Instance.ChangeSelectedObject(_TargetFPS.gameObject);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
         Debug.Log("Open Options");
     }
 
@@ -202,7 +202,7 @@ public class MainMenuUIManager : MonoBehaviour
     public void returnToMainMenuFromOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
-        ControllerForMenus.Instance.ChangeSelectedObject(_optionsButton.gameObject);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
     }
 
     // IMoveHandler Implementation

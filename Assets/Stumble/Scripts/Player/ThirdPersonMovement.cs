@@ -197,6 +197,12 @@ public class ThirdPersonMovement : MonoBehaviour
 
         // Add look action to cam
 
+        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
+        {
+            this.transform.GetComponent<PlayerInput>().camera = Camera.main;
+            cam = Camera.main.transform;
+        }
+
         if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
@@ -208,11 +214,6 @@ public class ThirdPersonMovement : MonoBehaviour
         if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.ThirdPersonControl)
         {
             this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
-        }
-        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
-        {
-            this.transform.GetComponent<PlayerInput>().camera = Camera.main;
-            cam = Camera.main.transform;
         }
         //Debug.Log("I got here 2");
     }
@@ -902,7 +903,7 @@ public class ThirdPersonMovement : MonoBehaviour
         foreach(var singleHit in hits)
         {
             //if(singleHit.transform == this.transform) { break; }
-            Debug.Log("Hit: " + singleHit.gameObject.name);
+            //Debug.Log("Hit: " + singleHit.gameObject.name);
             //Debug.DrawLine(slapDir, singleHit.point, Color.red, 20f);
             //Debug.DrawRay(slapDir, this.transform.forward - this.transform.position, Color.yellow, 20f);
             //Debug.DrawRay(slapDir, singleHit.point, Color.cyan, 20f);

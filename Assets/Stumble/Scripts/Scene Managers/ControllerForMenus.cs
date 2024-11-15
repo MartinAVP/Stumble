@@ -118,6 +118,22 @@ public class ControllerForMenus : MonoBehaviour
             currentItem = selected;
             Debug.Log("[CFM] Changed Selected Item for " + selected.name);
 
+            if(selected.GetComponent<Button>() != null)
+            {
+                Debug.Log("Navigation: Up: " +
+                selected.GetComponent<Button>().navigation.selectOnUp.name +
+                " Down: " +
+                selected.GetComponent<Button>().navigation.selectOnDown.name);
+            }
+
+            if(selected.GetComponent<Slider>() != null)
+            {
+                Debug.Log("Navigation: Up: " +
+                selected.GetComponent<Slider>().navigation.selectOnUp.name +
+                " Down: " +
+                selected.GetComponent<Slider>().navigation.selectOnDown.name);
+            }
+
             CheckSlider();
         }
     }
@@ -146,6 +162,11 @@ public class ControllerForMenus : MonoBehaviour
             activeSlider = null;
             input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.RemoveListener(SliderControl);
         }
+
+        if(currentItem.GetComponent<Button>() != null)
+        {
+            currentItem = eventSystem.currentSelectedGameObject;
+        }
     }
 
     public void SliderControl(Vector2 raw, PlayerInput data)
@@ -172,7 +193,7 @@ public class ControllerForMenus : MonoBehaviour
             {
                 ChangeSelectedObject(activeSlider.navigation.selectOnDown.gameObject);
             }
-            Debug.Log("Value: " + activeSlider.value);
+            Debug.Log("Value: " + activeSlider?.value);
         }
     }
 

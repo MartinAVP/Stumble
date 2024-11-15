@@ -11,14 +11,14 @@ public class LobbyUIManager : MonoBehaviour
     [SerializeField] private GameObject transitionPanel;
     [SerializeField] private GameObject mainLobbyPanel;
 
-    [SerializeField] private Button startGame;
+    //[SerializeField] private Button startGame;
 
     // Start is called before the first frame update
     public bool initialized { private set; get; }
 
     private void Start()
     {
-        StartCoroutine(AwakeCoroutine());
+        //StartCoroutine(AwakeCoroutine());
     }
 
     private IEnumerator AwakeCoroutine()
@@ -58,7 +58,7 @@ public class LobbyUIManager : MonoBehaviour
     }
 
 
-    private void OnEnable()
+/*    private void OnEnable()
     {
         startGame.onClick.AddListener(StartGame);
     }
@@ -66,7 +66,7 @@ public class LobbyUIManager : MonoBehaviour
     private void OnDisable()
     {
         startGame.onClick.RemoveAllListeners();
-    }
+    }*/
 
     public void StartGame()
     {
