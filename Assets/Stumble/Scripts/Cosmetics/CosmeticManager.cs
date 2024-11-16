@@ -46,15 +46,21 @@ public class CosmeticManager : MonoBehaviour
     private void Start()
     {
         // Moved to Enable so Unity has time to start the Player Input Manager
-        playerInputManager = FindFirstObjectByType<PlayerInputManager>();
-        playerInputManager.onPlayerJoined += AddPlayer;
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+
+        if (playerInputManager != null) {
+            playerInputManager.onPlayerJoined += AddPlayer;
+        }
 
         playerCooldown.Clear();        
     }
 
     private void OnDisable()
     {
-        playerInputManager.onPlayerJoined -= AddPlayer;
+        if (playerInputManager != null)
+        {
+            playerInputManager.onPlayerJoined -= AddPlayer;
+        }
 
         selectedCosmetic.Clear();
         playerCooldown.Clear();
