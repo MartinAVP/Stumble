@@ -96,37 +96,4 @@ public class LobbyManager : MonoBehaviour
         room.transform.position = spawnPos;
         lobbyRooms.Add(lobbyRoom);
     }
-
-    public void StartGame(PlayerInput input)
-    {
-        if(PlayerDataHolder.Instance.GetPlayerData(input)?.isHost == false) {
-            return;
-        }
-
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        StartCoroutine(delayStart());
-    }
-
-    private IEnumerator delayStart()
-    {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("GamemodeSelect");
-    }
-
-    public void ReturnToMainMenu(PlayerInput input)
-    {
-        if (PlayerDataHolder.Instance.GetPlayerData(input)?.isHost == false)
-        {
-            return;
-        }
-
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        StartCoroutine(delayReturn());
-    }
-
-    private IEnumerator delayReturn()
-    {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("MainMenu");
-    }
 }

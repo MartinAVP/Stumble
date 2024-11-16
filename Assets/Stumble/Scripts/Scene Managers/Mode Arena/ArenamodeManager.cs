@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -387,13 +386,11 @@ public class ArenamodeManager : MonoBehaviour
 
                     Console.WriteLine($"Key: {key}, Value: {value}");
                 }*/
-        int index = positions.Count;
-
-        // Reverse() Fixes Inverted Point problem.
-        foreach (PlayerData player in positions.Values.Reverse())
+        int index = 1;
+        foreach (PlayerData player in positions.Values)
         {
             scoreboardManager.SetPoints(player.id, index, 0);
-            index--;
+            index++;
         }
     }
     private void startSpectating(Vector2 value, PlayerInput input)
@@ -483,7 +480,7 @@ public class ArenamodeManager : MonoBehaviour
             //PlayerData data = PlayerDataHolder.Instance.GetPlayerData(playerObj.GetComponent<PlayerInput>());
 
             Debug.Log(data.GetPlayerInScene().name);
-            positions.Add(GetPlayersAlive() + 1, data);
+            positions.Add(GetPlayersAlive(), data);
             if (SpectatorManager.Instance != null)
             {
                 SpectatorManager.Instance.AddToSpectator(data);

@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
+public class MainMenuUIManager : MonoBehaviour
 {
     [Header("Panels")]
     [Tooltip("Panel For Fading")]
@@ -72,7 +71,7 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
         // Once it finds it initialize the scene
         Debug.Log("Initializing Main Menu UI Manager...         [Main Menu UI Manager]");
 
-        //playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
         menuManagerFound = true;
 
         InitializeManagerSubs();
@@ -82,7 +81,7 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
 
     private void InitializeManagerSubs()
     {
-        //playerInputManager.onPlayerJoined += joinHostPlayer;
+        playerInputManager.onPlayerJoined += joinHostPlayer;
 
         // Buttons
         _startGameButton?.onClick.AddListener(StartGameCoroutine);
@@ -101,7 +100,7 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
     private void OnDisable()
     {
         if (menuManagerFound) {        
-            //playerInputManager.onPlayerJoined -= joinHostPlayer;
+            playerInputManager.onPlayerJoined -= joinHostPlayer;
 
             // Buttons
             _startGameButton?.onClick.RemoveAllListeners();
@@ -126,8 +125,9 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
         startScreenPanel.SetActive(true);
 
         // Disable the Transition
-        //StartCoroutine(disableUnityTransition());
+        StartCoroutine(disableUnityTransition());
 
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
 
         changeGeneralVolume(0);
         changeMusicVolume(0);
@@ -135,34 +135,27 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
         changeTargetFPS(120);
 
         initialized = true;
-
-        Debug.Log("My Pony");
     }
 
-    private void Start()
+    private void joinHostPlayer(PlayerInput player)
     {
+        StartCoroutine(changeToMainMenu());
+    }
+
+    private IEnumerator changeToMainMenu()
+    {
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(3f);
+        mainMenuPanel.SetActive(true);
+        startScreenPanel.SetActive(false);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
     }
 
-    /*    private void joinHostPlayer(PlayerInput player)
-        {
-            StartCoroutine(changeToMainMenu());
-        }
-
-        private IEnumerator changeToMainMenu()
-        {
-            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-            yield return new WaitForSeconds(3f);
-            mainMenuPanel.SetActive(true);
-            startScreenPanel.SetActive(false);
-            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
-        }
-
-        private IEnumerator disableUnityTransition()
-        {
-            yield return new WaitForSeconds(3f);
-            unityScreenPanel.SetActive(false);
-        }*/
+    private IEnumerator disableUnityTransition()
+    {
+        yield return new WaitForSeconds(3f);
+        unityScreenPanel.SetActive(false);
+    }
 
     private void StartGameCoroutine() {
         StartCoroutine(StartGame());
@@ -197,12 +190,6 @@ public class MainMenuUIManager : MonoBehaviour, IUpdateSelectedHandler
     {
         //Debug.Log("Exit Game");
         Application.Quit();
-    }
-
-    public void OnUpdateSelected(BaseEventData data)
-    {
-        Debug.Log("OnUpdateSelected called.");
-        Debug.Log(data.selectedObject.name);
     }
 
     private void returnToMainMenuFromOptions()
