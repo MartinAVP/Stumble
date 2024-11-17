@@ -116,9 +116,9 @@ public class ControllerForMenus : MonoBehaviour
         {
             eventSystem.SetSelectedGameObject(selected);
             currentItem = selected;
-            Debug.Log("[CFM] Changed Selected Item for " + selected.name);
+/*            Debug.Log("[CFM] Changed Selected Item for " + selected.name);
 
-            if(selected.GetComponent<Button>() != null)
+            if (selected.GetComponent<Button>() != null)
             {
                 Debug.Log("Navigation: Up: " +
                 selected.GetComponent<Button>().navigation.selectOnUp.name +
@@ -126,7 +126,7 @@ public class ControllerForMenus : MonoBehaviour
                 selected.GetComponent<Button>().navigation.selectOnDown.name);
             }
 
-            if(selected.GetComponent<Slider>() != null)
+            if (selected.GetComponent<Slider>() != null)
             {
                 Debug.Log("Navigation: Up: " +
                 selected.GetComponent<Slider>().navigation.selectOnUp.name +
@@ -134,26 +134,31 @@ public class ControllerForMenus : MonoBehaviour
                 selected.GetComponent<Slider>().navigation.selectOnDown.name);
             }
 
-            CheckSlider();
+            CheckSlider();*/
         }
     }
-
+/*
     private bool usingSlider = false;
     private Slider activeSlider = null;
     public void CheckSlider()
     {
-        if(currentItem.GetComponent<Slider>() != null)
+        if (currentItem.GetComponent<Slider>() != null)
         {
             Debug.Log("This thing has a slider");
             usingSlider = true;
             activeSlider = currentItem.GetComponent<Slider>();
-            if(input.currentActionMap.name == "Player")
+            if (input.currentActionMap.name == "Player")
             {
                 input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(SliderControl);
+                // Lock Prevention, prevents slider locking.
+                Debug.Log("Press Send #2.1");
+                input.gameObject.GetComponent<PlayerInputOverhaul>().OnSouthPressed.AddListener(SliderLockPrevention);
             }
             else if (input.currentActionMap.name == "UI")
             {
                 input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(SliderControl);
+                Debug.Log("Press Send #2.2");
+                input.gameObject.GetComponent<PlayerInputOverhaul>().OnSouthPressed.AddListener(SliderLockPrevention);
             }
         }
         else
@@ -161,9 +166,11 @@ public class ControllerForMenus : MonoBehaviour
             usingSlider = false;
             activeSlider = null;
             input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.RemoveListener(SliderControl);
+
+            input.gameObject.GetComponent<PlayerInputOverhaul>().OnSouthPressed.RemoveListener(SliderLockPrevention);
         }
 
-        if(currentItem.GetComponent<Button>() != null)
+        if (currentItem.GetComponent<Button>() != null)
         {
             currentItem = eventSystem.currentSelectedGameObject;
         }
@@ -171,7 +178,7 @@ public class ControllerForMenus : MonoBehaviour
 
     public void SliderControl(Vector2 raw, PlayerInput data)
     {
-        if(activeSlider != null)
+        if (activeSlider != null)
         {
             Debug.Log("Slider Performed");
             if (raw.x > .5f)
@@ -185,20 +192,26 @@ public class ControllerForMenus : MonoBehaviour
                 activeSlider.value = activeSlider.value + raw.x;
             }
 
-            if(raw.y > .5f)
+            if (raw.y > .5f)
             {
                 ChangeSelectedObject(activeSlider.navigation.selectOnUp.gameObject);
             }
-            if(raw.y < -.5f)
+            if (raw.y < -.5f)
             {
                 ChangeSelectedObject(activeSlider.navigation.selectOnDown.gameObject);
             }
             Debug.Log("Value: " + activeSlider?.value);
         }
     }
+    public void SliderLockPrevention()
+    {
+        Debug.Log("Press Send #3");
+        ChangeObjectSelectedWithDelay(currentItem, .3f);
+    }*/
 
     // Timeds
-    public void ChangeObjectSelectedWithDelay(GameObject selected, float delay) {
+    public void ChangeObjectSelectedWithDelay(GameObject selected, float delay)
+    {
         StartCoroutine(changeObj(selected, delay));
     }
     private IEnumerator changeObj(GameObject selected, float delay)
