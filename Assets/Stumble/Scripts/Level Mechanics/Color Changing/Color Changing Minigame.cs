@@ -5,7 +5,10 @@ using UnityEngine;
 public class ColorChangingMinigame : MonoBehaviour
 {
     [SerializeField] public List<Color> colors = new List<Color>();
-
+    [SerializeField] private GameObject cubePrefab; 
+    [SerializeField] private int gridWidth = 5;     
+    [SerializeField] private int gridHeight = 5;    
+    [SerializeField] private float spacing = 1.5f;  // Spacing 
     [HideInInspector] public Color SelectedColor;
 
     public int randomColorInt;
@@ -15,7 +18,7 @@ public class ColorChangingMinigame : MonoBehaviour
     public int ColorsInPlay = 3;
 
     public int RoundCounter = 0;
-
+    public float frameDelay = 1.1f;
 
     public float progressionSpeed;
     private int progressionInt = 4;
@@ -26,6 +29,7 @@ public class ColorChangingMinigame : MonoBehaviour
     private bool timeToTrigger = false;
     
     
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -33,10 +37,12 @@ public class ColorChangingMinigame : MonoBehaviour
 
         progressionInt = ColorsInPlay + 1;
 
-        for (int i = colors.Count; i < colors.Count; i++)
+        for (int i = 0; i < colors.Count; i++)
         {
-            Debug.Log("Color:  " +colors[i]);
+            Debug.Log("Color: " +colors[i]);
         }
+
+        GenerateGrid();
 
     }
 
@@ -46,6 +52,32 @@ public class ColorChangingMinigame : MonoBehaviour
         
     }
 
+    private void GenerateGrid()
+    {
+        // Ensure cubePrefab is assigned
+        if (cubePrefab == null)
+        {
+            Debug.LogError("Cube Prefab is not assigned!");
+            return;
+        }
+
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int z = 0; z < gridHeight; z++)
+            {
+                Vector3 position = new Vector3(x * spacing, 0, z * spacing);
+                GameObject cube = Instantiate(cubePrefab, position, Quaternion.identity, transform);
+                int randomIndex = Random.Range(0, ColorsInPlay);
+                Color randomColor = colors[randomIndex];
+                Renderer renderer = cube.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    renderer.material.color = randomColor;
+                }
+            }
+        }
+    }
 
     private IEnumerator ColorChanger()
     {
