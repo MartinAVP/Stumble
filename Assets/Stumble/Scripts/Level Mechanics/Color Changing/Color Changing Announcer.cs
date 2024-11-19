@@ -6,17 +6,19 @@ public class ColorChangingAnnouncer : MonoBehaviour
 {
     [SerializeField] ColorChangingMinigame colorMinigame;
 
-    private Color DisplayColor;
+    private Renderer objectRenderer;
 
-    // Start is called before the first frame update
     void Start()
     {
-        
+        objectRenderer = GetComponent<Renderer>();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        
+        if (colorMinigame != null && objectRenderer != null)
+        {
+            Debug.Log(colorMinigame.SelectedColor);
+            objectRenderer.material.color = colorMinigame.SelectedColor;
+        }
     }
 }
