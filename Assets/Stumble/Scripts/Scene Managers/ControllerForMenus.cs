@@ -65,7 +65,7 @@ public class ControllerForMenus : MonoBehaviour
         playerDataManager = PlayerDataManager.Instance;
         playerInputManager.onPlayerJoined += AddPlayer;
 
-        if (playerDataManager != null)
+/*        if (playerDataManager != null)
         {
             if (playerDataManager.GetPlayers().Count > 0)
             {
@@ -75,7 +75,7 @@ public class ControllerForMenus : MonoBehaviour
                     hostUsingController = true;
                 }
             }
-        }
+        }*/
     }
 
     private void OnDisable()
@@ -92,12 +92,15 @@ public class ControllerForMenus : MonoBehaviour
         if(player.playerIndex == 0)
         {
             input = player;
-            if(player.currentControlScheme == "Controller")
+            if(player.currentControlScheme == "Controller" || player.currentControlScheme == "Gamepad")
             {
                 hostUsingController = true;
-                //Debug.Log("Player 0 Is Controller");
-                //eventSystem.firstSelectedGameObject = FirstSelectedItem;
+
+                player.uiInputModule = eventSystem.GetComponent<InputSystemUIInputModule>();
+                player.camera = Camera.main;
+
                 eventSystem.SetSelectedGameObject(FirstSelectedItem);
+                Debug.Log("Current Selected: " + eventSystem.currentSelectedGameObject.name);
             }
             else
             {
