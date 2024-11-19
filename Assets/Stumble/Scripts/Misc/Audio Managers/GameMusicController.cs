@@ -9,19 +9,15 @@ public class GameMusicController : MonoBehaviour
 
     [SerializeField] private float delay;
     [SerializeField] private float delayCountdown;
-    [Space]
     [SerializeField] private AudioSource background;
     [SerializeField] private AudioSource countdown;
-    [Space]
-    [SerializeField] private AudioClip backgroundMusic;
-    [SerializeField] private AudioClip countdownSound;
 
     private float timeElapsed;
     private float lerpDuration;
     private float currentVolume;
     private bool lowerVolume = false;
 
-    public bool initialized { get; private set; } = true;
+    public bool initialized { get; private set; } = false;
 
     // Start is called before the first frame update
 
@@ -42,15 +38,34 @@ public class GameMusicController : MonoBehaviour
         Singleton();
     }
 
+    public void setup() {
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Game Music Manager...         [Game Music Manager]");
+
+/*        RacemodeManager.Instance.onRaceStart += InitializeGameMusic;
+        RacemodeManager.Instance.onCountdownStart += InitializeCountdown;*/
+        initialized = true;
+        return;
+    }
+
+    public void OnDisable()
+    {
+/*        if (initialized)
+        {
+            RacemodeManager.Instance.onRaceStart -= InitializeGameMusic;
+            RacemodeManager.Instance.onCountdownStart -= InitializeCountdown;
+        }*/
+    }
+
     public void InitializeCountdown()
     {
-        countdown.clip = countdownSound;
+        //countdown.Play();
         StartCoroutine(StartCountdownSound());
     }
 
     public void InitializeGameMusic()
     {
-        background.clip = backgroundMusic;
         StartCoroutine(StartGameMusic());
     }
 
