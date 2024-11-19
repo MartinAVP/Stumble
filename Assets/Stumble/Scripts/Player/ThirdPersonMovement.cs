@@ -252,7 +252,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(this.transform.position.y < -100)
+        if(this.transform.position.y < -600)
         {
             controller.enabled = false;
             this.transform.position = new Vector3(0, 20, 0);
