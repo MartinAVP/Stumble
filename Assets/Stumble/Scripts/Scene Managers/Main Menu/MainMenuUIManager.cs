@@ -24,9 +24,9 @@ public class MainMenuUIManager : MonoBehaviour
     [Header("Main Buttons")]
     [SerializeField] private UnityEngine.UI.Button _startGameButton;
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
-    [SerializeField] private UnityEngine.UI.Button _creditsButton;
-    [SerializeField] private UnityEngine.UI.Button _achievementsButton;
-    [SerializeField] private UnityEngine.UI.Button _ExitButton;
+    //[SerializeField] private UnityEngine.UI.Button _creditsButton;
+    //[SerializeField] private UnityEngine.UI.Button _achievementsButton;
+    //[SerializeField] private UnityEngine.UI.Button _ExitButton;
 
     [Header("Options")]
     [SerializeField] private UnityEngine.UI.Slider _generalVolume;
@@ -34,10 +34,11 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Slider _SFXVolume;
     [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
     [SerializeField] private TextMeshProUGUI _TargetFPSText;
+    [Space]
     [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
 
     private PlayerInputManager playerInputManager;
-    [SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
+    //[SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
 
     public static MainMenuUIManager Instance { get; private set; }
     [HideInInspector] public bool initialized = false;
@@ -86,11 +87,11 @@ public class MainMenuUIManager : MonoBehaviour
         //playerInputManager.onPlayerJoined += joinHostPlayer;
 
         // Buttons
-        _startGameButton?.onClick.AddListener(StartGameCoroutine);
+/*        _startGameButton?.onClick.AddListener(StartGameCoroutine);
         _optionsButton?.onClick.AddListener(OpenOptions);
         _creditsButton?.onClick.AddListener(OpenCredits);
         _achievementsButton?.onClick.AddListener(OpenAchievements);
-        _ExitButton?.onClick.AddListener(ExitGame);
+        _ExitButton?.onClick.AddListener(ExitGame);*/
 
         _generalVolume.onValueChanged.AddListener(changeGeneralVolume);
         _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
@@ -105,11 +106,11 @@ public class MainMenuUIManager : MonoBehaviour
             //playerInputManager.onPlayerJoined -= joinHostPlayer;
 
             // Buttons
-            _startGameButton?.onClick.RemoveAllListeners();
+/*            _startGameButton?.onClick.RemoveAllListeners();
             _optionsButton?.onClick.RemoveAllListeners();
             _creditsButton?.onClick.RemoveAllListeners();
             _achievementsButton?.onClick.RemoveAllListeners();
-            _ExitButton?.onClick.RemoveAllListeners();
+            _ExitButton?.onClick.RemoveAllListeners();*/
 
             _generalVolume.onValueChanged.RemoveAllListeners();
             _MusicVolume.onValueChanged.RemoveAllListeners();
@@ -183,17 +184,17 @@ public class MainMenuUIManager : MonoBehaviour
         Debug.Log("Open Options");
     }
 
-    private void OpenCredits()
+    public void OpenCredits()
     {
         Debug.Log("Open Credits");
     }
 
-    private void OpenAchievements()
+    public void OpenAchievements()
     {
         Debug.Log("Open Achievements");
     }
 
-    private void ExitGame()
+    public void ExitGame()
     {
         //Debug.Log("Exit Game");
         Application.Quit();
@@ -206,10 +207,10 @@ public class MainMenuUIManager : MonoBehaviour
     }
 
     // IMoveHandler Implementation
-    public GameObject currentSelected;
+/*    public GameObject currentSelected;
     [HideInInspector] public UnityEvent<GameObject> OnChangedSelectedObject;
     private bool subToSlider = false;
-    public Slider activeSlide;
+    public Slider activeSlide;*/
     
 /*    private async Task ChangeCurrentSelected()
     {
