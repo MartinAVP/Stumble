@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 244180283245330597}
   - component: {fileID: 1601748962702920158}
   - component: {fileID: 8694255491217749892}
+  - component: {fileID: 9105899899481598298}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -88,11 +89,35 @@ MonoBehaviour:
     m_ActionId: 203c9b0c-fc00-4681-a056-f776fb98b428
     m_ActionName: Player/Emote Wheel[/XInputControllerWindows/buttonNorth,/Keyboard/b]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 9105899899481598298}
+        m_TargetAssemblyTypeName: PlayerExtraControls, Assembly-CSharp
+        m_MethodName: Continue
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: e0e0fb33-ac56-474f-87c4-3e128d66870f
     m_ActionName: Player/Continue[/XInputControllerWindows/start,/Keyboard/enter]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 9105899899481598298}
+        m_TargetAssemblyTypeName: PlayerExtraControls, Assembly-CSharp
+        m_MethodName: Return
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 41c06b24-513d-4a1d-ad9d-62348382cb0c
     m_ActionName: Player/Return[/XInputControllerWindows/select,/Keyboard/escape]
   - m_PersistentCalls:
@@ -135,6 +160,38 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9105899899481598298}
+        m_TargetAssemblyTypeName: PlayerExtraControls, Assembly-CSharp
+        m_MethodName: Continue
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 31837b3a-9f87-4ae4-8d73-9c6592c75151
+    m_ActionName: UI/Continue[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9105899899481598298}
+        m_TargetAssemblyTypeName: PlayerExtraControls, Assembly-CSharp
+        m_MethodName: Return
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 328cfe36-b103-4cfd-8250-d721bd4e71a0
+    m_ActionName: UI/Return[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: UI
@@ -168,6 +225,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OnSouthPressed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &9105899899481598298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716230687353702887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c58cd2c4c5e48b14ba78722747d1f540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressContinue:
+    m_PersistentCalls:
+      m_Calls: []
+  pressBack:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &9073692874036171556

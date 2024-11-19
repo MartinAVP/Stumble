@@ -59,7 +59,6 @@ public class PlayerExtraControls : MonoBehaviour
 
     public void Continue(InputAction.CallbackContext context)
     {
-        // Send a Message
         if (context.started)
         {
             if(gameController.gameState == GameState.Lobby)
@@ -71,14 +70,18 @@ public class PlayerExtraControls : MonoBehaviour
             {
                 mainMenuManager.StartGame(input);
             }
+            else if (gameController.gameState == GameState.Race || gameController.gameState == GameState.Arena || gameController.gameState == GameState.Podium)
+            {
+                Debug.Log("Pressed Continue");
+                PauseMenuManager.Instance.TogglePauseMenu(input, true);
+            }
             pressContinue.Invoke(input);
         }
     }
 
     public void Return(InputAction.CallbackContext context)
     {
-        // Send a Message.
-        if(!context.started)
+        if(context.started)
         {
             if (gameController.gameState == GameState.Lobby)
             {
@@ -87,6 +90,16 @@ public class PlayerExtraControls : MonoBehaviour
             else if (gameController.gameState == GameState.MainMenu)
             {
                 mainMenuManager.ExitGame(input);
+            }
+            else if (gameController.gameState == GameState.ChoosingGameMode)
+            {
+                Debug.Log("Pressed Return");
+                GamemodeSelectionManager.Instance.GoBackToLobby(input);
+            }
+            else if (gameController.gameState == GameState.Race || gameController.gameState == GameState.Arena || gameController.gameState == GameState.Podium)
+            {
+                Debug.Log("Pressed Return");
+                PauseMenuManager.Instance.TogglePauseMenu(input, false);
             }
             pressBack.Invoke(input);
         }

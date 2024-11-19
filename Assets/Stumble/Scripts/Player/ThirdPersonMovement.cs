@@ -292,7 +292,7 @@ public class ThirdPersonMovement : MonoBehaviour
         // Check when key is pressed once
         if (!context.started) return;
 
-        RaycastHit hit;
+        //RaycastHit hit;
         Vector3 delta = Vector3.up * 1.1f * (controller.height / 2);
 
         if(Physics.Linecast(transform.position, transform.position + delta))

@@ -197,10 +197,10 @@ public class PlayerDataHolder : MonoBehaviour
             }
         }
 
-/*        if (resetCosmetics)
+        if (resetCosmetics)
         {
-            players[0].cosmeticData = null;
-        }*/
+            players[0].cosmeticData = new CosmeticData();
+        }
     }
 
 /*    public int GetPlayersWithInGameCharacter()
