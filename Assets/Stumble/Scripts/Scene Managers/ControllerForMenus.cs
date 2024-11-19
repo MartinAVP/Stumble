@@ -37,7 +37,7 @@ public class ControllerForMenus : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
     }
 
     void Start()
