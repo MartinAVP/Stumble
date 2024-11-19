@@ -8,7 +8,7 @@ public class ModularController : MonoBehaviour
 {
     public int levelId;
 
-    private ModularGamemodes gamesLib;
+    [HideInInspector] public ModularGamemodes gamesLib;
     [Tooltip("The amount of modes that party gamemode will have.")]
     [SerializeField] private int partyGameSize;
 

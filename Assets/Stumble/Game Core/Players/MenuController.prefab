@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4099173294593281934}
   - component: {fileID: 244180283245330597}
+  - component: {fileID: 1601748962702920158}
+  - component: {fileID: 8694255491217749892}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -58,11 +60,35 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents:
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1601748962702920158}
+        m_TargetAssemblyTypeName: PlayerSelectAddon, Assembly-CSharp
+        m_MethodName: Select
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 50706a47-d6e6-4197-b962-ff209844b5ef
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8694255491217749892}
+        m_TargetAssemblyTypeName: PlayerInputOverhaul, Assembly-CSharp
+        m_MethodName: SouthButton
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: aaf51dfb-1212-4346-89c8-1640345fe39f
     m_ActionName: Player/Jump[/Keyboard/space]
   - m_PersistentCalls:
@@ -74,11 +100,35 @@ MonoBehaviour:
     m_ActionId: 3aff67fd-3609-465f-a0f3-dedaf932e206
     m_ActionName: Player/Look[/Mouse/delta]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1601748962702920158}
+        m_TargetAssemblyTypeName: PlayerSelectAddon, Assembly-CSharp
+        m_MethodName: Select
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 4518f07f-15ae-46c7-83f3-b30873ee494d
     m_ActionName: Player/Select[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1601748962702920158}
+        m_TargetAssemblyTypeName: PlayerSelectAddon, Assembly-CSharp
+        m_MethodName: Select
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 972f0d8f-a709-4280-86cc-539526382eda
     m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
@@ -94,7 +144,19 @@ MonoBehaviour:
     m_ActionId: 82d93cc6-c45e-4e1e-a19b-d9542e1973f0
     m_ActionName: UI/Point[/Mouse/position]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8694255491217749892}
+        m_TargetAssemblyTypeName: PlayerInputOverhaul, Assembly-CSharp
+        m_MethodName: SouthButton
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: bd16a4d9-8868-4542-9ee4-76daaaa3a768
     m_ActionName: UI/Click[/Mouse/leftButton]
   - m_PersistentCalls:
@@ -117,11 +179,57 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 8f21f6ee-294e-4b09-8de1-ef075b473f70
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eecc04e3-b50a-40d4-b593-3af76d42e4ad
+    m_ActionName: Player/Slap[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 093a83a5-1565-48ae-8efa-85110caae65f
+    m_ActionName: Player/Emote Wheel[/Keyboard/b]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 77f7f042-d4e4-4815-aa92-bc7b36a86614
+    m_ActionName: Player/Continue[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1076b9e1-6387-4c01-af14-30f0d173b11d
+    m_ActionName: Player/Return[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1601748962702920158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716230687353702887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04090fa5b6553ea44a897ee92ee41e25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectInput:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8694255491217749892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716230687353702887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80278a13a6724094ca59d4673250b604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSouthPressed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &9073692874036171556
 GameObject:
   m_ObjectHideFlags: 0
