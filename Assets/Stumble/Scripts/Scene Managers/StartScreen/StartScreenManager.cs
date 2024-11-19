@@ -6,12 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class StartScreenManager : MonoBehaviour
 {
+    // Michael Broke Github
     private PlayerInputManager _playerInputManager;
     [SerializeField] private Animator _animator;
-
-    void Awake()
-    {
-    }
 
     private void OnEnable()
     {
