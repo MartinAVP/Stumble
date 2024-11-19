@@ -82,6 +82,8 @@ public class PlayerManager : MonoBehaviour
                 break;
             case GameState.ChoosingGameMode:
                 break;
+            case GameState.MainMenu:
+                break;
             case GameState.Lobby:
                 while (LobbyManager.Instance == null || LobbyManager.Instance.enabled == false || LobbyManager.Instance.initialized == false)
                 {
