@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class MainMenuManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
 
     public static MainMenuManager Instance { get; private set; }
+    private bool transitioning = false;
     [HideInInspector] public bool initializedFinished = false;
 
     // Singleton
@@ -61,5 +63,47 @@ public class MainMenuManager : MonoBehaviour
         playerInputManager.DisableJoining();
         yield return new WaitForSeconds(1f);
         //playerInputManager.EnableJoining();
+    }
+
+    public void StartGame(PlayerInput input)
+    {
+        if (PlayerDataHolder.Instance.GetPlayerData(input)?.isHost == false)
+        {
+            return;
+        }
+
+        if (transitioning) return;
+        transitioning = true;
+
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        StartCoroutine(delayStart());
+    }
+
+    private IEnumerator delayStart()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Lobby");
+    }
+
+    public void ExitGame(PlayerInput input)
+    {
+        if (PlayerDataHolder.Instance.GetPlayerData(input).isHost == false)
+        {
+            return;
+        }
+
+        if (transitioning) return;
+        transitioning = true;
+
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        StartCoroutine(delayExit());
+    }
+
+    private IEnumerator delayExit()
+    {
+        yield return new WaitForSeconds(2f);
+        //PlayerDataHolder.Instance.ClearAllButHost(true);
+        Application.Quit();
+        //SceneManager.LoadScene("Menu");
     }
 }

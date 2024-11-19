@@ -20,6 +20,7 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private GameObject lobbyRoomPrefab;
 
     public static LobbyManager Instance;
+    private bool transitioning = false;
     [HideInInspector] public bool initialized = false;
 
     private void Awake()
@@ -103,6 +104,9 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
+        if(transitioning) return;
+        transitioning = true;
+
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayStart());
     }
@@ -120,6 +124,9 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
+        if(transitioning) return;
+        transitioning = true;
+
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayReturn());
     }
@@ -128,6 +135,6 @@ public class LobbyManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         PlayerDataHolder.Instance.ClearAllButHost(true);
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Menu");
     }
 }

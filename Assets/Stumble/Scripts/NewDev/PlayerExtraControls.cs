@@ -11,6 +11,7 @@ public class PlayerExtraControls : MonoBehaviour
 
     private GameController gameController;
     private LobbyManager lobbyManager;
+    private MainMenuManager mainMenuManager;
     private PlayerInput input;
 
     [HideInInspector] public UnityEvent<PlayerInput> pressContinue;
@@ -44,6 +45,16 @@ public class PlayerExtraControls : MonoBehaviour
 
             lobbyManager = LobbyManager.Instance;
         }
+
+        if (gameController.gameState == GameState.MainMenu)
+        {
+            while (MainMenuManager.Instance == null || MainMenuManager.Instance.enabled == false)
+            {
+                await Task.Delay(1);
+            }
+
+            mainMenuManager = MainMenuManager.Instance;
+        }
     }
 
     public void Continue(InputAction.CallbackContext context)
@@ -55,6 +66,10 @@ public class PlayerExtraControls : MonoBehaviour
             {
                 Debug.Log("Pressing Enter or Start");
                 lobbyManager.StartGame(input);
+            }
+            else if(gameController.gameState == GameState.MainMenu)
+            {
+                mainMenuManager.StartGame(input);
             }
             pressContinue.Invoke(input);
         }
@@ -68,6 +83,10 @@ public class PlayerExtraControls : MonoBehaviour
             if (gameController.gameState == GameState.Lobby)
             {
                 lobbyManager.ReturnToMainMenu(input);
+            }
+            else if (gameController.gameState == GameState.MainMenu)
+            {
+                mainMenuManager.ExitGame(input);
             }
             pressBack.Invoke(input);
         }

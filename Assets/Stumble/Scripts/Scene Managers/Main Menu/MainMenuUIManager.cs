@@ -160,9 +160,10 @@ public class MainMenuUIManager : MonoBehaviour
     }
 
     public void StartGameCoroutine() {
-        Debug.Log("Clicked");
+        MainMenuManager.Instance.StartGame(PlayerDataHolder.Instance.GetPlayerData(0).input);
+/*        Debug.Log("Clicked");             // MOVED TO THE MAIN MENU MANAGER
         if(transfering) { return; }
-        StartCoroutine(StartGame());
+        StartCoroutine(StartGame());*/
     }
 
     private IEnumerator StartGame()
@@ -193,6 +194,39 @@ public class MainMenuUIManager : MonoBehaviour
     {
         //Debug.Log("Exit Game");
         Application.Quit();
+    }
+
+    public void FullScreen()
+    {
+        Screen.fullScreen = true;
+    }
+
+    public void Windowed()
+    {
+        Screen.fullScreen = false;
+    }
+
+    public void ChangeTargetFPS(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                Application.targetFrameRate = 120;
+                break;
+            case 1:
+                Application.targetFrameRate = 90;
+                break;
+            case 2:
+                Application.targetFrameRate = 60;
+                break;
+            case 3:
+                Application.targetFrameRate = 30;
+                break;
+            case 4:
+                Application.targetFrameRate = 300;
+                break;
+        }
+
     }
 
     public void returnToMainMenuFromOptions()
