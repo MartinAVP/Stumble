@@ -53,6 +53,7 @@ public class PlayerExtraControls : MonoBehaviour
         {
             if(gameController.gameState == GameState.Lobby)
             {
+                Debug.Log("Pressing Enter or Start");
                 lobbyManager.StartGame(input);
             }
             pressContinue.Invoke(input);

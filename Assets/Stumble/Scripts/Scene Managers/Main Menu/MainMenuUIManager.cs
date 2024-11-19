@@ -40,6 +40,8 @@ public class MainMenuUIManager : MonoBehaviour
     private PlayerInputManager playerInputManager;
     //[SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
 
+    private bool transfering = false;           // Transferring prevent Spamming.
+
     public static MainMenuUIManager Instance { get; private set; }
     [HideInInspector] public bool initialized = false;
 
@@ -93,10 +95,10 @@ public class MainMenuUIManager : MonoBehaviour
         _achievementsButton?.onClick.AddListener(OpenAchievements);
         _ExitButton?.onClick.AddListener(ExitGame);*/
 
-        _generalVolume.onValueChanged.AddListener(changeGeneralVolume);
-        _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
-        _SFXVolume.onValueChanged.AddListener(changeSFXVolume);
-        _TargetFPS.onValueChanged.AddListener(changeTargetFPS);
+        _generalVolume?.onValueChanged.AddListener(changeGeneralVolume);
+        _MusicVolume?.onValueChanged.AddListener(changeMusicVolume);
+        _SFXVolume?.onValueChanged.AddListener(changeSFXVolume);
+        _TargetFPS?.onValueChanged.AddListener(changeTargetFPS);
         //_ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
     }
 
@@ -159,19 +161,12 @@ public class MainMenuUIManager : MonoBehaviour
 
     public void StartGameCoroutine() {
         Debug.Log("Clicked");
+        if(transfering) { return; }
         StartCoroutine(StartGame());
     }
 
     private IEnumerator StartGame()
     {
-        //Debug.Log("Start Game");
-        /*        SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, transitionPanel, GamemodeSelectScreenManager.Direction.Left);
-                yield return new WaitForSeconds(.5f);
-                transitionPanel.SetActive(false);*/
-        //SceneManager.UnloadSceneAsync("MainMenu");
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("Lobby");

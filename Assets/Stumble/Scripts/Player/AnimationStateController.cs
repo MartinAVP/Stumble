@@ -102,10 +102,11 @@ public class AnimationStateController : MonoBehaviour
 
     private void PlayEmote(int id)
     {
-/*        animator.SetBool("isPerformingEmote", false);*/
-        animator.SetInteger("EmoteID", id);
-        //animator.SetBool("isPerformingEmote", true);
-        animator.SetTrigger("ExecuteEmote");
+        if(!isMoving && !isProne)
+        {
+            animator.SetInteger("EmoteID", id);
+            animator.SetTrigger("ExecuteEmote");
+        }
 
     }
 
