@@ -4,27 +4,29 @@ using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Slider = UnityEngine.UI.Slider;
 
 public class MainMenuUIManager : MonoBehaviour
 {
     [Header("Panels")]
     [Tooltip("Panel For Fading")]
-    [SerializeField] private GameObject unityScreenPanel;
     [SerializeField] private GameObject mainMenuPanel;
-    [SerializeField] private GameObject startScreenPanel;
     [SerializeField] private GameObject optionsPanel;
+    [SerializeField] private GameObject transitionPanel;
 
     [Header("Main Buttons")]
     [SerializeField] private UnityEngine.UI.Button _startGameButton;
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
-    [SerializeField] private UnityEngine.UI.Button _creditsButton;
-    [SerializeField] private UnityEngine.UI.Button _achievementsButton;
-    [SerializeField] private UnityEngine.UI.Button _ExitButton;
+    //[SerializeField] private UnityEngine.UI.Button _creditsButton;
+    //[SerializeField] private UnityEngine.UI.Button _achievementsButton;
+    //[SerializeField] private UnityEngine.UI.Button _ExitButton;
 
     [Header("Options")]
     [SerializeField] private UnityEngine.UI.Slider _generalVolume;
@@ -32,10 +34,13 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Slider _SFXVolume;
     [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
     [SerializeField] private TextMeshProUGUI _TargetFPSText;
+    [Space]
     [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
 
     private PlayerInputManager playerInputManager;
-    [SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
+    //[SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
+
+    private bool transfering = false;           // Transferring prevent Spamming.
 
     public static MainMenuUIManager Instance { get; private set; }
     [HideInInspector] public bool initialized = false;
@@ -71,7 +76,7 @@ public class MainMenuUIManager : MonoBehaviour
         // Once it finds it initialize the scene
         Debug.Log("Initializing Main Menu UI Manager...         [Main Menu UI Manager]");
 
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        //playerInputManager = FindAnyObjectByType<PlayerInputManager>();
         menuManagerFound = true;
 
         InitializeManagerSubs();
@@ -81,133 +86,188 @@ public class MainMenuUIManager : MonoBehaviour
 
     private void InitializeManagerSubs()
     {
-        playerInputManager.onPlayerJoined += joinHostPlayer;
+        //playerInputManager.onPlayerJoined += joinHostPlayer;
 
         // Buttons
-        _startGameButton?.onClick.AddListener(StartGameCoroutine);
+/*        _startGameButton?.onClick.AddListener(StartGameCoroutine);
         _optionsButton?.onClick.AddListener(OpenOptions);
         _creditsButton?.onClick.AddListener(OpenCredits);
         _achievementsButton?.onClick.AddListener(OpenAchievements);
-        _ExitButton?.onClick.AddListener(ExitGame);
+        _ExitButton?.onClick.AddListener(ExitGame);*/
 
-        _generalVolume.onValueChanged.AddListener(changeGeneralVolume);
-        _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
-        _SFXVolume.onValueChanged.AddListener(changeSFXVolume);
-        _TargetFPS.onValueChanged.AddListener(changeTargetFPS);
-        _ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
+        _generalVolume?.onValueChanged.AddListener(changeGeneralVolume);
+        _MusicVolume?.onValueChanged.AddListener(changeMusicVolume);
+        _SFXVolume?.onValueChanged.AddListener(changeSFXVolume);
+        _TargetFPS?.onValueChanged.AddListener(changeTargetFPS);
+        //_ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
     }
 
     private void OnDisable()
     {
         if (menuManagerFound) {        
-            playerInputManager.onPlayerJoined -= joinHostPlayer;
+            //playerInputManager.onPlayerJoined -= joinHostPlayer;
 
             // Buttons
-            _startGameButton?.onClick.RemoveAllListeners();
+/*            _startGameButton?.onClick.RemoveAllListeners();
             _optionsButton?.onClick.RemoveAllListeners();
             _creditsButton?.onClick.RemoveAllListeners();
             _achievementsButton?.onClick.RemoveAllListeners();
-            _ExitButton?.onClick.RemoveAllListeners();
+            _ExitButton?.onClick.RemoveAllListeners();*/
 
             _generalVolume.onValueChanged.RemoveAllListeners();
             _MusicVolume.onValueChanged.RemoveAllListeners();
             _SFXVolume.onValueChanged.RemoveAllListeners();
             _TargetFPS.onValueChanged.RemoveAllListeners();
-            _ReturnToMenuFromOptions.onClick.RemoveAllListeners();
+            //_ReturnToMenuFromOptions.onClick.RemoveAllListeners();
         }
     }
 
     private void InitializeManager()
     {
         // Initialize Panels
-        unityScreenPanel.SetActive(true);
-        mainMenuPanel.SetActive(false);
-        startScreenPanel.SetActive(true);
+        //unityScreenPanel.SetActive(true);
+        mainMenuPanel.SetActive(true);
+        //startScreenPanel.SetActive(true);
 
         // Disable the Transition
-        StartCoroutine(disableUnityTransition());
+        //StartCoroutine(disableUnityTransition());
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
 
         changeGeneralVolume(0);
         changeMusicVolume(0);
         //changeSFXVolume(0);
         changeTargetFPS(120);
 
+        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
+        //input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(Slider);
+
+        //Task task = ChangeCurrentSelected();
         initialized = true;
     }
 
-    private void joinHostPlayer(PlayerInput player)
+    private void Start()
     {
-        StartCoroutine(changeToMainMenu());
-    }
-
-    private IEnumerator changeToMainMenu()
-    {
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        yield return new WaitForSeconds(3f);
-        mainMenuPanel.SetActive(true);
-        startScreenPanel.SetActive(false);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
+
+        Debug.LogWarning("Selection Started");
+
+        // Adding Slider Sub
+        //InputActionMap inputActionMap = input.
+        //if (input.currentControlScheme == "Controller") { return; }
+/*        input.actions["Move"].performed += Slider;
+        input.actions["Select"].performed += Slider;*/
+
     }
 
-    private IEnumerator disableUnityTransition()
-    {
-        yield return new WaitForSeconds(3f);
-        unityScreenPanel.SetActive(false);
-    }
-
-    private void StartGameCoroutine() {
+    public void StartGameCoroutine() {
+        Debug.Log("Clicked");
+        if(transfering) { return; }
         StartCoroutine(StartGame());
     }
 
     private IEnumerator StartGame()
     {
-        //Debug.Log("Start Game");
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("Lobby");
     }
 
-    private void OpenOptions()
+    public void OpenOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
-        ControllerForMenus.Instance.ChangeSelectedObject(_generalVolume.gameObject);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
         Debug.Log("Open Options");
     }
 
-    private void OpenCredits()
+    public void OpenCredits()
     {
         Debug.Log("Open Credits");
     }
 
-    private void OpenAchievements()
+    public void OpenAchievements()
     {
         Debug.Log("Open Achievements");
     }
 
-    private void ExitGame()
+    public void ExitGame()
     {
         //Debug.Log("Exit Game");
         Application.Quit();
     }
 
-    private void returnToMainMenuFromOptions()
+    public void returnToMainMenuFromOptions()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
     }
 
-    public void Slider(InputAction.CallbackContext context)
+    // IMoveHandler Implementation
+/*    public GameObject currentSelected;
+    [HideInInspector] public UnityEvent<GameObject> OnChangedSelectedObject;
+    private bool subToSlider = false;
+    public Slider activeSlide;*/
+    
+/*    private async Task ChangeCurrentSelected()
     {
-        Vector2 raw = context.ReadValue<Vector2>();
-        if(raw.x > .5f)
+        currentSelected = this.gameObject;
+        while (true)
         {
+            if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
+            {
+                currentSelected = multiplayerEventSystem.currentSelectedGameObject;
+                OnChangedSelectedObject.Invoke(currentSelected);
+                CheckSlider();
+                Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
+                await Task.Delay(100);
+            }
+
+            Debug.Log("Loopin");
+            await Task.Delay(200);
+        }
+
+    }*/
+
+/*    private void FixedUpdate()
+    {
+        //if(currentSelected == null) { currentSelected = gameObject; }
+        if (currentSelected == null) { currentSelected = multiplayerEventSystem.currentSelectedGameObject; return; }
+        if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
+        {
+            currentSelected = multiplayerEventSystem.currentSelectedGameObject;
+            OnChangedSelectedObject.Invoke(currentSelected);
+            CheckSlider();
+            //Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
+        }
+    }
+
+    private void CheckSlider()
+    {
+        // Prevent this Method from running if the player is not using a controller.
+        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
+        if (input.currentControlScheme != "Controller") { return; }
+        Debug.Log("Check #1");
+        GameObject obj = multiplayerEventSystem.currentSelectedGameObject;
+    }
+
+    public void SliderSubscribe()
+    {
+
+    }
+
+    public void Slider(Vector2 raw, PlayerInput data)
+    {
+        Debug.Log("Slider Performed");
+        if(activeSlide == null) { return; }
+        if (raw.x > .5f)
+        {
+            Debug.Log("Slider++");
             if (multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>() != null)
             {
                 multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>().value += raw.x * Time.deltaTime;
             }
         }
-    }
+    }*/
+
 
     private void changeGeneralVolume(float value)
     {
@@ -241,5 +301,14 @@ public class MainMenuUIManager : MonoBehaviour
         {
             OptionsManager.Instance.SetTargetFPS(newValue);
         }
+    }
+
+    private enum Menu
+    {
+        Main,
+        Options,
+        Controls,
+        Achievements,
+        Credits
     }
 }

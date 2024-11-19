@@ -7,10 +7,26 @@ using UnityEngine.UI;
 
 public class LobbyUIManager : MonoBehaviour
 {
-    [SerializeField] private Button startGame;
+    [SerializeField] private GameObject emptyPanel;
+    [SerializeField] private GameObject transitionPanel;
+    [SerializeField] private GameObject mainLobbyPanel;
+
+    //[SerializeField] private Button startGame;
 
     // Start is called before the first frame update
     public bool initialized { private set; get; }
+
+    private void Start()
+    {
+        //StartCoroutine(AwakeCoroutine());
+    }
+
+    private IEnumerator AwakeCoroutine()
+    {
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(emptyPanel, transitionPanel, GamemodeSelectScreenManager.Direction.Left);
+        yield return new WaitForSeconds(1f);
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(transitionPanel, mainLobbyPanel, GamemodeSelectScreenManager.Direction.Left);
+    }
 
     private void Awake()
     {
@@ -42,7 +58,7 @@ public class LobbyUIManager : MonoBehaviour
     }
 
 
-    private void OnEnable()
+/*    private void OnEnable()
     {
         startGame.onClick.AddListener(StartGame);
     }
@@ -50,17 +66,18 @@ public class LobbyUIManager : MonoBehaviour
     private void OnDisable()
     {
         startGame.onClick.RemoveAllListeners();
-    }
+    }*/
 
     public void StartGame()
     {
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayStart());
     }
-
     private IEnumerator delayStart()
     {
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("GamemodeSelect");
     }
+
+
 }

@@ -110,8 +110,6 @@ public class CheckpointManager : MonoBehaviour
             Checkpoints[targetCheckpoint].addPlayer(playerID);
         }
 
-        print("checkpoint reached: " + currentCheckpoint + " num checkpoints: " + Checkpoints.Count);
-
         // Check if the checkpoint reached is the last one.
         if(targetCheckpoint == Checkpoints.Count - 1)
         {
