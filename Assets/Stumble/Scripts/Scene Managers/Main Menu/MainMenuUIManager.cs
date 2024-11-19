@@ -95,10 +95,10 @@ public class MainMenuUIManager : MonoBehaviour
         _achievementsButton?.onClick.AddListener(OpenAchievements);
         _ExitButton?.onClick.AddListener(ExitGame);*/
 
-        _generalVolume.onValueChanged.AddListener(changeGeneralVolume);
-        _MusicVolume.onValueChanged.AddListener(changeMusicVolume);
-        _SFXVolume.onValueChanged.AddListener(changeSFXVolume);
-        _TargetFPS.onValueChanged.AddListener(changeTargetFPS);
+        _generalVolume?.onValueChanged.AddListener(changeGeneralVolume);
+        _MusicVolume?.onValueChanged.AddListener(changeMusicVolume);
+        _SFXVolume?.onValueChanged.AddListener(changeSFXVolume);
+        _TargetFPS?.onValueChanged.AddListener(changeTargetFPS);
         //_ReturnToMenuFromOptions.onClick.AddListener(returnToMainMenuFromOptions);
     }
 
