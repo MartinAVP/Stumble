@@ -98,6 +98,16 @@ public class VFXManager : MonoBehaviour
         activeEffects.Add(individual);
     }
 
+    public void PlayVFX(string VFXname, Vector3 position)
+    {
+        if (GetVFXPlayer(VFXname) == null) { Debug.LogError("[Error] There is no VFX in the VFX Library with the name " + VFXname); }
+        VFXplayer currentFX = GetVFXPlayer(VFXname);
+        GameObject individual = Instantiate(currentFX.player, position, Quaternion.identity);
+        individual.GetComponent<VFXIndividual>().player = currentFX;
+
+        activeEffects.Add(individual);
+    }
+
     public void RemoveActiveVFX(VFXplayer player)
     {
         if (GetVFXPlayer(player) == null) { Debug.LogError("[Error] There is no VFX in the active VFX with the name " + player.title); }

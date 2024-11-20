@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class VFXIndividual : MonoBehaviour
@@ -8,7 +9,7 @@ public class VFXIndividual : MonoBehaviour
     [HideInInspector] public VFXplayer player;
 
     public float time;
-    private bool running;
+    private bool running = false;
     [Space]
     [SerializeField] private bool playOnStart = true;
 
@@ -27,15 +28,26 @@ public class VFXIndividual : MonoBehaviour
             if (running) return;                // Prevent Executing 2 Times by the same call
             running = true;
 
-            StartCoroutine(delayTimer());       // Start Timer Delay
-
+            //StartCoroutine(delayTimer());       // Start Timer Delay
+            Task Delay = delayTimerAsync();
         }
+    }
+
+    private async Task delayTimerAsync()
+    {
+        int delay = (int)time * 1000;
+        await Task.Delay(delay);
+
+        Debug.Log("Death");
+        Destroy(gameObject);
+        VFXManager.Instance?.RemoveActiveVFX(player);
+        running = false;
     }
 
     private IEnumerator delayTimer()
     {
         yield return new WaitForSeconds(time);
-        VFXManager.Instance.RemoveActiveVFX(player);
+        VFXManager.Instance?.RemoveActiveVFX(player);
         Destroy(this.gameObject);
         running = false;
     }

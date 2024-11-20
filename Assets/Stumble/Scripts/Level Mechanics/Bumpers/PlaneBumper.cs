@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlaneBumper : Bumper
 {
@@ -13,6 +14,8 @@ public class PlaneBumper : Bumper
 
     private List<GameObject> sphereOverlaps = new List<GameObject>();
     private LayerMask layerMask;
+
+    public UnityEvent<Transform> bounceEvent;
 
     private void Start()
     {
@@ -35,16 +38,13 @@ public class PlaneBumper : Bumper
     {
         if (!sphereOverlaps.Contains(other)) return;
 
+        Debug.Log("Bumped");
+        bounceEvent?.Invoke(other.transform);
         IBumper bumpedObject = other.GetComponent<IBumper>();
         if (bumpedObject == null) return;
         bumpedObject.Bump(transform.up, bounceForce, sourceType);
-        Debug.DrawRay(other.transform.position, transform.up, Color.magenta, 100f);
 
-        // Sounds
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.PlaySound("BumperBounce", other.transform);
-        }
+        Debug.DrawRay(other.transform.position, transform.up, Color.magenta, 100f);
     }
 
     /// <summary>
