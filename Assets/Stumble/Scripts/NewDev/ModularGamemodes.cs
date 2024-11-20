@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class ModularGamemodes : MonoBehaviour
 {
-    private List<Gamemode> modules = new List<Gamemode>();                  // List of Module Gamemodes 
+    public List<Gamemode> modules = new List<Gamemode>();                  // List of Module Gamemodes 
     [Header("Selection")]
     public List<Gamemode> activeGamemodes = new List<Gamemode>();           // List of Chosen Module Gamemodes
     public bool allowDuplicates = false;

@@ -60,6 +60,6 @@ public class MainMenuManager : MonoBehaviour
     {
         playerInputManager.DisableJoining();
         yield return new WaitForSeconds(1f);
-        playerInputManager.EnableJoining();
+        //playerInputManager.EnableJoining();
     }
 }
