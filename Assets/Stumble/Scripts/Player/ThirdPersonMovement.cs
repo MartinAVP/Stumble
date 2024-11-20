@@ -338,7 +338,7 @@ public class ThirdPersonMovement : MonoBehaviour
             toggleProne(true);
 
 
-            verticalVelocity = 1;
+            //verticalVelocity = 1;
             OnDive?.Invoke();
         }
     }
