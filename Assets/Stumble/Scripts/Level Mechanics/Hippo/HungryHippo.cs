@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class HungryHippo : MonoBehaviour
 {
+    [SerializeField] private PlayerDataHolder holder;
+
     //timer for movement smoothness - delay is a lockout to prevent repeat calling
     private float timer;
     private bool delayed = false;
@@ -12,12 +15,16 @@ public class HungryHippo : MonoBehaviour
     public float movementMultiplier = 0.5f;
 
     public float speed;
-
+    public float TimeBetweenPlayerTrackingUpdates = 2;
+    public bool PlayerTracking = false;
+    private Vector3 TrackedPlayerPos;
+    private float ShortestDistance = 100;
 
     public float actionDuration = 2f;
     public int frameSkips = 5;
 
-
+    public GameObject HippoParrent;
+    private bool Collided = false;
 
     //standard delay inbetween each action
     public float inbetweenActionDelay = .5f;
@@ -62,9 +69,6 @@ public class HungryHippo : MonoBehaviour
         previousMouthAngle = mouthOpenAngle;
     }
 
-
-
-
     void FixedUpdate()
     {
 
@@ -93,6 +97,11 @@ public class HungryHippo : MonoBehaviour
         }
 
 
+    }
+
+    private void OnAnimatorIK(int layerIndex)
+    {
+        
     }
 
 
@@ -127,10 +136,26 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("lunge");
 
+        if (PlayerTracking)
+        {
+            for (int i = 0; i < holder.players.Count; i++)
+            {
+                var d = Vector3.Distance(transform.position, holder.players[i].input.gameObject.transform.position);
+                if (d < ShortestDistance)
+                {
+                    ShortestDistance = d;
+                    TrackedPlayerPos = holder.players[i].input.gameObject.transform.position;
+                }
+            }
+            HippoParrent.transform.rotation = Quaternion.LookRotation(TrackedPlayerPos);
+            
+        }
+
         while (Vector3.Distance(transform.position, endingPos.transform.position) > .1f)
         {
             timer += Time.deltaTime;
             this.transform.position = Vector3.MoveTowards(transform.position, endingPos.transform.position, speed * Time.deltaTime);
+           
             //this.transform.Translate(Vector3.forward * movementMultiplier * Time.deltaTime, Space.Self);
             temp++;
             if (temp > frameSkips)
