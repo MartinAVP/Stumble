@@ -11,31 +11,40 @@ public class HungryHippo : MonoBehaviour
     private float timer;
     private bool delayed = false;
 
+
+    [Header("Hippo Adjusments")]
     public int mouthOpenAngle = 45;
     public float movementMultiplier = 0.5f;
-
     public float speed;
+    public float actionDuration = 2f;
+    public int frameSkips = 5;
+    public float inbetweenActionDelay = .5f;
+
+    [Header("Player Tracking")]
     public float TimeBetweenPlayerTrackingUpdates = 2;
     public bool PlayerTracking = false;
     private Vector3 TrackedPlayerPos;
     private float ShortestDistance = 100;
 
-    public float actionDuration = 2f;
-    public int frameSkips = 5;
+    
 
     public GameObject HippoParrent;
     private bool Collided = false;
 
     //standard delay inbetween each action
-    public float inbetweenActionDelay = .5f;
+
 
     //range for random delay after the full set of actions
+    [Header("Random Delay For Start Of New Cycle")]
     public float minDelay = .1f;
     public float maxDelay = 1f;
     private float inActionDelay = .000000000000000000000000000000000000000000000001f;
 
 
 
+    [Header("Arena Values")]
+    public float ArenaShrinkSpeed = 1f;
+    public float ShrinkActivationTimeMinutes = 6f; 
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
@@ -46,15 +55,12 @@ public class HungryHippo : MonoBehaviour
     private GameObject hippoNeck;
     private Quaternion startingRotation;
 
-
-
     public GameObject playerKillzone;
 
+    [Header("Testing Bools")]
     public bool triggered = false;
     private bool available = true;
-
     public bool reset = false;
-
 
     void Start()
     {
