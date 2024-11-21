@@ -19,6 +19,11 @@ public class ModularController : MonoBehaviour
         if (Instance == null) { Instance = this; DontDestroyOnLoad(this.gameObject); }
     }
 
+    public Gamemode GetCurrentGamemode()
+    {
+        return gamesLib.activeGamemodes[levelId];
+    }
+
     private void Start()
     {
         if(GetComponent<ModularGamemodes>() == null)
