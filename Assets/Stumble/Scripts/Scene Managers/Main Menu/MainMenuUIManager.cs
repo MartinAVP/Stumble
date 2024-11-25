@@ -42,6 +42,8 @@ public class MainMenuUIManager : MonoBehaviour
 
     private bool transfering = false;           // Transferring prevent Spamming.
 
+    public Menu currentMenu = Menu.Main;
+
     public static MainMenuUIManager Instance { get; private set; }
     [HideInInspector] public bool initialized = false;
 
@@ -177,6 +179,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
         ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
+        currentMenu = Menu.Options;
         Debug.Log("Open Options");
     }
 
@@ -195,17 +198,14 @@ public class MainMenuUIManager : MonoBehaviour
         //Debug.Log("Exit Game");
         Application.Quit();
     }
-
     public void FullScreen()
     {
         Screen.fullScreen = true;
     }
-
     public void Windowed()
     {
         Screen.fullScreen = false;
     }
-
     public void ChangeTargetFPS(int index)
     {
         switch (index)
@@ -231,77 +231,12 @@ public class MainMenuUIManager : MonoBehaviour
 
     public void returnToMainMenuFromOptions()
     {
+        currentMenu = Menu.Main;
         GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
         ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
     }
 
     // IMoveHandler Implementation
-/*    public GameObject currentSelected;
-    [HideInInspector] public UnityEvent<GameObject> OnChangedSelectedObject;
-    private bool subToSlider = false;
-    public Slider activeSlide;*/
-    
-/*    private async Task ChangeCurrentSelected()
-    {
-        currentSelected = this.gameObject;
-        while (true)
-        {
-            if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
-            {
-                currentSelected = multiplayerEventSystem.currentSelectedGameObject;
-                OnChangedSelectedObject.Invoke(currentSelected);
-                CheckSlider();
-                Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
-                await Task.Delay(100);
-            }
-
-            Debug.Log("Loopin");
-            await Task.Delay(200);
-        }
-
-    }*/
-
-/*    private void FixedUpdate()
-    {
-        //if(currentSelected == null) { currentSelected = gameObject; }
-        if (currentSelected == null) { currentSelected = multiplayerEventSystem.currentSelectedGameObject; return; }
-        if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
-        {
-            currentSelected = multiplayerEventSystem.currentSelectedGameObject;
-            OnChangedSelectedObject.Invoke(currentSelected);
-            CheckSlider();
-            //Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
-        }
-    }
-
-    private void CheckSlider()
-    {
-        // Prevent this Method from running if the player is not using a controller.
-        PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
-        if (input.currentControlScheme != "Controller") { return; }
-        Debug.Log("Check #1");
-        GameObject obj = multiplayerEventSystem.currentSelectedGameObject;
-    }
-
-    public void SliderSubscribe()
-    {
-
-    }
-
-    public void Slider(Vector2 raw, PlayerInput data)
-    {
-        Debug.Log("Slider Performed");
-        if(activeSlide == null) { return; }
-        if (raw.x > .5f)
-        {
-            Debug.Log("Slider++");
-            if (multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>() != null)
-            {
-                multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>().value += raw.x * Time.deltaTime;
-            }
-        }
-    }*/
-
 
     private void changeGeneralVolume(float value)
     {
@@ -310,7 +245,6 @@ public class MainMenuUIManager : MonoBehaviour
             OptionsManager.Instance.SetGeneralVolume(value);
         }
     }
-
     private void changeMusicVolume(float value)
     {
         if (OptionsManager.Instance != null)
@@ -318,7 +252,6 @@ public class MainMenuUIManager : MonoBehaviour
             OptionsManager.Instance.SetMusicVolume(value);
         }
     }
-
     private void changeSFXVolume(float value)
     {
         if (OptionsManager.Instance != null)
@@ -326,7 +259,6 @@ public class MainMenuUIManager : MonoBehaviour
             OptionsManager.Instance.SetSFXVolume(value);
         }
     }
-
     private void changeTargetFPS(float value)
     {
         int newValue = (int)value;
@@ -337,7 +269,7 @@ public class MainMenuUIManager : MonoBehaviour
         }
     }
 
-    private enum Menu
+    public enum Menu
     {
         Main,
         Options,

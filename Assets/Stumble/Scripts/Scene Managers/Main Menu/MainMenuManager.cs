@@ -92,6 +92,7 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
+        // Is on Main Menu
         if (transitioning) return;
         transitioning = true;
 

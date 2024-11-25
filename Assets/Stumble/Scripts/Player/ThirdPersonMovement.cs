@@ -84,6 +84,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool baseInvertHorizontalInput = false;
 
     private CinemachineFreeLook freelookcam;
+    [HideInInspector] public InputHandler camInputHandler;
     #endregion
 
     #region Diving
@@ -196,6 +197,7 @@ public class ThirdPersonMovement : MonoBehaviour
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
 
         // Add look action to cam
+        camInputHandler = this.transform.parent.GetComponentInChildren<InputHandler>();
 
         if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
         {
@@ -205,7 +207,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
         {
-            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            camInputHandler.horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
 /*            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;*/
             return;
@@ -213,7 +215,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.ThirdPersonControl)
         {
-            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            camInputHandler.horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
         }
         //Debug.Log("I got here 2");
     }

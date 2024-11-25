@@ -1,8 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using static Cinemachine.CinemachineTriggerAction.ActionSettings;
 
 public class ModularGamemodeDisplay : MonoBehaviour
 {
@@ -11,6 +11,9 @@ public class ModularGamemodeDisplay : MonoBehaviour
     private ModularGamemodes gamemodes;
 
     [SerializeField] private GameObject MapPrefab;
+    [SerializeField] private Transform parentTransform;
+
+    [SerializeField] private List<GameObject> cards;
 
     public static ModularGamemodeDisplay Instance { get; private set; }
     public bool initialized { get; private set; }
@@ -48,11 +51,19 @@ public class ModularGamemodeDisplay : MonoBehaviour
         gamemodes = ModularController.Instance.gamesLib;
 
         // Once it finds it initialize the scene
-        Initialize();
+        //Initialize();
+        StartCoroutine(DelayedStart());
+
         Debug.Log("Modular Controller Found...         [Modular Gamemode Display]");
         initialized = true;
 
         return;
+    }
+
+    private IEnumerator DelayedStart()
+    {
+        yield return new WaitForSeconds(1f);
+        Initialize();
     }
 
     private void Initialize()
@@ -61,30 +72,43 @@ public class ModularGamemodeDisplay : MonoBehaviour
 
         for (int i = 0; i < gamemodes.modules.Count; i++) {
             //Debug.Log("Spawning");
-            GameObject map = Instantiate(MapPrefab, this.transform);
+            GameObject map = Instantiate(MapPrefab, parentTransform.transform);
+            cards.Add(map);
+
             MapCard mapCard = map.GetComponent<MapCard>();
             mapCard.gamemode = gamemodes.modules[i];
             mapCard.title.text = gamemodes.modules[i].name;
-/*            if (gamemodes.modules[i].modulePreview != null)
+            mapCard.modularGamemode = this;
+
+            //Texture2D texture = gamemodes.modules[i].modulePreview.texture;
+            Sprite ModeSprite = gamemodes.modules[i].modulePreview;
+
+            if(ModeSprite == null)
             {
-                mapCard.backgroundImage.sprite = gamemodes.modules[i].modulePreview;
+                Debug.Log("Empty #" + i);
             }
             else
             {
-                Debug.Log("Null Image");
-            }*/
-            /*            if (gamemodes.modules[i].title != null)
-                        {
-                            mapCard.title.text = gamemodes.modules[i].title;
-                        }
-                        if (gamemodes.modules[i].modulePreview != null)
-                        {
-                            mapCard.backgroundImage.sprite = gamemodes.modules[i].modulePreview;
-                        }*/
+                Debug.Log("Not Empty #" + i);
+
+                try
+                {
+                    mapCard.SetImageSprite(ModeSprite);
+                }
+                catch (Exception ex)
+                {
+                    //Debug.LogError("Exception in SetImageSprite for sprite #" + i + ": " + ex.Message);
+                }
+                //mapCard.SetImageSprite(ModeSprite);
+            }
         }
+    }
 
-        foreach (var gamemode in gamemodes.modules) {
-
+    public void LoadLevel(Gamemode gamemode)
+    {
+        if(GamemodeSelectionManager.Instance != null)
+        {
+            GamemodeSelectionManager.Instance.LoadLevel(gamemode);
         }
     }
 }

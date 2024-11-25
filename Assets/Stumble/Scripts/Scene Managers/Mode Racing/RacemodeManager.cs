@@ -164,6 +164,7 @@ public class RacemodeManager : MonoBehaviour
         // Lock all players in place
         Debug.Log("PrePreTask");
         LockPlayersMovement(true);
+        LockPlayersView(true);
 
         Debug.Log("PreTask");
         StartCoroutine(MainRaceController());
@@ -175,6 +176,11 @@ public class RacemodeManager : MonoBehaviour
         Debug.Log("InTask");
         yield return new WaitForSeconds(.1f);
 
+        if (LoadingScreenManager.Instance != null)
+        {
+            LoadingScreenManager.Instance.StartTransition(false);
+        }
+
         if (cinematicController != null)
         {
             Debug.Log("Initializing Cinematic");
@@ -185,6 +191,7 @@ public class RacemodeManager : MonoBehaviour
             // On Cinematic End
         }
         onCountdownStart?.Invoke();
+        LockPlayersView(false);
 
         if (racemodeUIManager != null)
         {
@@ -272,6 +279,26 @@ public class RacemodeManager : MonoBehaviour
             foreach (ThirdPersonMovement player in players)
             {
                 player.lockMovement = false;
+            }
+        }
+    }
+
+    private void LockPlayersView(bool value)
+    {
+        ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
+
+        if (value)
+        {
+            foreach (ThirdPersonMovement player in players)
+            {
+                player.camInputHandler.lockView = true;
+            }
+        }
+        else
+        {
+            foreach (ThirdPersonMovement player in players)
+            {
+                player.camInputHandler.lockView = false;
             }
         }
     }

@@ -63,6 +63,20 @@ public class ModularController : MonoBehaviour
         }
     }
 
+    public void InitializeMinigame(Gamemode mode)
+    {
+        //gamesLib.SelectGamemodes(1);
+        gamesLib.SelectSpecificGamemode(mode);
+
+        LoadingScreenManager.Instance.StartTransition(true);
+        StartCoroutine(loadLevelDelay());
+
+        if (MenuMusicController.Instance != null)
+        {
+            MenuMusicController.Instance.EndMusic(2.8f);
+        }
+    }
+
     private IEnumerator loadLevelDelay()
     {
         yield return new WaitForSeconds(4f);

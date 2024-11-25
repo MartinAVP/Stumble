@@ -39,4 +39,19 @@ public class GamemodeSelectionManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("Lobby");
     }
+
+    public void LoadLevel(Gamemode gamemode)
+    {
+        if(transitioning) return;
+        transitioning = true;
+
+        StartCoroutine(delayLoad(gamemode));
+    }
+
+    private IEnumerator delayLoad(Gamemode gamemode)
+    {
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+        ModularController.Instance.InitializeMinigame(gamemode);
+    }
 }

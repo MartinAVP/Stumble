@@ -62,7 +62,9 @@ public class GamemodeSelectionUIManager : MonoBehaviour
 
     private void SelectArena()
     {
-        SceneManager.LoadScene("ArenaScene");
+        //SceneManager.LoadScene("ArenaScene");
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(GamemodeSelectPanel, GrandPrixLevelSelectionPanel, GamemodeSelectScreenManager.Direction.Left);
+        ControllerForMenus.Instance.ChangeSelectedObject(Level1Button.gameObject);
     }
 
     private void GoBackToModeSelection()
