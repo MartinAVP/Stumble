@@ -92,6 +92,12 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
+        if(MainMenuUIManager.Instance.currentMenu == MainMenuUIManager.Menu.Controls)
+        {
+            MainMenuUIManager.Instance.returnToMainMenuFromControls();
+            return;
+        }
+
         // Is on Main Menu
         if (transitioning) return;
         transitioning = true;

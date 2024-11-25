@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Slider = UnityEngine.UI.Slider;
+using Button = UnityEngine.UI.Button;
 
 public class MainMenuUIManager : MonoBehaviour
 {
@@ -20,10 +21,12 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject optionsPanel;
     [SerializeField] private GameObject transitionPanel;
+    [SerializeField] private GameObject controlsPanel;
 
     [Header("Main Buttons")]
     [SerializeField] private UnityEngine.UI.Button _startGameButton;
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
+    [SerializeField] private UnityEngine.UI.Button _controlsButton;
     //[SerializeField] private UnityEngine.UI.Button _creditsButton;
     //[SerializeField] private UnityEngine.UI.Button _achievementsButton;
     //[SerializeField] private UnityEngine.UI.Button _ExitButton;
@@ -36,6 +39,11 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _TargetFPSText;
     [Space]
     [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
+
+    [Header("Controls")]
+    [SerializeField] private Button _leftArrowControls;
+    [SerializeField] private Button _rightArrowControls;
+    [SerializeField] private TextMeshProUGUI _controlScheme;
 
     private PlayerInputManager playerInputManager;
     //[SerializeField] private MultiplayerEventSystem multiplayerEventSystem;
@@ -183,6 +191,16 @@ public class MainMenuUIManager : MonoBehaviour
         Debug.Log("Open Options");
     }
 
+    public void OpenControls()
+    {
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, controlsPanel, GamemodeSelectScreenManager.Direction.Left);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
+
+        ControlScheme.Instance.OpenControls();
+        currentMenu = Menu.Controls;
+        Debug.Log("Open Controls");
+    }
+
     public void OpenCredits()
     {
         Debug.Log("Open Credits");
@@ -193,6 +211,24 @@ public class MainMenuUIManager : MonoBehaviour
         Debug.Log("Open Achievements");
     }
 
+    public void returnToMainMenuFromOptions()
+    {
+        currentMenu = Menu.Main;
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
+
+        ControlScheme.Instance.CloseControls();
+    }
+
+    public void returnToMainMenuFromControls()
+    {
+        currentMenu = Menu.Main;
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(controlsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_controlsButton.gameObject, .4f);
+    }
+
+    // IMoveHandler Implementation
+    #region OptionsMethods
     public void ExitGame()
     {
         //Debug.Log("Exit Game");
@@ -229,15 +265,6 @@ public class MainMenuUIManager : MonoBehaviour
 
     }
 
-    public void returnToMainMenuFromOptions()
-    {
-        currentMenu = Menu.Main;
-        GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
-        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
-    }
-
-    // IMoveHandler Implementation
-
     private void changeGeneralVolume(float value)
     {
         if(OptionsManager.Instance != null)
@@ -268,6 +295,7 @@ public class MainMenuUIManager : MonoBehaviour
             OptionsManager.Instance.SetTargetFPS(newValue);
         }
     }
+    #endregion
 
     public enum Menu
     {
@@ -277,4 +305,10 @@ public class MainMenuUIManager : MonoBehaviour
         Achievements,
         Credits
     }
+
+/*    public enum ControlScheme
+    {
+        Keyboard,
+        Controller
+    }*/
 }
