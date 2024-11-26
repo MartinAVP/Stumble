@@ -89,6 +89,7 @@ public class PlayerExtraControls : MonoBehaviour
             }
             else if (gameController.gameState == GameState.MainMenu)
             {
+                Debug.Log("Pressed Return");
                 mainMenuManager.ExitGame(input);
             }
             else if (gameController.gameState == GameState.ChoosingGameMode)
@@ -99,7 +100,10 @@ public class PlayerExtraControls : MonoBehaviour
             else if (gameController.gameState == GameState.Race || gameController.gameState == GameState.Arena || gameController.gameState == GameState.Podium)
             {
                 Debug.Log("Pressed Return");
-                PauseMenuManager.Instance.TogglePauseMenu(input, false);
+                if(PauseMenuManager.Instance != null)
+                {
+                    PauseMenuManager.Instance.TogglePauseMenu(input, false);
+                }
             }
             pressBack.Invoke(input);
         }

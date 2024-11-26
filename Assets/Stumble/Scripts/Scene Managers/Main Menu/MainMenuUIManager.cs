@@ -127,7 +127,7 @@ public class MainMenuUIManager : MonoBehaviour
             _generalVolume.onValueChanged.RemoveAllListeners();
             _MusicVolume.onValueChanged.RemoveAllListeners();
             _SFXVolume.onValueChanged.RemoveAllListeners();
-            _TargetFPS.onValueChanged.RemoveAllListeners();
+            _TargetFPS?.onValueChanged.RemoveAllListeners();
             //_ReturnToMenuFromOptions.onClick.RemoveAllListeners();
         }
     }
@@ -194,7 +194,8 @@ public class MainMenuUIManager : MonoBehaviour
     public void OpenControls()
     {
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, controlsPanel, GamemodeSelectScreenManager.Direction.Left);
-        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
+        //ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(null, .5f);
+        ControllerForMenus.Instance.ChangeSelectedObject(null);
 
         ControlScheme.Instance.OpenControls();
         currentMenu = Menu.Controls;
@@ -209,6 +210,22 @@ public class MainMenuUIManager : MonoBehaviour
     public void OpenAchievements()
     {
         Debug.Log("Open Achievements");
+    }
+
+    private bool navLock = false;
+    public void Nav(Vector2 v2)
+    {
+        if(currentMenu == Menu.Controls)
+        {
+            if(v2.x > .5f)
+            {
+                ControlScheme.Instance.NavRight();
+            }
+            else if(v2.x < -.5f)
+            {
+                ControlScheme.Instance.NavLeft();
+            }
+        }
     }
 
     public void returnToMainMenuFromOptions()

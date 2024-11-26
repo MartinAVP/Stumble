@@ -85,8 +85,15 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene("Lobby");
     }
 
+    private bool isInputLock = false;
     public void ExitGame(PlayerInput input)
     {
+        if(isInputLock) { return; }
+        isInputLock = true;
+
+        StartCoroutine(delayPress());
+
+        Debug.LogWarning("Checkpointed #1");
         if (PlayerDataHolder.Instance.GetPlayerData(input).isHost == false)
         {
             return;
@@ -98,12 +105,24 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
+        if (MainMenuUIManager.Instance.currentMenu == MainMenuUIManager.Menu.Options)
+        {
+            MainMenuUIManager.Instance.returnToMainMenuFromOptions();
+            return;
+        }
+
         // Is on Main Menu
         if (transitioning) return;
         transitioning = true;
 
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayExit());
+    }
+
+    private IEnumerator delayPress()
+    {
+        yield return new WaitForSeconds(1.1f);
+        isInputLock = false;
     }
 
     private IEnumerator delayExit()

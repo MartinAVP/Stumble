@@ -42,9 +42,14 @@ public class ControlScheme : MonoBehaviour
         if(schemes.Count > 0)
         {
             controlScheme.text = schemes[0].name;
-            schemes[0].panel.localPosition = Vector3.zero;
+            schemes[0].panel.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
             schemes[0].panel.gameObject.SetActive(true);
         }
+
+        if (transitioning) { return; }
+        transitioning = true;
+
+        StartCoroutine(delayPress());
     }
 
     public void NavRight()
