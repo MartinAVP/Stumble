@@ -11,6 +11,7 @@ public class UnstablePlatform : MonoBehaviour
     [SerializeField] private float timeDelayForRespawn = 3;
     [SerializeField, Range(0, 1)] private float maxTintStrength = .65f;
     private Material material;
+    private Color startColor;
 
     private GameObject managerObject;
     private UnstablePlatformManager unstablePlatformManager;
@@ -36,6 +37,10 @@ public class UnstablePlatform : MonoBehaviour
         rb.useGravity = false;
 
         onContact.AddListener(OnContact);
+        onRespawn.AddListener(OnRespawn);
+
+        material = GetComponent<Renderer>().material;
+        startColor = material.color;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -52,19 +57,18 @@ public class UnstablePlatform : MonoBehaviour
         StartCoroutine(MaterialInterpolate(timeUntilFall));
     }
 
+    private void OnRespawn()
+    {
+        material.color = startColor;
+    }
+
     private IEnumerator MaterialInterpolate(float duration)
     {
-        material =  GetComponent<Renderer>().material;
-        Vector3 baseColor = new Vector3(material.color.r, material.color.g, material.color.b);
-        float alpha = material.color.a;
-        Vector3 red = new Vector3(255, 0, 0);
         float timeElapsed = 0;
         
         while (timeElapsed < duration)
         {
-            Vector3 newColor = Vector3.Lerp(baseColor, red, timeElapsed / duration * maxTintStrength);
-            newColor[0] = Mathf.Clamp(newColor[0], 0, 255);
-            material.color = new Color(newColor[0], newColor[1], newColor[2], alpha);
+            material.color = Color.Lerp(startColor, (Color.red * startColor) + Color.red, timeElapsed/duration * maxTintStrength);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
