@@ -10,9 +10,13 @@ public class InputHandler : MonoBehaviour, AxisState.IInputAxisProvider
     public InputAction horizontal;
     [HideInInspector]
     public InputAction vertical;
+    public bool lockView = false;
 
     public float GetAxisValue(int axis)
     {
+        // Not update the view.
+        if (lockView) return 0;
+
         switch (axis)
         {
             case 0: return horizontal.ReadValue<Vector2>().x;
