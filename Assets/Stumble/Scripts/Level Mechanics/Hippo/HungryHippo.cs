@@ -42,9 +42,7 @@ public class HungryHippo : MonoBehaviour
 
 
 
-    [Header("Arena Values")]
-    public float ArenaShrinkSpeed = 1f;
-    public float ShrinkActivationTimeMinutes = 6f; 
+    
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
