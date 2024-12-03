@@ -110,8 +110,6 @@ public class CheckpointManager : MonoBehaviour
             Checkpoints[targetCheckpoint].addPlayer(playerID);
         }
 
-        print("checkpoint reached: " + currentCheckpoint + " num checkpoints: " + Checkpoints.Count);
-
         // Check if the checkpoint reached is the last one.
         if(targetCheckpoint == Checkpoints.Count - 1)
         {
@@ -156,7 +154,7 @@ public class CheckpointManager : MonoBehaviour
 /*        playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().m_XAxis.Value = spawn.rotation.y;*/
         playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position, spawn.rotation);
 
-        Vector3 offset = spawn.rotation * new Vector3(0, 3, -10); // 10m behind the player
+        Vector3 offset = spawn.rotation * new Vector3(0, 8, -10); // 10m behind the player
         playerObject.transform.parent.GetComponentInChildren<CinemachineFreeLook>().ForceCameraPosition(spawn.position + offset, spawn.rotation); //
     }
 

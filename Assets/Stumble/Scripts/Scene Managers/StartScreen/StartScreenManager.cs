@@ -6,12 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class StartScreenManager : MonoBehaviour
 {
+    // Michael Broke Github
     private PlayerInputManager _playerInputManager;
     [SerializeField] private Animator _animator;
-
-    void Awake()
-    {
-    }
 
     private void OnEnable()
     {
@@ -41,6 +38,6 @@ public class StartScreenManager : MonoBehaviour
         Debug.Log("IM HERE");
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Menu");
     }
 }

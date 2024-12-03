@@ -8,7 +8,7 @@ public class ModularController : MonoBehaviour
 {
     public int levelId;
 
-    private ModularGamemodes gamesLib;
+    [HideInInspector] public ModularGamemodes gamesLib;
     [Tooltip("The amount of modes that party gamemode will have.")]
     [SerializeField] private int partyGameSize;
 
@@ -17,6 +17,11 @@ public class ModularController : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) { Instance = this; DontDestroyOnLoad(this.gameObject); }
+    }
+
+    public Gamemode GetCurrentGamemode()
+    {
+        return gamesLib.activeGamemodes[levelId];
     }
 
     private void Start()
@@ -48,6 +53,20 @@ public class ModularController : MonoBehaviour
     public void InitializeParty()
     {
         gamesLib.SelectGamemodes(partyGameSize);
+
+        LoadingScreenManager.Instance.StartTransition(true);
+        StartCoroutine(loadLevelDelay());
+
+        if (MenuMusicController.Instance != null)
+        {
+            MenuMusicController.Instance.EndMusic(2.8f);
+        }
+    }
+
+    public void InitializeMinigame(Gamemode mode)
+    {
+        //gamesLib.SelectGamemodes(1);
+        gamesLib.SelectSpecificGamemode(mode);
 
         LoadingScreenManager.Instance.StartTransition(true);
         StartCoroutine(loadLevelDelay());

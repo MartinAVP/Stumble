@@ -75,11 +75,6 @@ public class RacemodeUIManager : MonoBehaviour
 
     private void InitializeManager()
     {
-        if (LoadingScreenManager.Instance != null)
-        {
-            LoadingScreenManager.Instance.StartTransition(false);
-        }
-
         //EndScoreScreen?.SetActive(false);
         if(countdownPanel != null)
         {

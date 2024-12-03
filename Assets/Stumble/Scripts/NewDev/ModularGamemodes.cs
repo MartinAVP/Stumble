@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class ModularGamemodes : MonoBehaviour
 {
-    private List<Gamemode> modules = new List<Gamemode>();                  // List of Module Gamemodes 
+    public List<Gamemode> modules = new List<Gamemode>();                  // List of Module Gamemodes 
     [Header("Selection")]
     public List<Gamemode> activeGamemodes = new List<Gamemode>();           // List of Chosen Module Gamemodes
     public bool allowDuplicates = false;
@@ -31,27 +31,32 @@ public class ModularGamemodes : MonoBehaviour
         modules = Resources.LoadAll("Modules", typeof(Gamemode)).Cast<Gamemode>().ToList();
     }
 
+    public void SelectSpecificGamemode(Gamemode gamemode)
+    {
+        activeGamemodes.Clear();
+        activeGamemodes.Add(gamemode);
+    }
+
     public void SelectGamemodes(int quantity)
     {
+        activeGamemodes.Clear();
         RecursiveSelect(quantity);
     }
 
     private void RecursiveSelect(int quantity)
     {
-        if (activeGamemodes.Count >= quantity) { return; } // Finished Doing Recursion
+        if (activeGamemodes.Count >= quantity) { return; }
         if(activeGamemodes.Count == modules.Count) { Debug.LogWarning("Could not continue Recursion, missing asset quantity. Tried getting " + quantity + ", but there are only " + modules.Count + "."); return; } // Finish Recursion - Modules List is not filled enough.
-        if(activeGamemodes.Count >= GetEnabledMapsCount()) { return; }  // Check if there is no more enabled maps available
+        if(activeGamemodes.Count >= GetEnabledMapsCount()) { return; }
 
-        int id = Random.Range(0, modules.Count); // Get a random index from the modules list
+        int id = Random.Range(0, modules.Count);
 
-        // Check for duplicates
         if (activeGamemodes.Contains(modules[id]) && !allowDuplicates)
         {
             RecursiveSelect(quantity);
             return;
         }
 
-        // Check if the Specific Module is disabled
         if (modules[id].disabled)
         {
             RecursiveSelect(quantity);

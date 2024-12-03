@@ -187,6 +187,22 @@ public class PlayerDataHolder : MonoBehaviour
         return null;
     }
 
+    public void ClearAllButHost(bool resetCosmetics)
+    {
+        foreach (var player in players)
+        {
+            if (!player.isHost)
+            {
+                RemovePlayer(player.input);
+            }
+        }
+
+        if (resetCosmetics)
+        {
+            players[0].cosmeticData = new CosmeticData();
+        }
+    }
+
 /*    public int GetPlayersWithInGameCharacter()
     {
         int count = 0;

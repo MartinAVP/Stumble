@@ -1,16 +1,22 @@
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
+//using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 public class ControllerForMenus : MonoBehaviour
 {
     private PlayerDataManager playerDataManager;
     private PlayerInputManager playerInputManager;
+    private PlayerInput input;
 
     [SerializeField] GameObject FirstSelectedItem;
     [SerializeField] public MultiplayerEventSystem eventSystem;
+    public GameObject currentItem;
 
     public bool hostUsingController;
     public bool giveHostCursorAccess = true;
@@ -31,7 +37,7 @@ public class ControllerForMenus : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
     }
 
     void Start()
@@ -59,7 +65,7 @@ public class ControllerForMenus : MonoBehaviour
         playerDataManager = PlayerDataManager.Instance;
         playerInputManager.onPlayerJoined += AddPlayer;
 
-        if (playerDataManager != null)
+/*        if (playerDataManager != null)
         {
             if (playerDataManager.GetPlayers().Count > 0)
             {
@@ -69,7 +75,7 @@ public class ControllerForMenus : MonoBehaviour
                     hostUsingController = true;
                 }
             }
-        }
+        }*/
     }
 
     private void OnDisable()
@@ -85,12 +91,16 @@ public class ControllerForMenus : MonoBehaviour
         //Is the first player
         if(player.playerIndex == 0)
         {
-            if(player.currentControlScheme == "Controller")
+            input = player;
+            if(player.currentControlScheme == "Controller" || player.currentControlScheme == "Gamepad")
             {
                 hostUsingController = true;
-                //Debug.Log("Player 0 Is Controller");
-                //eventSystem.firstSelectedGameObject = FirstSelectedItem;
+
+                player.uiInputModule = eventSystem.GetComponent<InputSystemUIInputModule>();
+                player.camera = Camera.main;
+
                 eventSystem.SetSelectedGameObject(FirstSelectedItem);
+                Debug.Log("Current Selected: " + eventSystem.currentSelectedGameObject.name);
             }
             else
             {
@@ -108,17 +118,108 @@ public class ControllerForMenus : MonoBehaviour
         if (hostUsingController)
         {
             eventSystem.SetSelectedGameObject(selected);
-            Debug.Log("Changed Selected Item for " + selected.name);
+            currentItem = selected;
+/*            Debug.Log("[CFM] Changed Selected Item for " + selected.name);
+
+            if (selected.GetComponent<Button>() != null)
+            {
+                Debug.Log("Navigation: Up: " +
+                selected.GetComponent<Button>().navigation.selectOnUp.name +
+                " Down: " +
+                selected.GetComponent<Button>().navigation.selectOnDown.name);
+            }
+
+            if (selected.GetComponent<Slider>() != null)
+            {
+                Debug.Log("Navigation: Up: " +
+                selected.GetComponent<Slider>().navigation.selectOnUp.name +
+                " Down: " +
+                selected.GetComponent<Slider>().navigation.selectOnDown.name);
+            }
+
+            CheckSlider();*/
+        }
+    }
+/*
+    private bool usingSlider = false;
+    private Slider activeSlider = null;
+    public void CheckSlider()
+    {
+        if (currentItem.GetComponent<Slider>() != null)
+        {
+            Debug.Log("This thing has a slider");
+            usingSlider = true;
+            activeSlider = currentItem.GetComponent<Slider>();
+            if (input.currentActionMap.name == "Player")
+            {
+                input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(SliderControl);
+                // Lock Prevention, prevents slider locking.
+                Debug.Log("Press Send #2.1");
+                input.gameObject.GetComponent<PlayerInputOverhaul>().OnSouthPressed.AddListener(SliderLockPrevention);
+            }
+            else if (input.currentActionMap.name == "UI")
+            {
+                input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(SliderControl);
+                Debug.Log("Press Send #2.2");
+                input.gameObject.GetComponent<PlayerInputOverhaul>().OnSouthPressed.AddListener(SliderLockPrevention);
+            }
+        }
+        else
+        {
+            usingSlider = false;
+            activeSlider = null;
+            input.gameObject.GetComponent<PlayerSelectAddon>().OnSelectInput.RemoveListener(SliderControl);
+
+            input.gameObject.GetComponent<PlayerInputOverhaul>().OnSouthPressed.RemoveListener(SliderLockPrevention);
+        }
+
+        if (currentItem.GetComponent<Button>() != null)
+        {
+            currentItem = eventSystem.currentSelectedGameObject;
         }
     }
 
-    public void ChangeObjectSelectedWithDelay(GameObject selected, float delay) {
+    public void SliderControl(Vector2 raw, PlayerInput data)
+    {
+        if (activeSlider != null)
+        {
+            Debug.Log("Slider Performed");
+            if (raw.x > .5f)
+            {
+                Debug.Log("Slider++");
+                activeSlider.value = activeSlider.value + raw.x;
+            }
+            else if (raw.x < -.5f)
+            {
+                Debug.Log("Slider--");
+                activeSlider.value = activeSlider.value + raw.x;
+            }
+
+            if (raw.y > .5f)
+            {
+                ChangeSelectedObject(activeSlider.navigation.selectOnUp.gameObject);
+            }
+            if (raw.y < -.5f)
+            {
+                ChangeSelectedObject(activeSlider.navigation.selectOnDown.gameObject);
+            }
+            Debug.Log("Value: " + activeSlider?.value);
+        }
+    }
+    public void SliderLockPrevention()
+    {
+        Debug.Log("Press Send #3");
+        ChangeObjectSelectedWithDelay(currentItem, .3f);
+    }*/
+
+    // Timeds
+    public void ChangeObjectSelectedWithDelay(GameObject selected, float delay)
+    {
         StartCoroutine(changeObj(selected, delay));
     }
-
     private IEnumerator changeObj(GameObject selected, float delay)
     {
         yield return new WaitForSeconds(delay);
-        eventSystem.SetSelectedGameObject(selected);
+        ChangeSelectedObject(selected);
     }
 }

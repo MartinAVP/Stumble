@@ -84,6 +84,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool baseInvertHorizontalInput = false;
 
     private CinemachineFreeLook freelookcam;
+    [HideInInspector] public InputHandler camInputHandler;
     #endregion
 
     #region Diving
@@ -196,10 +197,17 @@ public class ThirdPersonMovement : MonoBehaviour
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
 
         // Add look action to cam
+        camInputHandler = this.transform.parent.GetComponentInChildren<InputHandler>();
+
+        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
+        {
+            this.transform.GetComponent<PlayerInput>().camera = Camera.main;
+            cam = Camera.main.transform;
+        }
 
         if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
         {
-            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            camInputHandler.horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
 /*            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;*/
             return;
@@ -207,12 +215,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.ThirdPersonControl)
         {
-            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
-        }
-        if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
-        {
-            this.transform.GetComponent<PlayerInput>().camera = Camera.main;
-            cam = Camera.main.transform;
+            camInputHandler.horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
         }
         //Debug.Log("I got here 2");
     }
@@ -251,7 +254,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(this.transform.position.y < -100)
+        if(this.transform.position.y < -600)
         {
             controller.enabled = false;
             this.transform.position = new Vector3(0, 20, 0);
@@ -291,7 +294,7 @@ public class ThirdPersonMovement : MonoBehaviour
         // Check when key is pressed once
         if (!context.started) return;
 
-        RaycastHit hit;
+        //RaycastHit hit;
         Vector3 delta = Vector3.up * 1.1f * (controller.height / 2);
 
         if(Physics.Linecast(transform.position, transform.position + delta))
@@ -337,7 +340,7 @@ public class ThirdPersonMovement : MonoBehaviour
             toggleProne(true);
 
 
-            verticalVelocity = 1;
+            //verticalVelocity = 1;
             OnDive?.Invoke();
         }
     }
@@ -870,22 +873,70 @@ public class ThirdPersonMovement : MonoBehaviour
         slapDistance = playerMovementSettings.slapForce;
         slapCooldown = playerMovementSettings.slapForce;*/
 
+    public List<GameObject> hitObjs = new List<GameObject>();
     private void SlapPlayer()
     {
         if (!canSlap) { return; }
         canSlap = false;
-        RaycastHit hit;
-        if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
+        /*        RaycastHit hit;
+                if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
+                {
+                    if (hit.transform.GetComponent<IBumper>() != null)
+                    {
+                        hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                        Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+                    }
+                }*/
+
+        float offset = 1.1f;
+        Vector3 slapDir = this.transform.position + (this.transform.forward * offset);
+        Debug.DrawLine(this.transform.position, slapDir, Color.green, 20f);
+
+        //RaycastHit[] hits = Physics.OverlapSphere(slapDir, slapDistance);
+        hitObjs.Clear();
+        Collider[] hits = Physics.OverlapSphere(slapDir, slapDistance);
+        foreach (Collider hit in hits)
         {
-            ThirdPersonMovement thirdPersonMovement = hit.transform.GetComponent<ThirdPersonMovement>();
-            if (thirdPersonMovement != null)
+            hitObjs.Add(hit.gameObject);
+        }
+
+
+        //CapsuleCollider collider = this.transform.GetComponent<CapsuleCollider>();
+        foreach(var singleHit in hits)
+        {
+            //if(singleHit.transform == this.transform) { break; }
+            //Debug.Log("Hit: " + singleHit.gameObject.name);
+            //Debug.DrawLine(slapDir, singleHit.point, Color.red, 20f);
+            //Debug.DrawRay(slapDir, this.transform.forward - this.transform.position, Color.yellow, 20f);
+            //Debug.DrawRay(slapDir, singleHit.point, Color.cyan, 20f);
+            Debug.DrawLine(slapDir, singleHit.transform.position, Color.red, 20f);
+            GameObject obj = singleHit.gameObject;
+            if (obj.GetComponent<IBumper>() != null)
             {
-                thirdPersonMovement.Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
-                Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+                Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.green, 5f);
+                Debug.DrawLine(slapDir, singleHit.transform.position, Color.cyan, 20f);
+                singleHit.gameObject.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                //Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
+                //Debug.DrawLine(this.transform.position, singleHit.point, Color.cyan);
+            }
+            else if (singleHit.GetComponent<ThirdPersonMovement>() != null)
+            {
+                if(singleHit.GetComponent<ThirdPersonMovement>() != this){                
+                    Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.green, 5f);
+                    Debug.DrawLine(slapDir, singleHit.transform.position, Color.cyan, 20f);
+                    singleHit.GetComponent<ThirdPersonMovement>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
+                } // Prevent Auto Bumping
+            }
+            else
+            {
+                Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.red, 5f);
             }
         }
+
         StartCoroutine(SlapCooldown(slapCooldown));
     }
+
+    private Physics physics;
 
     private IEnumerator SlapCooldown(float time)
     {

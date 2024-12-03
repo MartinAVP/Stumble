@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlaneBumperComponent : MonoBehaviour
 {
     [SerializeField] private PlaneBumper planeBumper;
     [SerializeField] private collisionType type;
 
+    public string soundFXId;
     private void OnTriggerEnter(Collider other)
     {
         if (type == collisionType.Plane)
@@ -16,6 +18,12 @@ public class PlaneBumperComponent : MonoBehaviour
         else
         {
             planeBumper.AddSphereOverlap(other.gameObject);
+        }
+
+        // Sounds
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlaySound(soundFXId, other.transform);
         }
     }
 
