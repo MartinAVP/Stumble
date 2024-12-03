@@ -336,6 +336,8 @@ public class ThirdPersonMovement : MonoBehaviour
             if (isProne) { return; }
             toggleProne(true);
 
+
+            verticalVelocity = 1;
             OnDive?.Invoke();
         }
     }
@@ -875,9 +877,10 @@ public class ThirdPersonMovement : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(this.transform.position, this.transform.forward, out hit, slapDistance))
         {
-            if (hit.transform.GetComponent<IBumper>() != null)
+            ThirdPersonMovement thirdPersonMovement = hit.transform.GetComponent<ThirdPersonMovement>();
+            if (thirdPersonMovement != null)
             {
-                hit.transform.GetComponent<IBumper>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce, BumpSource.StaticBumper);
+                thirdPersonMovement.Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
                 Debug.DrawRay(hit.point, hit.normal, Color.cyan, 5f);
             }
         }

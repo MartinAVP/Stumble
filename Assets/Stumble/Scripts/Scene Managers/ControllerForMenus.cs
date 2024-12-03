@@ -81,8 +81,8 @@ public class ControllerForMenus : MonoBehaviour
 
     private void AddPlayer(PlayerInput player)
     {
-        Debug.Log("PLAYER JOINED EPICly");
-        // Is the first player
+        //Debug.Log("PLAYER JOINED EPICly");
+        //Is the first player
         if(player.playerIndex == 0)
         {
             if(player.currentControlScheme == "Controller")

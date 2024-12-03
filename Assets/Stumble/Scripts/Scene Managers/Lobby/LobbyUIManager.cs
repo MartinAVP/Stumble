@@ -57,10 +57,11 @@ public class LobbyUIManager : MonoBehaviour
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayStart());
     }
-
     private IEnumerator delayStart()
     {
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("GamemodeSelect");
     }
+
+
 }
