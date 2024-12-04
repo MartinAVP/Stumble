@@ -28,6 +28,9 @@ public class ArenamodeManager : MonoBehaviour
     [SerializeField] private int Lives;
     private IDictionary<PlayerData, int> playerLives = new Dictionary<PlayerData, int>();
 
+    public List<PlayerData> playersAlive = new List<PlayerData>();
+    public List<PlayerData> playersDead = new List<PlayerData>();
+
     public static ArenamodeManager Instance { get; private set; }
     public bool initialized { get; private set; }
 
@@ -328,12 +331,17 @@ public class ArenamodeManager : MonoBehaviour
 
     private void AddPlayersToDictionary()
     {
+        foreach(PlayerData data in PlayerDataHolder.Instance.players)
+        {
+            playersAlive.Add(data);
+        }
+
         // Add Player Lives
-        foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
+/*        foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
         {
             playerLives.Add(player, Lives + 1);
         }
-        Debug.Log(playerLives.Count + " in the dictionary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        Debug.Log(playerLives.Count + " in the dictionary ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");*/
     }
 
     private PlayerUIComponent uiComponent;
@@ -421,14 +429,51 @@ public class ArenamodeManager : MonoBehaviour
         int id = input.playerIndex;
 
         // Check if the player is already in the Dictionary
-        if(positions.ContainsValue(data))
+        if(playersDead.Contains(data))
         {
-
+            return;
         }
 
+        // Check if it is the last player
+        if (GetPlayersAlive() >= 1)
+        {
+            // Remove Player from the alive list
+            playersAlive.Remove(data);
+            // Add Player to the Dead list
+            playersDead.Add(data);
+            // Make the player loose and add to spectator
+            if (SpectatorManager.Instance != null)
+            {
+                SpectatorManager.Instance.AddToSpectator(data);
+            }
+            // Add players to the final position
+            positions.Add(playersDead.Count, data);
+
+            // If there is only one player left, end the game
+            if (IsLastPlayerStanding()) {             
+                if (!gameEnding)
+                {
+                    gameEnding = true;
+                    positions.Add(playersDead.Count + 1, GetLastPlayer());
+
+                    //scoreboardManager.UpdatePositions(positions);
+                    scoreboardManager.UpdatePositionsFromArena(positions);
+
+                    StartCoroutine(EndGameDelay());
+                    Respawn(playerObj);
+
+                    onLastManStanding?.Invoke();
+                }
+            }
+        }
+        // There is one player left
+        else if (GetPlayersAlive() <= 1) {
+            // Respawn the player if its the last time.
+            Respawn(playerObj);
+        }
     }
 
-    public void PlayerOnKillZone(GameObject playerObj)
+/*    public void PlayerOnKillZone(GameObject playerObj)
     {
 
         // Remove a Life;
@@ -458,12 +503,6 @@ public class ArenamodeManager : MonoBehaviour
         playerLives[data] = playerLives[data] - 1;
         int currentLives = playerLives[data];
 
-/*        for (int i = 0; i < playerLives.Count; i++) {
-            Debug.Log("LOGGER: Player #" + i + " now has " + playerLives[i] + " lives");
-        }*/
-
-        // Update UI
-        //ArenamodeUIManager.Instance.UpdatePlayersAlive(GetPlayersAlive().ToString());
         Debug.Log("Player #" + id + " now has " + playerLives[data] + " lives");
 
         // End Game Check
@@ -513,7 +552,7 @@ public class ArenamodeManager : MonoBehaviour
         {
             Respawn(playerObj);
         }
-    }
+    }*/
 
     public void Respawn(GameObject playerObject)
     {
@@ -556,6 +595,16 @@ public class ArenamodeManager : MonoBehaviour
 
     private bool IsLastPlayerStanding()
     {
+        if(playersAlive.Count <= 1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+/*    private bool IsLastPlayerStanding()
+    {
         bool lastPlayer = true;
         foreach (int lives in playerLives.Values)
         {
@@ -566,20 +615,7 @@ public class ArenamodeManager : MonoBehaviour
             }
         }
         return lastPlayer;
-
-        //*        int aliveCount = 0;
-/*
-            foreach (var lives in playerLives.Values)
-        {
-            if (lives > 0)
-            {
-                aliveCount++;
-            }
-        }
-
-        return aliveCount == 1; */
-        // Return true if only one player is alive*//*
-    }
+    }*/
 
 /*    private IEnumerator EndGameDelay()
     {
@@ -600,7 +636,7 @@ public class ArenamodeManager : MonoBehaviour
         SceneManager.LoadScene("Podium");
     }*/
 
-    private int GetPlayersAlive()
+/*    private int GetPlayersAlive()
     {
         int alive = 0;
         foreach (int lives in playerLives.Values)
@@ -612,9 +648,14 @@ public class ArenamodeManager : MonoBehaviour
 
         }
         return alive;
+    }*/
+
+    private int GetPlayersAlive()
+    {
+        return playersAlive.Count;
     }
 
-    private PlayerData GetLastPlayer()
+/*    private PlayerData GetLastPlayer()
     {
         foreach (PlayerData playerID in playerLives.Keys)
         {
@@ -625,6 +666,11 @@ public class ArenamodeManager : MonoBehaviour
         }
 
         return null;
+    }*/
+
+    private PlayerData GetLastPlayer()
+    {
+        return playersAlive[0];
     }
 
     /*    public event Action<SortedDictionary<float, PlayerData>> onCompleteFinish;
@@ -856,7 +902,8 @@ public class ArenamodeManager : MonoBehaviour
             }
             return lastPlayer;
 
-    *//*        int aliveCount = 0;
+    */
+    /*        int aliveCount = 0;
 
             foreach (var lives in playerLives.Values)
             {
