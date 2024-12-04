@@ -321,11 +321,13 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
 
         // Freeze player position
+
         // Unprone
         if (player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().isProne)
         {
             player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().toggleProne(false);
         }
+
         // Lock Movement
         player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
 
@@ -335,7 +337,9 @@ public class RacemodeManager : MonoBehaviour
             // End
             // Display the Scores
             //Debug.Log("Race Values: " + positions.Count);
-            scoreboardManager.UpdatePositionsFromTime(positions);
+            //scoreboardManager.UpdatePositionsFromTime(positions);
+            scoreboardManager.UpdatePositionsFromRace(positions);
+
             StartCoroutine(EndGameDelay());
             onCompleteFinish?.Invoke(positions);
 
@@ -395,11 +399,13 @@ public class RacemodeManager : MonoBehaviour
 
                     Console.WriteLine($"Key: {key}, Value: {value}");
                 }*/
-        int index = 1;
+/*        int index = 1;
         foreach (PlayerData player in positions.Values) {
             scoreboardManager.SetPoints(player.id, index, 0);
             index++;
-        }
+        }*/
+
+        ScoreboardManager.Instance.AddMatchPoints();
     }
     private void startSpectating(Vector2 value, PlayerInput input)
     {

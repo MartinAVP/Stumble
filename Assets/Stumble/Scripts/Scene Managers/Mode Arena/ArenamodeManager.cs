@@ -378,6 +378,7 @@ public class ArenamodeManager : MonoBehaviour
 
     private void AddPoints()
     {
+        ScoreboardManager.Instance.AddMatchPoints();
         /*        foreach (KeyValuePair<float, PlayerData> data in positions)
                 {
                     int key = data.Key;       // Get the key
@@ -390,11 +391,11 @@ public class ArenamodeManager : MonoBehaviour
         int index = positions.Count;
 
         // Reverse() Fixes Inverted Point problem.
-        foreach (PlayerData player in positions.Values.Reverse())
+/*        foreach (PlayerData player in positions.Values.Reverse())
         {
             scoreboardManager.SetPoints(player.id, index, 0);
             index--;
-        }
+        }*/
     }
     private void startSpectating(Vector2 value, PlayerInput input)
     {
@@ -410,6 +411,21 @@ public class ArenamodeManager : MonoBehaviour
             data.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.RemoveListener(startSpectating);
             SpectatorManager.Instance.AddToSpectator(data);
         }
+    }
+
+    public void KillPlayer(GameObject playerObj)
+    {
+        //Define Player Variables
+        PlayerInput input = playerObj.GetComponent<PlayerInput>();
+        PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
+        int id = input.playerIndex;
+
+        // Check if the player is already in the Dictionary
+        if(positions.ContainsValue(data))
+        {
+
+        }
+
     }
 
     public void PlayerOnKillZone(GameObject playerObj)
@@ -458,13 +474,13 @@ public class ArenamodeManager : MonoBehaviour
             {
                 gameEnding = true;
                 positions.Add(0, GetLastPlayer());
-                scoreboardManager.UpdatePositions(positions);
+
+                //scoreboardManager.UpdatePositions(positions);
+                scoreboardManager.UpdatePositionsFromArena(positions);
+
                 StartCoroutine(EndGameDelay());
                 Respawn(playerObj);
-/*                if(playerObj.GetComponent<ThirdPersonMovement>() != null)
-                {
-                    playerObj.GetComponent<ThirdPersonMovement>().lockVeritcalMovement = true;
-                }*/
+
                 onLastManStanding?.Invoke();
             }
         }
@@ -498,44 +514,6 @@ public class ArenamodeManager : MonoBehaviour
             Respawn(playerObj);
         }
     }
-
-/*    public void ReachFinishLine(PlayerData player)
-    {
-
-        // Check if the player has already finished
-        foreach (PlayerData data in positions.Values)
-        {
-            // Player has already reached the finish line
-            if (data == player) return;
-        }
-
-        // Add player to the finish
-        positions.Add(GetElapsedTime(), player);
-        UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
-
-        // Freeze player position
-        // Unprone
-        if (player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().isProne)
-        {
-            player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().toggleProne(false);
-        }
-        // Lock Movement
-        player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
-
-        // Check if the last player reached the checkpoint
-        if (positions.Count == PlayerDataHolder.Instance.GetPlayers().Count)
-        {
-            // End
-            // Display the Scores
-            //Debug.Log("Race Values: " + positions.Count);
-            scoreboardManager.UpdatePositions(positions);
-            StartCoroutine(EndGameDelay());
-            onCompleteFinish?.Invoke(positions);
-        }
-
-        // Add a Listener to when the player wants to start spectating
-        player.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(startSpectating);
-    }*/
 
     public void Respawn(GameObject playerObject)
     {
