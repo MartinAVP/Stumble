@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HippoArena : MonoBehaviour
@@ -8,10 +9,10 @@ public class HippoArena : MonoBehaviour
 
     [Header("Arena Values")]
     [Tooltip("Adding more numbers to the decimal will change the shrinking speed as well")]
-    public float ArenaShrinkPercent = 1f;
+    public float ArenaShrinkPercent = .999f;
     [Tooltip("The amount runs of the loop before a quick pause, helps with making the 'animation' smoother")]
-    public float frameSkips = 1;
-    private float inActionDelay = .00000001f;
+    public float frameSkips = 2;
+    private float inActionDelay = .00000000001f;
 
     [Tooltip("The Delay Will Be In Secounds")]
     public int DelayUntilShrink = 600;
@@ -24,12 +25,31 @@ public class HippoArena : MonoBehaviour
 
     private int counter = 0;
     private Vector3 currentScale;
+    private Vector3 dumpScale;
     private float arenaY;
+
+    private float arenaShrinkRatio;
+    private Vector3 origionalScale;
+    private float origionalBumperY;
+
+    public GameObject Bumper1;
+    public GameObject Bumper2;
+    public GameObject Bumper3;
+    public GameObject Bumper4;
 
     // Start is called before the first frame update
     void Start()
     {
         arenaY = transform.localScale.y;
+        if (Bumper1 != null)
+        {
+            origionalBumperY = Bumper1.transform.localScale.y;
+            arenaShrinkRatio = origionalBumperY / origionalScale.y;
+        }
+        origionalScale = transform.localScale;
+        dumpScale.x = 0.045f;
+        dumpScale.z = 0.113f;
+
         StartCoroutine(DummyTimer());  
     }
 
@@ -55,7 +75,18 @@ public class HippoArena : MonoBehaviour
         available = false;
         currentScale.x = ArenaShrinkPercent * transform.localScale.x;
         currentScale.z = ArenaShrinkPercent * transform.localScale.z;
+        dumpScale.y = 1f * arenaShrinkRatio * arenaShrinkRatio;
+        Bumper1.transform.localScale = dumpScale;
+        Bumper2.transform.localScale = dumpScale;
+        Bumper3.transform.localScale = dumpScale;
+        Bumper4.transform.localScale = dumpScale;
+
+
         currentScale.y = arenaY;
+
+
+
+
         transform.localScale = currentScale;
 
         counter++;
