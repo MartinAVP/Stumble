@@ -150,6 +150,19 @@ public class PlayerDataHolder : MonoBehaviour
         return -1;
     }
 
+    public PlayerData GetHost()
+    {
+        foreach(var player in players)
+        {
+            if (player.isHost)
+            {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
     // Get Player Data
     public PlayerData GetPlayerData(PlayerInput input)
     {

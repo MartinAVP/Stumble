@@ -56,9 +56,15 @@ public class LobbyManager : MonoBehaviour
 
     private void InitializeLobby()
     {
-        for (int i = 0; i < rooms; i++)
+        const int rows = 2;
+        const int columns = 2;
+
+        for (int i = 0; i < columns; i++)
         {
-            SpawnPlayerRoom(i);
+            for (int j = 0; j < rows; j++)
+            {
+                SpawnPlayerRoom(j, i);
+            }
         }
     }
 
@@ -88,12 +94,13 @@ public class LobbyManager : MonoBehaviour
         playerObj.GetComponent<CharacterController>().enabled = true;
     }
 
-    private void SpawnPlayerRoom(int id)
+    private void SpawnPlayerRoom(int columnId, int rowId)
     {
         GameObject room = Instantiate(lobbyRoomPrefab);
         LobbyRoom lobbyRoom = room.GetComponent<LobbyRoom>();
 
-        Vector3 spawnPos = new Vector3((id + 10) * 10, 0, 0);
+        Vector3 spawnPos = new Vector3((columnId + 10) * 10, (rowId + 10) * 10, 0f);
+
         room.transform.position = spawnPos;
         lobbyRooms.Add(lobbyRoom);
     }
