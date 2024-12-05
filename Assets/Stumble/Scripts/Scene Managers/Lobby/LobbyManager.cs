@@ -20,6 +20,7 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private GameObject lobbyRoomPrefab;
 
     public static LobbyManager Instance;
+    private bool transitioning = false;
     [HideInInspector] public bool initialized = false;
 
     private void Awake()
@@ -92,7 +93,7 @@ public class LobbyManager : MonoBehaviour
         GameObject room = Instantiate(lobbyRoomPrefab);
         LobbyRoom lobbyRoom = room.GetComponent<LobbyRoom>();
 
-        Vector3 spawnPos = new Vector3(id * 10, 0, 0);
+        Vector3 spawnPos = new Vector3((id + 10) * 10, 0, 0);
         room.transform.position = spawnPos;
         lobbyRooms.Add(lobbyRoom);
     }
@@ -102,6 +103,9 @@ public class LobbyManager : MonoBehaviour
         if(PlayerDataHolder.Instance.GetPlayerData(input)?.isHost == false) {
             return;
         }
+
+        if(transitioning) return;
+        transitioning = true;
 
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayStart());
@@ -120,14 +124,34 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
+        if(transitioning) return;
+        transitioning = true;
+
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        StartCoroutine(delayReturn());
+        StartCoroutine(delayReturn("Menu"));
     }
 
-    private IEnumerator delayReturn()
+    private IEnumerator delayReturn(string scene)
     {
         yield return new WaitForSeconds(2f);
         PlayerDataHolder.Instance.ClearAllButHost(true);
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene(scene);
+    }
+
+    public void RemovePlayer(PlayerInput input)
+    {
+        PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
+        Destroy(input.transform.parent.gameObject);
+
+        // Only Removes it from the Database
+        PlayerDataHolder.Instance.RemovePlayer(input);
+
+        // If no players Left, Go back to StartScreen.
+        if(PlayerDataHolder.Instance.GetPlayers().Count <= 0)
+        {
+            // All Players Including Host left, send to StartScreen.
+            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+            StartCoroutine(delayReturn("StartScreen"));
+        }
     }
 }

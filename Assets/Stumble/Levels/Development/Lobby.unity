@@ -677,7 +677,6 @@ MonoBehaviour:
   emptyPanel: {fileID: 374215194}
   transitionPanel: {fileID: 11578164}
   mainLobbyPanel: {fileID: 519569611}
-  startGame: {fileID: 0}
 --- !u!114 &254751568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1048,6 +1047,11 @@ MonoBehaviour:
   hats:
   - {fileID: 11400000, guid: bc49077edd9d7a740adbeb4d02e8c863, type: 2}
   - {fileID: 11400000, guid: 647bb0ec979c60f4b889d4b44cf2d986, type: 2}
+  - {fileID: 11400000, guid: 8e129e25ca758be48a9091df2d85cdc4, type: 2}
+  - {fileID: 11400000, guid: c8efa9156889ebd41a938baed10c7a41, type: 2}
+  - {fileID: 11400000, guid: ef77461643901144396e177e0a3a146f, type: 2}
+  - {fileID: 11400000, guid: 0d861a365345a8e4bbdeee0b51ca1ef0, type: 2}
+  - {fileID: 11400000, guid: 73088cb2e12556b4d8e8048ad73c3905, type: 2}
   colors:
   - {fileID: 11400000, guid: 8efd7a3b2513ccc43833ed2b80aca4ed, type: 2}
   - {fileID: 11400000, guid: b217458d59bf8a8449b72c09191d71e2, type: 2}
@@ -3818,63 +3822,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1001 &1240160603
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 17.62556
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 11.714584
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -4.4207487
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6332425257480662357, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8269053404197753238, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
-      propertyPath: m_Name
-      value: BackupKicker
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d3ca3172f9ab0d146b47ca4a1b9b98e2, type: 3}
 --- !u!1001 &1318197727
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4050,8 +3997,8 @@ Camera:
   m_GameObject: {fileID: 1401675552}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -6522,4 +6469,3 @@ SceneRoots:
   - {fileID: 1191027543}
   - {fileID: 1189264203}
   - {fileID: 569531260}
-  - {fileID: 1240160603}

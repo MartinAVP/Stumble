@@ -23,10 +23,13 @@ public class UnstablePlatformManager : MonoBehaviour
 
     private IEnumerator StartFallDelay()
     {
+        unstablePlatform.onContact?.Invoke(unstablePlatform.TimeDelayBeforeFall);
         yield return new WaitForSeconds(unstablePlatform.TimeDelayBeforeFall);
 
         unstableRigidbody.isKinematic = false;
         unstableRigidbody.useGravity = true;
+
+        unstablePlatform.onStartFalling?.Invoke();
 
         StartCoroutine(WaitWhileFalling());
     }
@@ -36,6 +39,8 @@ public class UnstablePlatformManager : MonoBehaviour
         yield return new WaitForSeconds(unstablePlatform.FallTime);
 
         fallingObject.SetActive(false);
+
+        unstablePlatform.onEndFalling?.Invoke();
 
         StartCoroutine(WaitForRespawn());
     }
@@ -49,5 +54,6 @@ public class UnstablePlatformManager : MonoBehaviour
         unstableRigidbody.useGravity = false;
         fallingObject.transform.position = startPosition;
         triggered = false;
+        unstablePlatform.onRespawn?.Invoke();
     }
 }

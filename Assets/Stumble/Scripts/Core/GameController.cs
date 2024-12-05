@@ -10,8 +10,8 @@ public class GameController : MonoBehaviour
     public GameState gameState { get; private set; }
     public GameState viewer;
 
-    public event Action startSystems;
-    public event Action startSecondarySystems;
+    //public event Action startSystems;
+    //public event Action startSecondarySystems;
 
     [HideInInspector] public bool initialized = false;
 
