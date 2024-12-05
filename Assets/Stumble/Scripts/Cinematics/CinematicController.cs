@@ -105,6 +105,7 @@ public class CinematicController : MonoBehaviour
 
 
         cinematicCamera.gameObject.SetActive(true);
+        cinematicCamera.farClipPlane = 5000.0f;
         //this.transform.GetComponentInChildren<CinemachineBrain>().gameObject.SetActive(true);
     }
 

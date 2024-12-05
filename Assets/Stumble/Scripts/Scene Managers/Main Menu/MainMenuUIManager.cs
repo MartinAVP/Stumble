@@ -170,6 +170,15 @@ public class MainMenuUIManager : MonoBehaviour
     }
 
     public void StartGameCoroutine() {
+        if(PlayerDataHolder.Instance == null)
+        {
+            Debug.LogWarning("There is no player data holder, can't start the game");
+            return;
+        } // Check if there is a player Data Holder
+        else
+        {
+            if(PlayerDataHolder.Instance.players.Count == 0) { Debug.LogWarning("There is no player in the menu, can't start game"); return; }
+        } // Check if there is a player to start
         MainMenuManager.Instance.StartGame(PlayerDataHolder.Instance.GetPlayerData(0).input);
 /*        Debug.Log("Clicked");             // MOVED TO THE MAIN MENU MANAGER
         if(transfering) { return; }

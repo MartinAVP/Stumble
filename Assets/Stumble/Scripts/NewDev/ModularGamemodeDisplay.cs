@@ -13,7 +13,7 @@ public class ModularGamemodeDisplay : MonoBehaviour
     [SerializeField] private GameObject MapPrefab;
     [SerializeField] private Transform parentTransform;
 
-    [SerializeField] private List<GameObject> cards;
+    [HideInInspector] public List<GameObject> cards;
 
     public static ModularGamemodeDisplay Instance { get; private set; }
     public bool initialized { get; private set; }

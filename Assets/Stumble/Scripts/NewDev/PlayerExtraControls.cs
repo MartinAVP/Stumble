@@ -95,7 +95,8 @@ public class PlayerExtraControls : MonoBehaviour
             else if (gameController.gameState == GameState.ChoosingGameMode)
             {
                 Debug.Log("Pressed Return");
-                GamemodeSelectionManager.Instance.GoBackToLobby(input);
+                //GamemodeSelectionManager.Instance.GoBackToLobby(input);
+                GamemodeSelectionUIManager.Instance.Return(input);
             }
             else if (gameController.gameState == GameState.Race || gameController.gameState == GameState.Arena || gameController.gameState == GameState.Podium)
             {

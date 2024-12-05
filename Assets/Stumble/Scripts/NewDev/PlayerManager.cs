@@ -292,11 +292,15 @@ public class PlayerManager : MonoBehaviour
             //Debug.Log("Player has a PlayerCosmetics Item");
             // Add Cosmetic [Prototype]
             //Debug.Log(GameController.Instance.gameState.ToString());
-            if (GameController.Instance.gameState == GameState.Lobby || BackupKicker.Instance != null)
+            Debug.LogWarning(PlayerDataHolder.Instance.GetPlayerData(player).cosmeticData.colorIndex);
+            if (GameController.Instance.gameState == GameState.Lobby && PlayerDataHolder.Instance.GetPlayerData(player).cosmeticData.colorIndex == -1)
             {
                 // Set the default cosmetic if the scene is Lobby
-                CosmeticManager.Instance.setDefaultCosmetic(playerDataHolder.GetPlayerData(player));
-                Debug.Log("Set the default player for Player #" + player.playerIndex);
+                if(PlayerDataHolder.Instance.GetPlayerData(player).cosmeticData.colorIndex == -1)
+                {
+                    CosmeticManager.Instance.setDefaultCosmetic(playerDataHolder.GetPlayerData(player));
+                    Debug.Log("Set the default player for Player #" + player.playerIndex);
+                }
             }
             else
             {
