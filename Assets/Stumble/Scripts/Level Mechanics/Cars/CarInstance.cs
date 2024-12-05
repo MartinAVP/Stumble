@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class CarInstance : MonoBehaviour
 {
+    [Header("Wheel Storage")] 
     public GameObject wheel1;
     public GameObject wheel2;
     public GameObject wheel3;
     public GameObject wheel4;
 
-    public float speed = 3;
-    public 
+    [Header("Time Until It Despawns")]
+    public float despawnTime = 5f;
 
+    [Header("Movement Speed / Wheel Rotation")]
+    public float speed = 3;
+
+    [Header("Max Rotation the Car Can Achieve Downward")]
+    public float MaxRotation = -70f;
 
     // Start is called before the first frame update
     void Start()
     {
-        //Debug.Log(wheel1.transform.position);
+        StartCoroutine(DespawnAfterTime());
     }
 
     // Update is called once per frame
@@ -31,6 +37,8 @@ public class CarInstance : MonoBehaviour
 
         //transform.position ;
         transform.position -= transform.forward * Time.deltaTime * speed;
+
+        ClampParentRotation();
 
         CarPositioning();
     }
@@ -50,11 +58,36 @@ public class CarInstance : MonoBehaviour
         Debug.DrawLine(BackRight, BackRight + delta, Color.magenta);
     }
 
+    private void ClampParentRotation()
+    {
+        Vector3 localRotation = transform.localEulerAngles;
+
+        // Convert X angle to a range of -180 to 180 for clamping
+        if (localRotation.x > 180)
+        {
+            localRotation.x -= 360;
+        }
+
+        // Clamp rotations
+        localRotation.x = Mathf.Clamp(localRotation.x, MaxRotation, 0f);
+        localRotation.y = 0f;
+        localRotation.z = 0f;
+
+        // Apply clamped rotation
+        transform.localEulerAngles = localRotation;
+    }
+
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.gameObject.name == "CullZone")
         {
             Destroy(gameObject);
         }
+    }
+
+    private IEnumerator DespawnAfterTime()
+    {
+        yield return new WaitForSeconds(despawnTime); // Wait for the specified time
+        Destroy(gameObject); // Destroy the car
     }
 }

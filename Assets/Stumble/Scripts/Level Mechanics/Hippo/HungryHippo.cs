@@ -69,27 +69,23 @@ public class HungryHippo : MonoBehaviour
         openRotation = Quaternion.Euler(-mouthOpenAngle, transform.eulerAngles.y, transform.eulerAngles.z);
         startingRotation = transform.rotation;
         Debug.Log(startingRotation);
+        holder = PlayerDataHolder.Instance;
 
         previousMouthAngle = mouthOpenAngle;
     }
 
     void FixedUpdate()
     {
-
         if (triggered && available)
         {
-
             StartCoroutine(HippoMotion());
-
         }
-
 
         if (mouthOpenAngle != previousMouthAngle)
         {
             openRotation = Quaternion.Euler(-mouthOpenAngle, 0f, 0f);
             previousMouthAngle = mouthOpenAngle;
         }
-
 
         if (reset)
         {
@@ -99,15 +95,7 @@ public class HungryHippo : MonoBehaviour
             transform.rotation = startingRotation;
             transform.position = startingPos;
         }
-
-
     }
-
-    private void OnAnimatorIK(int layerIndex)
-    {
-        
-    }
-
 
     private IEnumerator HippoMotion()
     {
@@ -152,7 +140,6 @@ public class HungryHippo : MonoBehaviour
                 }
             }
             HippoParrent.transform.rotation = Quaternion.LookRotation(TrackedPlayerPos);
-            
         }
 
         while (Vector3.Distance(transform.position, endingPos.transform.position) > .1f)
