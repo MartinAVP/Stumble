@@ -17,7 +17,8 @@ public class PlayerDeathVolume : MonoBehaviour
             }
             // Player is in Arena Mode
             if (FindAnyObjectByType(typeof(ArenamodeManager)) != null) {
-                ArenamodeManager.Instance.PlayerOnKillZone(other.gameObject);
+                //ArenamodeManager.Instance.PlayerOnKillZone(other.gameObject);
+                ArenamodeManager.Instance.KillPlayer(other.gameObject);
                 // Kill the player
             }
         }
