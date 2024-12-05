@@ -55,10 +55,14 @@ public class HippoArena : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        
+
         if (timerComplete && available && transform.localScale.x > EndingScale && transform.localScale.z > EndingScale)
         {
             StartCoroutine(ArenaShrink());
+        }
+        else
+        {
+
         }
 
     }
@@ -79,7 +83,9 @@ public class HippoArena : MonoBehaviour
         if (Bumper1.transform.localScale.x > ( EndingScale / origionalScale.x) * origionalBumperX)
         {
             Debug.Log( dumpScale.x + " : " + Bumper1.transform.localScale.x);
-            dumpScale.x = Bumper1.transform.localScale.x * ArenaShrinkPercent;
+            dumpScale.x = Bumper1.transform.localScale.x * .9995f;
+            dumpScale.y = Bumper1.transform.localScale.y * 1.0005f;
+            dumpScale.z = Bumper1.transform.localScale.z * 1.0005f;
         }
 
         dumpCounter++;

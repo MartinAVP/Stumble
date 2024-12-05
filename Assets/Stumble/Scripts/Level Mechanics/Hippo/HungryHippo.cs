@@ -5,8 +5,6 @@ using static UnityEditor.PlayerSettings;
 
 public class HungryHippo : MonoBehaviour
 {
-    [SerializeField] private PlayerDataHolder holder;
-
     //timer for movement smoothness - delay is a lockout to prevent repeat calling
     private float timer;
     private bool delayed = false;
@@ -37,12 +35,10 @@ public class HungryHippo : MonoBehaviour
     //range for random delay after the full set of actions
     [Header("Random Delay For Start Of New Cycle")]
     public float minDelay = .1f;
-    public float maxDelay = 1f;
+    public float maxDelay = 1f; 
     private float inActionDelay = .000000000000000000000000000000000000000000000001f;
 
-
-
-    
+    public PlayerDataHolder holder;
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
@@ -62,6 +58,9 @@ public class HungryHippo : MonoBehaviour
 
     void Start()
     {
+
+        holder = PlayerDataHolder.Instance;
+
         startingPos = transform.position;
         closedRotation = transform.rotation;
         playerKillzone.SetActive(false);
