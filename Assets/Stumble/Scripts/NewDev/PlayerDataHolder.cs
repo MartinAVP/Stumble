@@ -189,13 +189,21 @@ public class PlayerDataHolder : MonoBehaviour
 
     public void ClearAllButHost(bool resetCosmetics)
     {
+        // Find Host
+        PlayerData hostPlayer = new PlayerData(-1, null, null, null, false, null);
+
+        Debug.LogWarning(players.Count);
         foreach (var player in players)
         {
-            if (!player.isHost)
+            if (player.isHost)
             {
-                RemovePlayer(player.input);
+                hostPlayer = player;
+                break;
             }
         }
+
+        players.Clear();
+        players.Add(hostPlayer);
 
         if (resetCosmetics)
         {

@@ -13,6 +13,9 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     [SerializeField] private GameObject GamemodeSelectPanel;
     [SerializeField] private GameObject GrandPrixLevelSelectionPanel;
 
+    [SerializeField] private GameObject minigameModeDescription;
+    [SerializeField] private GameObject partyModeDescription;
+
     [Header("Buttons")]
     [SerializeField] private Button GrandprixButton;
     [SerializeField] private Button ArenaButton;
@@ -26,6 +29,20 @@ public class GamemodeSelectionUIManager : MonoBehaviour
     [SerializeField] private VideoPlayer backgroundVideo;
 
     private bool transitioning;
+    private GamemdoeScreen currentScreen;
+
+    public static GamemodeSelectionUIManager Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     private void OnEnable()
     {
@@ -37,37 +54,48 @@ public class GamemodeSelectionUIManager : MonoBehaviour
         SelectModes.onClick.AddListener(GoBackToModeSelection);
     }
 
-
-    private GamemodeSelected currentlySelected;
-
     void Start()
     {
         LoadingScreenManager.Instance.StartTransition(false);
+
+        HoverOverGrandPrix();
     }
 
     private void HoverOverGrandPrix()
     {
         backgroundVideo.clip = grandPrixVideo;
         backgroundVideo.Play();
+
+        partyModeDescription?.SetActive(true);
+        minigameModeDescription?.SetActive(false);
     }
 
     private void HoverOverArena()
     {
         backgroundVideo.clip = arenaVideo;
         backgroundVideo.Play();
-    }
 
-/*    private void SelectGrandPrix()
-    {
-        GamemodeSelectScreenManager.Instance.InterpolateScreens(GamemodeSelectPanel, GrandPrixLevelSelectionPanel, GamemodeSelectScreenManager.Direction.Left);
-        ControllerForMenus.Instance.ChangeSelectedObject(Level1Button.gameObject);
-    }*/
+        partyModeDescription?.SetActive(false);
+        minigameModeDescription?.SetActive(true);
+    }
 
     private void SelectArena()
     {
+        if (transitioning)
+        {
+            return;
+        }
+        else
+        {
+            StartCoroutine(clickDelay());
+            transitioning = true;
+        }
+
+        currentScreen = GamemdoeScreen.Minigame;
+
         //SceneManager.LoadScene("ArenaScene");
         GamemodeSelectScreenManager.Instance.InterpolateScreens(GamemodeSelectPanel, GrandPrixLevelSelectionPanel, GamemodeSelectScreenManager.Direction.Left);
-        ControllerForMenus.Instance.ChangeSelectedObject(Level1Button.gameObject);
+        ControllerForMenus.Instance.ChangeSelectedObject(ModularGamemodeDisplay.Instance?.cards[0]);
     }
 
     private void GoBackToModeSelection()
@@ -78,7 +106,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
         }
 
         GamemodeSelectScreenManager.Instance.InterpolateScreens(GrandPrixLevelSelectionPanel, GamemodeSelectPanel, GamemodeSelectScreenManager.Direction.Right);
-        ControllerForMenus.Instance.ChangeSelectedObject(GrandprixButton.gameObject);
+        ControllerForMenus.Instance.ChangeSelectedObject(ArenaButton.gameObject);
     }
 
     public void LoadGrandPrixLevel(string name)
@@ -113,16 +141,37 @@ public class GamemodeSelectionUIManager : MonoBehaviour
 
 
 
-    public void GoBackToLobby(PlayerInput input)
+    public void Return(PlayerInput input)
     {
         // Check Permission
         if (!PlayerDataHolder.Instance.GetPlayerData(input).isHost) return;
 
         if (transitioning) return;
-        transitioning = true;
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        StartCoroutine(delayReturn());
+        Debug.Log("Current Screen: Main");
+        switch (currentScreen)
+        {
+            case GamemdoeScreen.Main:
+                Debug.Log("Current Screen: Main");
+                if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+
+                transitioning = true;
+
+                StartCoroutine(delayReturn());
+                break;
+            case GamemdoeScreen.Minigame:
+                Debug.Log("Current Screen: Minigame");
+
+                GoBackToModeSelection();
+                currentScreen = GamemdoeScreen.Main;
+                break;
+        }
+/*        if (currentScreen == GamemdoeScreen.Main)
+        {
+            if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+            StartCoroutine(delayReturn());
+        }*/
+
     }
 
     private IEnumerator delayReturn()
@@ -131,7 +180,7 @@ public class GamemodeSelectionUIManager : MonoBehaviour
         SceneManager.LoadScene("Lobby");
     }
 
-    private enum Screen
+    public enum GamemdoeScreen
     {
         Main,
         Party,
