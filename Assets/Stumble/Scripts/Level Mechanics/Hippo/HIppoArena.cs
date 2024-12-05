@@ -28,27 +28,26 @@ public class HippoArena : MonoBehaviour
     private Vector3 dumpScale;
     private float arenaY;
 
-    private float arenaShrinkRatio;
     private Vector3 origionalScale;
-    private float origionalBumperY;
+    private float origionalBumperX;
 
     public GameObject Bumper1;
     public GameObject Bumper2;
     public GameObject Bumper3;
     public GameObject Bumper4;
 
+    public int BumperScaleFrames = 5;
+    private int dumpCounter;
+
     // Start is called before the first frame update
     void Start()
     {
         arenaY = transform.localScale.y;
-        if (Bumper1 != null)
-        {
-            origionalBumperY = Bumper1.transform.localScale.y;
-            arenaShrinkRatio = origionalBumperY / origionalScale.y;
-        }
+        origionalBumperX = Bumper1.transform.localScale.x;
         origionalScale = transform.localScale;
-        dumpScale.x = 0.045f;
-        dumpScale.z = 0.113f;
+        dumpScale.y = Bumper1.transform.localScale.y;
+        dumpScale.z = Bumper1.transform.localScale.z;
+        dumpCounter = BumperScaleFrames;
 
         StartCoroutine(DummyTimer());  
     }
@@ -75,7 +74,18 @@ public class HippoArena : MonoBehaviour
         available = false;
         currentScale.x = ArenaShrinkPercent * transform.localScale.x;
         currentScale.z = ArenaShrinkPercent * transform.localScale.z;
-        dumpScale.y = 1f * arenaShrinkRatio * arenaShrinkRatio;
+
+        
+        if (Bumper1.transform.localScale.x > ( EndingScale / origionalScale.x) * origionalBumperX)
+        {
+            Debug.Log( dumpScale.x + " : " + Bumper1.transform.localScale.x);
+            dumpScale.x = Bumper1.transform.localScale.x * ArenaShrinkPercent;
+        }
+
+        dumpCounter++;
+
+        Debug.Log((EndingScale / origionalScale.x) * origionalBumperX);
+
         Bumper1.transform.localScale = dumpScale;
         Bumper2.transform.localScale = dumpScale;
         Bumper3.transform.localScale = dumpScale;
