@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UISuggestionSwitcher : MonoBehaviour
 {
+    /*
     public Sprite spriteToSwitch;
 
     public Sprite keyboardScheme;
@@ -35,4 +36,5 @@ public class UISuggestionSwitcher : MonoBehaviour
         Keyboard,
         Controller
     }
+    */
 }
