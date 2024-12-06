@@ -29,39 +29,45 @@ public class UISuggestionSwitcher : MonoBehaviour
 
         // Once it finds it initialize the scene
         Debug.Log("Initializing Lobby Manager...         [Lobby Manager]");
-        StartSwitcher();
+        StartCoroutine(StartSwitcher());
 
         return;
     }
 
-    private void StartSwitcher()
+    private IEnumerator StartSwitcher()
     {
         // Get the Host Scheme
         spriteToSwitch = this.GetComponent<Image>();
         
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
         if(PlayerDataHolder.Instance == null)
         {
-            return;
+            yield return null;
         }
-
-        PlayerData data = PlayerDataHolder.Instance.GetHost();
-        string scheme = data.input.currentControlScheme;
-
-        Debug.Log("The Host Scheme is: " + scheme);
-
-        switch (scheme)
+        else
         {
-            case "Keyboard&Mouse":
-                currentScheme = playerScheme.Keyboard;
-                spriteToSwitch.sprite = keyboardScheme;
-                break;
-            case "Gamepad":
-                currentScheme = playerScheme.Controller;
-                spriteToSwitch.sprite = controllerScheme;
-                break;
-        }
+            PlayerData data = PlayerDataHolder.Instance.GetHost();
+            string scheme = data.input.currentControlScheme;
+
+            Debug.Log("The Host Scheme is: " + scheme);
+
+            switch (scheme)
+            {
+                case "Keyboard&Mouse":
+                    currentScheme = playerScheme.Keyboard;
+                    spriteToSwitch.sprite = keyboardScheme;
+                    break;
+                case "Gamepad":
+                    currentScheme = playerScheme.Controller;
+                    spriteToSwitch.sprite = controllerScheme;
+                    break;
+            }
         
-        // Change the Sprite based on the scheme changed
+            // Change the Sprite based on the scheme changed
+        }
     }
 
     private enum playerScheme
