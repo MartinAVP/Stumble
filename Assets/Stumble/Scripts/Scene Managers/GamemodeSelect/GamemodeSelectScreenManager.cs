@@ -53,7 +53,7 @@ public class GamemodeSelectScreenManager : MonoBehaviour
             outgoing.localPosition = Vector3.Lerp(Vector3.zero, direction == Direction.Left ? new Vector3(-Screen.width, 0, 0) : new Vector3(Screen.width, 0, 0), smoothStep);
             incoming.localPosition = Vector3.Lerp(initialIncomingPosition, Vector3.zero, smoothStep);
 
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
 
