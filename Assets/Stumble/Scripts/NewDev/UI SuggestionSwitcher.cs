@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class UISuggestionSwitcher : MonoBehaviour
 {
     public Sprite spriteToSwitch;
@@ -36,3 +36,4 @@ public class UISuggestionSwitcher : MonoBehaviour
         Controller
     }
 }
+*/
