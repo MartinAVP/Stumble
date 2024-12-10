@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class BoxBumper : Bumper
 {
+    public UnityEvent<Vector3, Vector3> BounceEvent = new UnityEvent<Vector3, Vector3>();
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.GetComponent<IBumper>() != null)
@@ -26,10 +29,14 @@ public class BoxBumper : Bumper
             }
 
             // Sounds
+            BounceEvent?.Invoke(hit.point, hit.normal);
+            Debug.Log("Invoked Bounce");
+
             if(SFXManager.Instance != null)
             {
                 SFXManager.Instance.PlaySound("BumperBounce", collision.gameObject.transform);
             }
+
         }
     }
 
@@ -40,12 +47,23 @@ public class BoxBumper : Bumper
         Vector3 invDirection = transform.position - other.transform.position;
 
         //Vector3 dirVec = other.transform.TransformDirection(direction);
+
         Debug.DrawRay(this.transform.position, direction, Color.magenta, 100f);
         if (Physics.Raycast(other.transform.position, invDirection, out hit, 100))
         {
+            BounceEvent?.Invoke(other.transform.position, direction);
             return hit.normal;
         }
 
+        BounceEvent?.Invoke(other.transform.position, direction);
+/*        BounceEvent?.Invoke(hit.point, hit.normal);*/
+
         return Vector3.zero;
+    }
+
+    public override void ExecuteBumpVFX()
+    {
+
+        return;
     }
 }

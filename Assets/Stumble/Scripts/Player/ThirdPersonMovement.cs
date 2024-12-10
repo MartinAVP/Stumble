@@ -959,7 +959,7 @@ public class ThirdPersonMovement : MonoBehaviour
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
-        print("Bump player: " + direction + " " + magnitude);
+        //print("Bump player: " + direction + " " + magnitude);
 
         if (magnitude < .01f || direction.magnitude < .01f) return;
 
