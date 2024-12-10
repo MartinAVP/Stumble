@@ -23,6 +23,7 @@ public class ThirdPersonMovement : MonoBehaviour
     public event Action OnSlap;
 
     [HideInInspector] public UnityEvent OnSlapPlayer;
+    [HideInInspector] public UnityEvent OnJumpPlayer;
 
     #region Horizontal Movement
     [Header("Movement")]
@@ -322,6 +323,7 @@ public class ThirdPersonMovement : MonoBehaviour
         verticalVelocity += jumpPower;
 
         OnJump?.Invoke();
+        OnJumpPlayer?.Invoke();
     }
 
     public void Dive(InputAction.CallbackContext context)
