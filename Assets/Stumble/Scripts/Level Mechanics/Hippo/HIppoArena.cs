@@ -82,15 +82,12 @@ public class HippoArena : MonoBehaviour
         
         if (Bumper1.transform.localScale.x > ( EndingScale / origionalScale.x) * origionalBumperX)
         {
-            Debug.Log( dumpScale.x + " : " + Bumper1.transform.localScale.x);
             dumpScale.x = Bumper1.transform.localScale.x * .9995f;
             dumpScale.y = Bumper1.transform.localScale.y * 1.0005f;
             dumpScale.z = Bumper1.transform.localScale.z * 1.0005f;
         }
 
         dumpCounter++;
-
-        Debug.Log((EndingScale / origionalScale.x) * origionalBumperX);
 
         Bumper1.transform.localScale = dumpScale;
         Bumper2.transform.localScale = dumpScale;

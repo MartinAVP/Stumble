@@ -8,7 +8,7 @@ public class HungryHippo : MonoBehaviour
     //timer for movement smoothness - delay is a lockout to prevent repeat calling
     private float timer;
     private bool delayed = false;
-
+    
 
     [Header("Hippo Adjusments")]
     public int mouthOpenAngle = 45;
@@ -38,7 +38,6 @@ public class HungryHippo : MonoBehaviour
     public float maxDelay = 1f; 
     private float inActionDelay = .000000000000000000000000000000000000000000000001f;
 
-    public PlayerDataHolder holder;
 
     private Quaternion closedRotation;
     private Quaternion openRotation;
@@ -46,10 +45,10 @@ public class HungryHippo : MonoBehaviour
     public GameObject endingPos;
 
     private float previousMouthAngle;
-    private GameObject hippoNeck;
     private Quaternion startingRotation;
 
     public GameObject playerKillzone;
+    public GameObject targetPoint;
 
     [Header("Testing Bools")]
     public bool triggered = false;
@@ -58,17 +57,12 @@ public class HungryHippo : MonoBehaviour
 
     void Start()
     {
-
-        holder = PlayerDataHolder.Instance;
-
         startingPos = transform.position;
         closedRotation = transform.rotation;
         playerKillzone.SetActive(false);
-        hippoNeck = GameObject.Find("HippoNeck");
         openRotation = Quaternion.Euler(-mouthOpenAngle, transform.eulerAngles.y, transform.eulerAngles.z);
         startingRotation = transform.rotation;
         Debug.Log(startingRotation);
-        holder = PlayerDataHolder.Instance;
 
         previousMouthAngle = mouthOpenAngle;
     }
@@ -129,24 +123,41 @@ public class HungryHippo : MonoBehaviour
 
         if (PlayerTracking)
         {
-            for (int i = 0; i < holder.players.Count; i++)
+            if (PlayerDataHolder.Instance != null)
             {
-                var d = Vector3.Distance(transform.position, holder.players[i].input.gameObject.transform.position);
-                if (d < ShortestDistance)
+                ShortestDistance = float.MaxValue;
+
+                for (int i = 0; i < PlayerDataHolder.Instance.GetPlayers().Count; i++)
                 {
-                    ShortestDistance = d;
-                    TrackedPlayerPos = holder.players[i].input.gameObject.transform.position;
+                    var d = Vector3.Distance(transform.position, PlayerDataHolder.Instance.GetPlayerData(i).input.gameObject.transform.position);
+                    if (d < ShortestDistance)
+                    {
+                        ShortestDistance = d;
+                        TrackedPlayerPos = PlayerDataHolder.Instance.GetPlayerData(i).input.gameObject.transform.position;
+                    }
                 }
+                Vector3 directionToPlayer = (TrackedPlayerPos - transform.position).normalized;
+                Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+                HippoParrent.transform.rotation = targetRotation;
+
+                Debug.Log("DataHolder is not null");
+
             }
-            HippoParrent.transform.rotation = Quaternion.LookRotation(TrackedPlayerPos);
+
         }
 
-        while (Vector3.Distance(transform.position, endingPos.transform.position) > .1f)
+        while (Vector3.Distance(transform.position, targetPoint.transform.position) > 0.1f)
         {
             timer += Time.deltaTime;
-            this.transform.position = Vector3.MoveTowards(transform.position, endingPos.transform.position, speed * Time.deltaTime);
-           
-            //this.transform.Translate(Vector3.forward * movementMultiplier * Time.deltaTime, Space.Self);
+            transform.position = Vector3.MoveTowards(transform.position, targetPoint.transform.position, speed * Time.deltaTime);
+            Vector3 directionToTarget = targetPoint.transform.position - transform.position;
+            if (directionToTarget != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+                targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * speed);
+            }
+
             temp++;
             if (temp > frameSkips)
             {
@@ -154,7 +165,8 @@ public class HungryHippo : MonoBehaviour
                 temp = 0;
             }
         }
-        transform.position = endingPos.transform.position;
+
+        transform.position = targetPoint.transform.position;
         timer = 0;
 
         //Debug.Log("lunge complete");
@@ -163,20 +175,22 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("mouth closing");
 
-        while (Quaternion.Angle(transform.rotation, closedRotation) > 0.1f)
+        while (Mathf.Abs(Mathf.DeltaAngle(transform.rotation.eulerAngles.x, closedRotation.eulerAngles.x)) > 0.1f)
         {
             timer += Time.deltaTime;
             smoothing = Mathf.SmoothStep(0f, 1f, timer / actionDuration);
+            float interpolatedX = Mathf.LerpAngle(transform.rotation.eulerAngles.x, 0, smoothing);
+            Quaternion newRotation = Quaternion.Euler(interpolatedX, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+            transform.rotation = newRotation;
 
-            transform.rotation = Quaternion.Slerp(openRotation, closedRotation, smoothing);
             temp++;
-            if (temp > frameSkips)
+            if (temp > frameSkips + 1)
             {
-                yield return new WaitForSeconds(inActionDelay);
+                yield return new WaitForSeconds(inActionDelay + .01f );
                 temp = 0;
             }
-
         }
+
         timer = 0;
         smoothing = 0;
 
