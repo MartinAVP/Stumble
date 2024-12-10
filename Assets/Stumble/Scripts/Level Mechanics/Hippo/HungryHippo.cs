@@ -18,12 +18,17 @@ public class HungryHippo : MonoBehaviour
     public int frameSkips = 5;
     public float inbetweenActionDelay = .5f;
 
+    public float ChompOverTime = 1.75f;
+    public int MaxRounds = 8;
+
+
     [Header("Player Tracking")]
     public float TimeBetweenPlayerTrackingUpdates = 2;
     public bool PlayerTracking = false;
     private Vector3 TrackedPlayerPos;
     private float ShortestDistance = 100;
 
+    private int rounds = 0;
     
 
     public GameObject HippoParrent;
@@ -138,9 +143,11 @@ public class HungryHippo : MonoBehaviour
                 }
                 Vector3 directionToPlayer = (TrackedPlayerPos - transform.position).normalized;
                 Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
-                HippoParrent.transform.rotation = targetRotation;
+                Vector3 eulerRotation = targetRotation.eulerAngles;
+                eulerRotation.x = HippoParrent.transform.rotation.eulerAngles.x;
+                targetRotation = Quaternion.Euler(eulerRotation);
 
-                Debug.Log("DataHolder is not null");
+                HippoParrent.transform.rotation = targetRotation;
 
             }
 
@@ -223,6 +230,16 @@ public class HungryHippo : MonoBehaviour
         yield return new WaitForSecondsRealtime(Random.Range(minDelay, maxDelay));
 
         available = true;
+
+        rounds++;
+        if (rounds < MaxRounds)
+        {
+            speed += ChompOverTime;
+            if (rounds == 4 || rounds == 8)
+            {
+                frameSkips -= 1;
+            }
+        }
 
     }
 
