@@ -164,6 +164,7 @@ public class RacemodeManager : MonoBehaviour
         // Lock all players in place
         Debug.Log("PrePreTask");
         LockPlayersMovement(true);
+        LockPlayersView(true);
 
         Debug.Log("PreTask");
         StartCoroutine(MainRaceController());
@@ -175,6 +176,11 @@ public class RacemodeManager : MonoBehaviour
         Debug.Log("InTask");
         yield return new WaitForSeconds(.1f);
 
+        if (LoadingScreenManager.Instance != null)
+        {
+            LoadingScreenManager.Instance.StartTransition(false);
+        }
+
         if (cinematicController != null)
         {
             Debug.Log("Initializing Cinematic");
@@ -185,6 +191,7 @@ public class RacemodeManager : MonoBehaviour
             // On Cinematic End
         }
         onCountdownStart?.Invoke();
+        LockPlayersView(false);
 
         if (racemodeUIManager != null)
         {
@@ -276,6 +283,26 @@ public class RacemodeManager : MonoBehaviour
         }
     }
 
+    private void LockPlayersView(bool value)
+    {
+        ThirdPersonMovement[] players = FindObjectsOfType<ThirdPersonMovement>();
+
+        if (value)
+        {
+            foreach (ThirdPersonMovement player in players)
+            {
+                player.camInputHandler.lockView = true;
+            }
+        }
+        else
+        {
+            foreach (ThirdPersonMovement player in players)
+            {
+                player.camInputHandler.lockView = false;
+            }
+        }
+    }
+
     public void ReachFinishLine(PlayerData player)
     {
 
@@ -294,11 +321,13 @@ public class RacemodeManager : MonoBehaviour
         UnityEngine.Debug.Log("Player #" + player.GetID() + " has reached the finish line in " + GetElapsedTimeString());
 
         // Freeze player position
+
         // Unprone
         if (player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().isProne)
         {
             player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().toggleProne(false);
         }
+
         // Lock Movement
         player.GetPlayerInScene().GetComponent<ThirdPersonMovement>().lockMovement = true;
 
@@ -308,7 +337,9 @@ public class RacemodeManager : MonoBehaviour
             // End
             // Display the Scores
             //Debug.Log("Race Values: " + positions.Count);
-            scoreboardManager.UpdatePositionsFromTime(positions);
+            //scoreboardManager.UpdatePositionsFromTime(positions);
+            scoreboardManager.UpdatePositionsFromRace(positions);
+
             StartCoroutine(EndGameDelay());
             onCompleteFinish?.Invoke(positions);
 
@@ -368,11 +399,13 @@ public class RacemodeManager : MonoBehaviour
 
                     Console.WriteLine($"Key: {key}, Value: {value}");
                 }*/
-        int index = 1;
+/*        int index = 1;
         foreach (PlayerData player in positions.Values) {
             scoreboardManager.SetPoints(player.id, index, 0);
             index++;
-        }
+        }*/
+
+        ScoreboardManager.Instance.AddMatchPoints();
     }
     private void startSpectating(Vector2 value, PlayerInput input)
     {

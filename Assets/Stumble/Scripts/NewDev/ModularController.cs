@@ -19,6 +19,11 @@ public class ModularController : MonoBehaviour
         if (Instance == null) { Instance = this; DontDestroyOnLoad(this.gameObject); }
     }
 
+    public Gamemode GetCurrentGamemode()
+    {
+        return gamesLib.activeGamemodes[levelId];
+    }
+
     private void Start()
     {
         if(GetComponent<ModularGamemodes>() == null)
@@ -48,6 +53,20 @@ public class ModularController : MonoBehaviour
     public void InitializeParty()
     {
         gamesLib.SelectGamemodes(partyGameSize);
+
+        LoadingScreenManager.Instance.StartTransition(true);
+        StartCoroutine(loadLevelDelay());
+
+        if (MenuMusicController.Instance != null)
+        {
+            MenuMusicController.Instance.EndMusic(2.8f);
+        }
+    }
+
+    public void InitializeMinigame(Gamemode mode)
+    {
+        //gamesLib.SelectGamemodes(1);
+        gamesLib.SelectSpecificGamemode(mode);
 
         LoadingScreenManager.Instance.StartTransition(true);
         StartCoroutine(loadLevelDelay());

@@ -84,6 +84,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool baseInvertHorizontalInput = false;
 
     private CinemachineFreeLook freelookcam;
+    [HideInInspector] public InputHandler camInputHandler;
     #endregion
 
     #region Diving
@@ -196,6 +197,7 @@ public class ThirdPersonMovement : MonoBehaviour
         jumpableLayersMinusPlayer = jumpableLayers &= ~(1 << this.gameObject.layer);
 
         // Add look action to cam
+        camInputHandler = this.transform.parent.GetComponentInChildren<InputHandler>();
 
         if (FindAnyObjectByType<PlayerManager>().sceneCameraType == SceneCameraType.StaticCamera)
         {
@@ -205,7 +207,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (FindFirstObjectByType<ExperimentalPlayerManager>() == null) // No Player Experimental Controller
         {
-            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            camInputHandler.horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
 /*            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;*/
             return;
@@ -213,7 +215,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (FindAnyObjectByType<ExperimentalPlayerManager>().GetCameraType() == SceneCameraType.ThirdPersonControl)
         {
-            this.transform.parent.GetComponentInChildren<InputHandler>().horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
+            camInputHandler.horizontal = this.GetComponent<PlayerInput>().actions.FindAction("Look");
         }
         //Debug.Log("I got here 2");
     }
@@ -285,6 +287,7 @@ public class ThirdPersonMovement : MonoBehaviour
             rawDirection = Vector3.zero;
         }
     }
+
     public void Jump(InputAction.CallbackContext context)
     {
         if (lockMovement) return;
@@ -292,10 +295,11 @@ public class ThirdPersonMovement : MonoBehaviour
         // Check when key is pressed once
         if (!context.started) return;
 
-        RaycastHit hit;
+        //RaycastHit hit;
         Vector3 delta = Vector3.up * 1.1f * (controller.height / 2);
 
-        if(Physics.Linecast(transform.position, transform.position + delta))
+        if(!isProne &&
+            Physics.Linecast(transform.position, transform.position + delta))
         {
             return;
         }
@@ -338,7 +342,7 @@ public class ThirdPersonMovement : MonoBehaviour
             toggleProne(true);
 
 
-            verticalVelocity = 1;
+            //verticalVelocity = 1;
             OnDive?.Invoke();
         }
     }
@@ -955,7 +959,7 @@ public class ThirdPersonMovement : MonoBehaviour
     /// </summary>
     public void Bump(Vector3 direction, float magnitude)
     {
-        print("Bump player: " + direction + " " + magnitude);
+        //print("Bump player: " + direction + " " + magnitude);
 
         if (magnitude < .01f || direction.magnitude < .01f) return;
 

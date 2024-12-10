@@ -541,7 +541,7 @@ public class CosmeticManager : MonoBehaviour
         {
             case SelectedCosmetic.Hats: return 0;
             case SelectedCosmetic.Colors: return 1;
-            case SelectedCosmetic.Boots: return 2;
+/*            case SelectedCosmetic.Boots: return 2;*/
             default: return -1;
         }
     }
@@ -553,8 +553,8 @@ public class CosmeticManager : MonoBehaviour
                 return SelectedCosmetic.Hats;
             case 1:
                 return SelectedCosmetic.Colors;
-            case 2:
-                return SelectedCosmetic.Boots;
+/*            case 2:
+                return SelectedCosmetic.Boots;*/
             default:
                 Debug.LogError("No Cosmetic Foud");
                 return SelectedCosmetic.Error;
@@ -588,8 +588,8 @@ public class CosmeticManager : MonoBehaviour
             case SelectedCosmetic.Colors:
                 ChangeColor(value, data);
                 break;
-            case SelectedCosmetic.Boots:
-                break;
+/*            case SelectedCosmetic.Boots:
+                break;*/
             default:
                 break;
         }
@@ -629,7 +629,6 @@ public class CosmeticManager : MonoBehaviour
     {
         Hats,
         Colors,
-        Boots,
         Error
     }
 

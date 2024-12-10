@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ScoreboardManager : MonoBehaviour
@@ -35,6 +36,80 @@ public class ScoreboardManager : MonoBehaviour
         foreach (PlayerData data in newPositions.Values) {
             index++;
             positions.Add(index, data);
+        }
+    }
+
+    private Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
+    /// <summary>
+    /// Update the Positions based on the time players finished in.
+    /// </summary>
+    /// <param name="newPositions">The positions in order the players finished in</param>
+    public void UpdatePositionsFromRace(SortedDictionary<float, PlayerData> newPositions)
+    {
+        positions.Clear(); // Clean the Positions in the Canvas
+
+        finalPositions = CalculateRacePositions(newPositions);
+    }
+    
+    /// <summary>
+    /// Update the Positions based on the order that the players were eliminated in.
+    /// </summary>
+    /// <param name="newPositions">The positions in order of elimination</param>
+    public void UpdatePositionsFromArena(SortedDictionary<int, PlayerData> newPositions)
+    {
+        positions.Clear(); // Clean the Positions in the Canvas
+
+        finalPositions = CalculateArenaPositions(newPositions);
+    }
+
+    /// <summary>
+    /// Takes the positions from the Race manager and converts them in a Dictionary of Positions.
+    /// </summary>
+    /// <param name="incomingPositions">Incoming Sorted array of Time and PlayerData</param>
+    /// <returns> The sorted players in point assignment order; first - last </returns>
+    public static Dictionary<PlayerData, int> CalculateRacePositions(SortedDictionary<float, PlayerData> incomingPositions)
+    {
+        Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
+
+        int index = 0;
+        foreach (PlayerData data in incomingPositions.Values)
+        {
+            finalPositions.Add(data, index);
+            index++;
+        }
+
+        return finalPositions;
+    }
+
+    /// <summary>
+    /// Takes the positions from the Arena managed and converst them in a Dictionary of Positions.
+    /// Note: The order that is provided is inverted since, it is given in the order that players die in.
+    /// </summary>
+    /// <param name="incomingPositions">The Dictionary of player Death order</param>
+    /// <returns>The sorted players in point assignment order; first - last </returns>
+    public static Dictionary<PlayerData, int> CalculateArenaPositions(SortedDictionary<int, PlayerData> incomingPositions)
+    {
+        Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
+
+        // Inverted loop allowing the correct position assignation
+        int index = incomingPositions.Count - 1;
+        foreach (PlayerData data in incomingPositions.Values)
+        {
+            finalPositions.Add(data, index);
+            index--;
+        }
+
+        return finalPositions;
+    }
+
+    public void AddMatchPoints()
+    {
+        // Add Points Based on Positions
+        int index = 1;
+        foreach (PlayerData data in finalPositions.Keys)
+        {
+            SetPoints(data.id, index, 0);
+            index++;
         }
     }
 
@@ -76,16 +151,16 @@ public class ScoreboardManager : MonoBehaviour
         List<UICameraView> views = new List<UICameraView>();
         views = GetCharacterImages();
 
-        Debug.Log(positions.Count + " Values");
+        Debug.Log(finalPositions.Count + " Values");
 
         int index = 0;
-        foreach (PlayerData player in positions.Values) {
+        foreach (PlayerData player in finalPositions.Keys) {
             GameObject card = Instantiate(CardPrefab);
             Scoreboard board = card.GetComponent<Scoreboard>();
 
             if(index % 2 == 1)
             {
-                board.InvertPanel(); // Panel Invert
+                board.InvertPanel(); // Panel Invert One Left and on Right
             }
 
             board.playerData = player;

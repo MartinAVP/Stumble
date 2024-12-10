@@ -1,18 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GamemodeSelectionManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private bool transitioning;
+
+    public static GamemodeSelectionManager Instance { get; private set; }
+
+    private void Awake()
     {
-        
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void GoBackToLobby(PlayerInput input)
     {
-        
+        // Check Permission
+        if (!PlayerDataHolder.Instance.GetPlayerData(input).isHost) return;
+
+        if (transitioning) return;
+        transitioning = true;
+
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        StartCoroutine(delayReturn());
+    }
+
+    private IEnumerator delayReturn()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Lobby");
+    }
+
+    public void LoadLevel(Gamemode gamemode)
+    {
+        if(transitioning) return;
+        transitioning = true;
+
+        StartCoroutine(delayLoad(gamemode));
+    }
+
+    private IEnumerator delayLoad(Gamemode gamemode)
+    {
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+        ModularController.Instance.InitializeMinigame(gamemode);
     }
 }

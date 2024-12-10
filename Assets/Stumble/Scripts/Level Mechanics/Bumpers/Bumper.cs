@@ -34,6 +34,8 @@ public class Bumper : MonoBehaviour, IBumper
             rb.velocity = newVelocity;
         }
 
+        ExecuteBumpVFX();
+
         rb.AddForce(impulse, ForceMode.Impulse);
     }
 
@@ -62,6 +64,11 @@ public class Bumper : MonoBehaviour, IBumper
     public virtual Vector3 GetBumpDirection(GameObject other)
     {
         return Vector3.zero;
+    }
+
+    public virtual void ExecuteBumpVFX()
+    {
+        return;
     }
 
     public BumpSource GetBumpSource()

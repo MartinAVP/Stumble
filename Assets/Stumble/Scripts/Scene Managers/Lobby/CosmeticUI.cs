@@ -81,11 +81,11 @@ public class CosmeticUI : MonoBehaviour
                 currentImage = visuals[playerID].currentColorImage;
                 cosmetic = CosmeticManager.SelectedCosmetic.Colors;
                 break;
-            case 2:
+/*            case 2:
                 container = visuals[playerID].bootsContainer;
                 currentImage = visuals[playerID].currentBootsImage;
                 cosmetic = CosmeticManager.SelectedCosmetic.Boots;
-                break;
+                break;*/
             default:
                 Debug.LogError(" Not Category with that ID!");
                 break;
@@ -169,9 +169,9 @@ public class CosmeticUI : MonoBehaviour
             case CosmeticManager.SelectedCosmetic.Colors:
                 visuals[playerID].currentColorImage = currentImage;
                 break;
-            case CosmeticManager.SelectedCosmetic.Boots:
+/*            case CosmeticManager.SelectedCosmetic.Boots:
                 visuals[playerID].currentBootsImage = currentImage;
-                break;
+                break;*/
         }
 
         Destroy(outgoingImage.gameObject); // Clean up the outgoing image
