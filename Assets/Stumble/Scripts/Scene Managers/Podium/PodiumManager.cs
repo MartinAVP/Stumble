@@ -198,6 +198,9 @@ public class PodiumManager : MonoBehaviour
 
         }
 
+        // Destroy the Object
+        Destroy(ModularController.Instance.gameObject);
+
         SceneManager.LoadScene("GamemodeSelect");
     }
 

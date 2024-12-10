@@ -150,6 +150,19 @@ public class PlayerDataHolder : MonoBehaviour
         return -1;
     }
 
+    public PlayerData GetHost()
+    {
+        foreach(var player in players)
+        {
+            if (player.isHost)
+            {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
     // Get Player Data
     public PlayerData GetPlayerData(PlayerInput input)
     {
@@ -189,18 +202,26 @@ public class PlayerDataHolder : MonoBehaviour
 
     public void ClearAllButHost(bool resetCosmetics)
     {
+        // Find Host
+        PlayerData hostPlayer = new PlayerData(-1, null, null, null, false, null);
+
+        Debug.LogWarning(players.Count);
         foreach (var player in players)
         {
-            if (!player.isHost)
+            if (player.isHost)
             {
-                RemovePlayer(player.input);
+                hostPlayer = player;
+                break;
             }
         }
 
-/*        if (resetCosmetics)
+        players.Clear();
+        players.Add(hostPlayer);
+
+        if (resetCosmetics)
         {
-            players[0].cosmeticData = null;
-        }*/
+            players[0].cosmeticData = new CosmeticData();
+        }
     }
 
 /*    public int GetPlayersWithInGameCharacter()
