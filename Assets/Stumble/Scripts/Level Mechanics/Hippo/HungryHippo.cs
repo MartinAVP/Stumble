@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class HungryHippo : MonoBehaviour
 {
@@ -8,26 +9,39 @@ public class HungryHippo : MonoBehaviour
     private float timer;
     private bool delayed = false;
 
+
+    [Header("Hippo Adjusments")]
     public int mouthOpenAngle = 45;
     public float movementMultiplier = 0.5f;
-
     public float speed;
-
-
     public float actionDuration = 2f;
     public int frameSkips = 5;
-
-
-
-    //standard delay inbetween each action
     public float inbetweenActionDelay = .5f;
 
+    public float ChompOverTime = 1.75f;
+    public int MaxRounds = 8;
+
+
+    [Header("Player Tracking")]
+    public float TimeBetweenPlayerTrackingUpdates = 2;
+    public bool PlayerTracking = false;
+    private Vector3 TrackedPlayerPos;
+    private float ShortestDistance = 100;
+
+    private int rounds = 0;
+
+
+    public GameObject HippoParrent;
+    private bool Collided = false;
+
+    //standard delay inbetween each action
+
+
     //range for random delay after the full set of actions
+    [Header("Random Delay For Start Of New Cycle")]
     public float minDelay = .1f;
     public float maxDelay = 1f;
     private float inActionDelay = .000000000000000000000000000000000000000000000001f;
-
-
 
 
     private Quaternion closedRotation;
@@ -36,25 +50,21 @@ public class HungryHippo : MonoBehaviour
     public GameObject endingPos;
 
     private float previousMouthAngle;
-    private GameObject hippoNeck;
     private Quaternion startingRotation;
 
-
-
     public GameObject playerKillzone;
+    public GameObject targetPoint;
 
+    [Header("Testing Bools")]
     public bool triggered = false;
     private bool available = true;
-
     public bool reset = false;
-
 
     void Start()
     {
         startingPos = transform.position;
         closedRotation = transform.rotation;
         playerKillzone.SetActive(false);
-        hippoNeck = GameObject.Find("HippoNeck");
         openRotation = Quaternion.Euler(-mouthOpenAngle, transform.eulerAngles.y, transform.eulerAngles.z);
         startingRotation = transform.rotation;
         Debug.Log(startingRotation);
@@ -62,26 +72,18 @@ public class HungryHippo : MonoBehaviour
         previousMouthAngle = mouthOpenAngle;
     }
 
-
-
-
     void FixedUpdate()
     {
-
         if (triggered && available)
         {
-
             StartCoroutine(HippoMotion());
-
         }
-
 
         if (mouthOpenAngle != previousMouthAngle)
         {
             openRotation = Quaternion.Euler(-mouthOpenAngle, 0f, 0f);
             previousMouthAngle = mouthOpenAngle;
         }
-
 
         if (reset)
         {
@@ -91,16 +93,14 @@ public class HungryHippo : MonoBehaviour
             transform.rotation = startingRotation;
             transform.position = startingPos;
         }
-
-
     }
-
 
     private IEnumerator HippoMotion()
     {
         available = false;
         float smoothing;
         int temp = 0;
+
         playerKillzone.SetActive(false);
         while (Quaternion.Angle(transform.rotation, openRotation) > 0.1f)
         {
@@ -126,11 +126,45 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("lunge");
 
-        while (Vector3.Distance(transform.position, endingPos.transform.position) > .1f)
+        if (PlayerTracking)
+        {
+            if (PlayerDataHolder.Instance != null)
+            {
+                ShortestDistance = float.MaxValue;
+
+                for (int i = 0; i < PlayerDataHolder.Instance.GetPlayers().Count; i++)
+                {
+                    var d = Vector3.Distance(transform.position, PlayerDataHolder.Instance.GetPlayerData(i).input.gameObject.transform.position);
+                    if (d < ShortestDistance)
+                    {
+                        ShortestDistance = d;
+                        TrackedPlayerPos = PlayerDataHolder.Instance.GetPlayerData(i).input.gameObject.transform.position;
+                    }
+                }
+                Vector3 directionToPlayer = (TrackedPlayerPos - transform.position).normalized;
+                Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+                Vector3 eulerRotation = targetRotation.eulerAngles;
+                eulerRotation.x = HippoParrent.transform.rotation.eulerAngles.x;
+                targetRotation = Quaternion.Euler(eulerRotation);
+
+                HippoParrent.transform.rotation = targetRotation;
+
+            }
+
+        }
+
+        while (Vector3.Distance(transform.position, targetPoint.transform.position) > 0.1f)
         {
             timer += Time.deltaTime;
-            this.transform.position = Vector3.MoveTowards(transform.position, endingPos.transform.position, speed * Time.deltaTime);
-            //this.transform.Translate(Vector3.forward * movementMultiplier * Time.deltaTime, Space.Self);
+            transform.position = Vector3.MoveTowards(transform.position, targetPoint.transform.position, speed * Time.deltaTime);
+            Vector3 directionToTarget = targetPoint.transform.position - transform.position;
+            if (directionToTarget != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+                targetRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, targetRotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * speed);
+            }
+
             temp++;
             if (temp > frameSkips)
             {
@@ -138,7 +172,8 @@ public class HungryHippo : MonoBehaviour
                 temp = 0;
             }
         }
-        transform.position = endingPos.transform.position;
+
+        transform.position = targetPoint.transform.position;
         timer = 0;
 
         //Debug.Log("lunge complete");
@@ -147,20 +182,22 @@ public class HungryHippo : MonoBehaviour
 
         //Debug.Log("mouth closing");
 
-        while (Quaternion.Angle(transform.rotation, closedRotation) > 0.1f)
+        while (Mathf.Abs(Mathf.DeltaAngle(transform.rotation.eulerAngles.x, closedRotation.eulerAngles.x)) > 0.1f)
         {
             timer += Time.deltaTime;
             smoothing = Mathf.SmoothStep(0f, 1f, timer / actionDuration);
+            float interpolatedX = Mathf.LerpAngle(transform.rotation.eulerAngles.x, 0, smoothing);
+            Quaternion newRotation = Quaternion.Euler(interpolatedX, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+            transform.rotation = newRotation;
 
-            transform.rotation = Quaternion.Slerp(openRotation, closedRotation, smoothing);
             temp++;
-            if (temp > frameSkips)
+            if (temp > frameSkips + 1)
             {
-                yield return new WaitForSeconds(inActionDelay);
+                yield return new WaitForSeconds(inActionDelay + .01f);
                 temp = 0;
             }
-
         }
+
         timer = 0;
         smoothing = 0;
 
@@ -169,7 +206,7 @@ public class HungryHippo : MonoBehaviour
         //Debug.Log("mouth closed");
 
         yield return new WaitForSecondsRealtime(inbetweenActionDelay);
-        
+
 
         //Debug.Log("retreat");
 
@@ -193,6 +230,16 @@ public class HungryHippo : MonoBehaviour
         yield return new WaitForSecondsRealtime(Random.Range(minDelay, maxDelay));
 
         available = true;
+
+        rounds++;
+        if (rounds < MaxRounds)
+        {
+            speed += ChompOverTime;
+            if (rounds == 4 || rounds == 8)
+            {
+                frameSkips -= 1;
+            }
+        }
 
     }
 
@@ -233,6 +280,7 @@ public class HungryHippo : MonoBehaviour
     //kill box deactivates - co ru?
 
     //repeat - fixed up
+
 
 
 

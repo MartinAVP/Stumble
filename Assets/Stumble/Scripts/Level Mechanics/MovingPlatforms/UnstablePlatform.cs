@@ -43,9 +43,9 @@ public class UnstablePlatform : MonoBehaviour
         startColor = material.color;
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
             Debug.Log("touched");
             unstablePlatformManager.Fall();
