@@ -86,34 +86,4 @@ public abstract class MovingPlatform : MonoBehaviour
         MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.Move, Move);
         MovingPlatformEventBus.Unsubscribe(MovingPlatformEvent.PostMove, UpdateDeltas);
     }
-
-    /*  Deprecated content is still being reference by StaticPlayerMovement.
-     *  Once StaticPlayerMovement is deleted this code can be removed.
-     */
-    #region Deprecated
-
-    private Vector3 previousPosition;
-    private Quaternion previousRotation;
-
-    public void UpdatePreviousPosition()
-    {
-        previousPosition = transform.position;
-    }
-
-    public void UpdatePreviousRotation()
-    {
-        previousRotation = transform.rotation;
-    }
-
-    public Vector3 ChangeInPosition
-    {
-        get { return transform.position - previousPosition; }
-    }
-
-    public Vector3 ChangeInRotation
-    {
-        get { return (transform.rotation * Quaternion.Inverse(previousRotation)).eulerAngles; }
-    }
-
-    #endregion
 }

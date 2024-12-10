@@ -1,34 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UISuggestionSwitcher : MonoBehaviour
 {
-    /*
-    public Sprite spriteToSwitch;
+    private Image spriteToSwitch;
 
     public Sprite keyboardScheme;
     public Sprite controllerScheme;
 
-    //private scheme currentScheme;
+    private playerScheme currentScheme;
 
-    private void Start()
+
+    private void Awake()
+    {
+        setup();
+    }
+
+    private async Task setup()
+    {
+        // Wait for these values GameController needs to exist and be enabled.
+        while (PlayerDataHolder.Instance == null || PlayerDataHolder.Instance.enabled == false || GameController.Instance.initialized == false)
+        {
+            await Task.Delay(5);
+        }
+
+        // Once it finds it initialize the scene
+        Debug.Log("Initializing Lobby Manager...         [Lobby Manager]");
+        StartCoroutine(StartSwitcher());
+
+        return;
+    }
+
+    private IEnumerator StartSwitcher()
     {
         // Get the Host Scheme
-        PlayerData data = PlayerDataHolder.Instance.GetHost();
-        string scheme = data.input.currentControlScheme;
+        spriteToSwitch = this.GetComponent<Image>();
+        
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
 
-        switch (scheme)
+        if(PlayerDataHolder.Instance == null)
         {
-            case "KeyboardMouse":
-                currentScheme = playerScheme.Keyboard;
-                break;
-            case "Gamepad":
-                currentScheme = playerScheme.Controller;
-                break;
+            yield return null;
         }
-         
-        // Change the Sprite based on the scheme changed
+        else
+        {
+            PlayerData data = PlayerDataHolder.Instance.GetHost();
+            string scheme = data.input.currentControlScheme;
+
+            Debug.Log("The Host Scheme is: " + scheme);
+
+            switch (scheme)
+            {
+                case "Keyboard&Mouse":
+                    currentScheme = playerScheme.Keyboard;
+                    spriteToSwitch.sprite = keyboardScheme;
+                    break;
+                case "Gamepad":
+                    currentScheme = playerScheme.Controller;
+                    spriteToSwitch.sprite = controllerScheme;
+                    break;
+            }
+        
+            // Change the Sprite based on the scheme changed
+        }
     }
 
     private enum playerScheme
@@ -36,5 +75,4 @@ public class UISuggestionSwitcher : MonoBehaviour
         Keyboard,
         Controller
     }
-    */
 }
