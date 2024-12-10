@@ -287,6 +287,7 @@ public class ThirdPersonMovement : MonoBehaviour
             rawDirection = Vector3.zero;
         }
     }
+
     public void Jump(InputAction.CallbackContext context)
     {
         if (lockMovement) return;
@@ -297,7 +298,8 @@ public class ThirdPersonMovement : MonoBehaviour
         //RaycastHit hit;
         Vector3 delta = Vector3.up * 1.1f * (controller.height / 2);
 
-        if(Physics.Linecast(transform.position, transform.position + delta))
+        if(!isProne &&
+            Physics.Linecast(transform.position, transform.position + delta))
         {
             return;
         }
