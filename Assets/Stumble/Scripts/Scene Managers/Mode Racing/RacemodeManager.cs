@@ -176,20 +176,36 @@ public class RacemodeManager : MonoBehaviour
         Debug.Log("InTask");
         yield return new WaitForSeconds(.1f);
 
-        if (LoadingScreenManager.Instance != null)
-        {
-            LoadingScreenManager.Instance.StartTransition(false);
-        }
+
 
         if (cinematicController != null)
         {
             Debug.Log("Initializing Cinematic");
+            //GameMusicController.Instance?.InitializeCinematicMusic();
+            if(gameMusicController != null)
+            {
+                gameMusicController?.InitializeCinematicMusic();
+            }
+            yield return new WaitForSeconds(.2f);
             cinematicController.StartTimeline();
+            yield return new WaitForSeconds(.1f);
+            if (LoadingScreenManager.Instance != null)
+            {
+                LoadingScreenManager.Instance.StartTransition(false);
+            }
             yield return new WaitForSeconds(cinematicController.GetTimelineLenght.ConvertTo<int>());
             //await Task.Delay(cinematicController.GetTimelineLenght.ConvertTo<int>() * 1000);
 
             // On Cinematic End
         }
+        else
+        {
+            if (LoadingScreenManager.Instance != null)
+            {
+                LoadingScreenManager.Instance.StartTransition(false);
+            }
+        }
+
         onCountdownStart?.Invoke();
         LockPlayersView(false);
 
@@ -235,6 +251,11 @@ public class RacemodeManager : MonoBehaviour
 
             StartRace();
         }*/
+
+    private IEnumerator LoadingScreenManagerDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+    }
 
     public void StartRace()
     {

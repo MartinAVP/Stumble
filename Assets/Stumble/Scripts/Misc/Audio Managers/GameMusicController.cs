@@ -12,9 +12,12 @@ public class GameMusicController : MonoBehaviour
     [Space]
     [SerializeField] private AudioSource background;
     [SerializeField] private AudioSource countdown;
+    [SerializeField] private AudioSource cinematic;
     [Space]
     [SerializeField] private AudioClip backgroundMusic;
     [SerializeField] private AudioClip countdownSound;
+    [SerializeField] private AudioClip cinematicSound;
+    [SerializeField] private List<AudioClip> backgroundMusicVariants;
 
     private float timeElapsed;
     private float lerpDuration;
@@ -50,8 +53,17 @@ public class GameMusicController : MonoBehaviour
 
     public void InitializeGameMusic()
     {
-        background.clip = backgroundMusic;
+        //background.clip = backgroundMusic;
+        int randomMusicSelector = Random.Range(0, backgroundMusicVariants.Count + 1);
+        background.clip = backgroundMusicVariants[randomMusicSelector];
+
         StartCoroutine(StartGameMusic());
+    }
+
+    public void InitializeCinematicMusic()
+    {
+        cinematic.clip = cinematicSound;
+        StartCoroutine(StartCinematicCountdown());
     }
 
     private IEnumerator StartCountdownSound()
@@ -64,6 +76,12 @@ public class GameMusicController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         background.Play();
+    }
+
+    private IEnumerator StartCinematicCountdown()
+    {
+        cinematic.Play();
+        yield return new WaitForSeconds(delay);
     }
 
     public void EndMusic(float time)
