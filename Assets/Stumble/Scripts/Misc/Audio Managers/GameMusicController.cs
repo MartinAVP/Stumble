@@ -54,8 +54,15 @@ public class GameMusicController : MonoBehaviour
     public void InitializeGameMusic()
     {
         //background.clip = backgroundMusic;
-        int randomMusicSelector = Random.Range(0, backgroundMusicVariants.Count - 1);
-        background.clip = backgroundMusicVariants[randomMusicSelector];
+        if(backgroundMusicVariants.Count > 0)
+        {
+            int randomMusicSelector = Random.Range(0, backgroundMusicVariants.Count - 1);
+            background.clip = backgroundMusicVariants[randomMusicSelector];
+        }
+        else
+        {
+            background.clip = backgroundMusic;
+        }
 
         StartCoroutine(StartGameMusic());
     }
