@@ -160,11 +160,11 @@ public class PodiumManager : MonoBehaviour
             SetUIMessage();
         }
 
-        LockPlayersMovement(false);
+        LockPlayersMovement(true);
 
         yield return new WaitForSeconds(.5f);
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
-
+        TriggerAnimations();
         if (cinematicController != null)
         {
             Debug.Log("Initializing Cinematic");
@@ -224,6 +224,7 @@ public class PodiumManager : MonoBehaviour
         }
     }
 
+
     private void CalculateFinalPositionPlacing()
     {
         // Calculate
@@ -238,6 +239,26 @@ public class PodiumManager : MonoBehaviour
         newPositions.Sort((a, b) => b.points.CompareTo(a.points)); // For ascending order, swap a and b
     }
 
+    public void TriggerAnimations()
+    {
+        //Debug.Log("!!! Animation Triggered");
+        // Case 1 Player for Debugging
+        if (newPositions.Count == 1)
+        {
+            newPositions[0].input.GetComponentInChildren<AnimationStateController>().TriggerPodiumAnimation(true);
+        }
+        // Case More than 1 Player (Normal)
+        else
+        {
+            newPositions[0].input.GetComponentInChildren<AnimationStateController>().TriggerPodiumAnimation(true);
+            // Start from one loser
+/*            for (int i = 1; i < newPositions.Count; i++)
+            {
+                newPositions[i].input.GetComponentInChildren<AnimationStateController>().TriggerPodiumAnimation(false);
+            }*/
+            newPositions[newPositions.Count - 1].input.GetComponentInChildren<AnimationStateController>().TriggerPodiumAnimation(false);
+        }
+    }
     private void SetUIMessage()
     {
         int index = 0;

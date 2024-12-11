@@ -45,7 +45,7 @@ public class WheeledVehicle : MonoBehaviour
     {
         Vector3 velocity = vehicle.transform.position - previousPosition;
         float dot = Vector3.Dot(vehicle.transform.forward, velocity.normalized);
-        print(dot);
+        //print(dot);
 
         for (int i = 0; i < rotationComponents.Count; i++)
         {
@@ -57,7 +57,7 @@ public class WheeledVehicle : MonoBehaviour
 
     private void StopWheels()
     {
-        print("stop rotating");
+        //print("stop rotating");
         for (int i = 0; i < rotationComponents.Count; i++)
         {
             RotationMovement rotationMovement = rotationComponents[i];
@@ -67,7 +67,7 @@ public class WheeledVehicle : MonoBehaviour
 
     private void StartWheels()
     {
-        print("start rotating");
+        //print("start rotating");
         for (int i = 0; i < rotationComponents.Count; i++)
         {
             RotationMovement rotationMovement = rotationComponents[i];

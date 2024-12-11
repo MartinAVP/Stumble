@@ -152,4 +152,18 @@ public class AnimationStateController : MonoBehaviour
         }
         isAscending = tempAscending;
     }
+
+
+    // Podium Animations
+    public void TriggerPodiumAnimation(bool win)
+    {
+        if (win)
+        {
+            animator.SetTrigger("PodiumWin");
+        }
+        else
+        {
+            animator.SetTrigger("PodiumLoose");
+        }
+    }
 }

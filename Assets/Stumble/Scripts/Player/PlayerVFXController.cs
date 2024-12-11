@@ -48,6 +48,7 @@ public class PlayerVFXController : MonoBehaviour
     private bool isRunningState = false;
     private void FixedUpdate()
     {
+        if(thirdPersonMovement.isFloored) { return;}
         if(thirdPersonMovement.horizontalVelocity > .5f)
         {
             if(isRunningState)
