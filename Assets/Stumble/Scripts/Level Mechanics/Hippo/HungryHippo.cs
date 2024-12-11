@@ -5,7 +5,7 @@ using static UnityEditor.PlayerSettings;
 
 public class HungryHippo : MonoBehaviour
 {
-    //timer for movement smoothness - delay is a lockout to prevent repeat calling
+  //timer for movement smoothness - delay is a lockout to prevent repeat calling
     private float timer;
     private bool delayed = false;
 
@@ -134,7 +134,10 @@ public class HungryHippo : MonoBehaviour
 
                 for (int i = 0; i < PlayerDataHolder.Instance.GetPlayers().Count; i++)
                 {
-                    var d = Vector3.Distance(transform.position, PlayerDataHolder.Instance.GetPlayerData(i).input.gameObject.transform.position);
+                    var playerData = PlayerDataHolder.Instance.GetPlayerData(i);
+                    if(playerData == null || playerData.input == null) continue;
+
+                    var d = Vector3.Distance(transform.position, playerData.input.gameObject.transform.position);
                     if (d < ShortestDistance)
                     {
                         ShortestDistance = d;
@@ -280,6 +283,7 @@ public class HungryHippo : MonoBehaviour
     //kill box deactivates - co ru?
 
     //repeat - fixed up
+
 
 
 
