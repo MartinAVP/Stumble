@@ -17,7 +17,7 @@ public class EmoteWheelController : MonoBehaviour
 
     public event Action<int> PlayEmote;
 
-    private scheme currentScheme;
+    private emotescheme currentScheme;
     private Vector2 controllerV2 = Vector2.zero;
 
     private bool isActive = false;
@@ -27,16 +27,21 @@ public class EmoteWheelController : MonoBehaviour
     {
         emoteWheelPanel.SetActive(false);
         controlScheme = this.GetComponent<PlayerInput>().currentControlScheme; //
+        Debug.Log("The Control Scheme is " + controlScheme);
 
-        if (controlScheme == "Keyboard")
+        if (controlScheme == "Keyboard&Mouse")
         {
             Debug.Log("Keyboard");
-            currentScheme = scheme.Keyboard;
+            currentScheme = emotescheme.Keyboard;
         }
-        else if(controlScheme == "Controller")
+        else if(controlScheme == "Gamepad")
         {
             Debug.Log("Controller");
-            currentScheme = scheme.Controller;
+            currentScheme = emotescheme.Controller;
+        }
+        else
+        {
+            currentScheme = emotescheme.Controller;
         }
     }
 
@@ -50,7 +55,7 @@ public class EmoteWheelController : MonoBehaviour
 
         Quaternion quaternion = Quaternion.identity;
 
-        if(currentScheme == scheme.Controller)
+        if(currentScheme == emotescheme.Controller)
         {
             //targetDir = controllerV2.normalized;
             targetDir = new Vector3(controllerV2.x, controllerV2.y, 0f);
@@ -88,7 +93,7 @@ public class EmoteWheelController : MonoBehaviour
         if (context.performed)
         {
             //Debug.Log("The Scheme is " + currentScheme);
-            if(currentScheme == scheme.Controller)
+            if(currentScheme == emotescheme.Controller)
             {
                 Vector2 raw = context.ReadValue<Vector2>();
                 controllerV2 = raw.normalized;
@@ -218,7 +223,7 @@ public class EmoteWheelController : MonoBehaviour
         }
     }
 
-    private enum scheme
+    private enum emotescheme
     {
         Keyboard,
         Controller
