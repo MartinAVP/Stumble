@@ -59,8 +59,7 @@ public class ArenamodeUIManager : MonoBehaviour
 
     private void InitializeManager()
     {
-        
-        if (LoadingScreenManager.Instance != null)
+/*        if (LoadingScreenManager.Instance != null)
         {
             Debug.LogWarning("No Loading Screen Manager Found");
             LoadingScreenManager.Instance.StartTransition(false);
@@ -68,7 +67,7 @@ public class ArenamodeUIManager : MonoBehaviour
         else
         {
             Debug.LogWarning("No Loading Screen Manager Found");
-        }
+        }*/
 
         //EndScoreScreen?.SetActive(false);
         if (countdownPanel != null)
