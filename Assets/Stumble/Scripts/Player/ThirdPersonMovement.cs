@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using Cinemachine;
 using Unity.VisualScripting;
 using Unity.IO.LowLevel.Unsafe;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonMovement : MonoBehaviour
@@ -20,6 +21,9 @@ public class ThirdPersonMovement : MonoBehaviour
     public event Action OnJump;
     public event Action OnDive;
     public event Action OnSlap;
+
+    [HideInInspector] public UnityEvent OnSlapPlayer;
+    [HideInInspector] public UnityEvent OnJumpPlayer;
 
     #region Horizontal Movement
     [Header("Movement")]
@@ -321,6 +325,7 @@ public class ThirdPersonMovement : MonoBehaviour
         verticalVelocity += jumpPower;
 
         OnJump?.Invoke();
+        OnJumpPlayer?.Invoke();
     }
 
     public void Dive(InputAction.CallbackContext context)
@@ -927,6 +932,8 @@ public class ThirdPersonMovement : MonoBehaviour
                     Debug.DrawLine(singleHit.transform.position, singleHit.transform.position + new Vector3(0, 5f, 0), Color.green, 5f);
                     Debug.DrawLine(slapDir, singleHit.transform.position, Color.cyan, 20f);
                     singleHit.GetComponent<ThirdPersonMovement>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
+
+                    OnSlapPlayer?.Invoke();
                 } // Prevent Auto Bumping
             }
             else

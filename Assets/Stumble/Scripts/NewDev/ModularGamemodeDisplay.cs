@@ -77,7 +77,7 @@ public class ModularGamemodeDisplay : MonoBehaviour
 
             MapCard mapCard = map.GetComponent<MapCard>();
             mapCard.gamemode = gamemodes.modules[i];
-            mapCard.title.text = gamemodes.modules[i].name;
+            mapCard.title.text = gamemodes.modules[i].title;
             mapCard.modularGamemode = this;
 
             //Texture2D texture = gamemodes.modules[i].modulePreview.texture;
