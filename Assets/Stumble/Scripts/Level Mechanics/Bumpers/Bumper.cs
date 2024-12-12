@@ -2,9 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BumperSoundType
+{
+    Bounce,
+    Plastic
+}
+
 public class Bumper : MonoBehaviour, IBumper
 {
     public float bounceForce;
+    public BumperSoundType soundType;
     protected BumpSource sourceType = BumpSource.StaticBumper;
 
     private Rigidbody rb;
