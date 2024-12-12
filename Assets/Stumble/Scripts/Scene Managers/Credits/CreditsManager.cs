@@ -1,18 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CreditsManager : MonoBehaviour
 {
-    [SerializeField] private Animator animator1;
+    private bool istransitioning = false;
 
-    private void Start()
+    public void GoBackToMenu()
     {
-        
+        if (istransitioning) { return; }
+        istransitioning = true;
+
+        StartCoroutine(GoBack());
     }
 
-    private IEnumerator mainController()
+    private IEnumerator GoBack()
     {
-        yield return null;
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Menu");
     }
 }

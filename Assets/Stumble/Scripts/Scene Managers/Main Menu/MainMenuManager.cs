@@ -132,4 +132,19 @@ public class MainMenuManager : MonoBehaviour
         Application.Quit();
         //SceneManager.LoadScene("Menu");
     }
+
+    public void OpenCredits()
+    {
+        if (transitioning) return;
+        transitioning = true;
+
+        StartCoroutine(LoadCredits());
+    }
+
+    private IEnumerator LoadCredits()
+    {
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene("Credits");
+    }
 }
