@@ -124,13 +124,16 @@ public class LobbyManager : MonoBehaviour
 
         playerInputManager.DisableJoining();
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayStart());
     }
 
     private IEnumerator delayStart()
     {
-        yield return new WaitForSeconds(2f);
+        if (LoadingScreenManager.Instance != null) {
+            Debug.Log("LOADING SCREEN FOUND!!");
+            LoadingScreenManager.Instance.StartTransition(false); 
+        }
+        yield return new WaitForSeconds(3f);
         SceneManager.LoadScene("GamemodeSelect");
     }
 
@@ -144,7 +147,9 @@ public class LobbyManager : MonoBehaviour
         if(transitioning) return;
         transitioning = true;
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        if (LoadingScreenManager.Instance != null) {
+            LoadingScreenManager.Instance.StartTransition(true); 
+        }
         StartCoroutine(delayReturn("Menu"));
     }
 
