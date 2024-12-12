@@ -108,6 +108,11 @@ public class CheckpointManager : MonoBehaviour
         {
             Checkpoints[currentCheckpoint].removePlayer(playerID);
             Checkpoints[targetCheckpoint].addPlayer(playerID);
+
+            if (VFXManager.Instance != null)
+            {
+                VFXManager.Instance.PlayVFX("Checkpoint", data.input.transform.position);
+            }
         }
 
         // Check if the checkpoint reached is the last one.
@@ -116,7 +121,6 @@ public class CheckpointManager : MonoBehaviour
             Debug.Log("Player " + data.GetInput().playerIndex + " has reached the finish line");
             RacemodeManager.Instance.ReachFinishLine(data);
         }
-
     }
 
     public void Respawn(GameObject playerObject)

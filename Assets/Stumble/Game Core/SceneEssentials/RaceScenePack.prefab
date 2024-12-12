@@ -2087,6 +2087,7 @@ Transform:
   - {fileID: 7683869603144806888}
   - {fileID: 2617506314957914220}
   - {fileID: 5808501679582124524}
+  - {fileID: 2928906283391881928}
   m_Father: {fileID: 1549826396738887386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4669162744488176070
@@ -2399,6 +2400,53 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 44047cec7e9808b4a852772e1ad3cfda, type: 3}
   - {fileID: 8300000, guid: 04fce54ffcac64c4bac445491a4dc758, type: 3}
   - {fileID: 8300000, guid: 1d4da1a5f3b87814e821df2e17eea853, type: 3}
+--- !u!1 &5419771891377754867
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2928906283391881928}
+  - component: {fileID: 5657638540164721605}
+  m_Layer: 0
+  m_Name: VFXManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2928906283391881928
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5419771891377754867}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6518755953194553170}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5657638540164721605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5419771891377754867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9595b95f94ee034db36136d92998181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effects: []
+  folderPath: Assets/Stumble/Audio/Assets
+  debugLogs: 0
 --- !u!1 &5450638775084827559
 GameObject:
   m_ObjectHideFlags: 0
