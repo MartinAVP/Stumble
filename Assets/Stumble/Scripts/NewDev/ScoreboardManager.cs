@@ -24,7 +24,7 @@ public class ScoreboardManager : MonoBehaviour
         if(Instance == null) { Instance = this; }
         scoreboardPanel.SetActive(false);
     }
-
+/*
     public void UpdatePositions(SortedDictionary<int, PlayerData> newPositions)
     {
         positions.Clear();
@@ -38,9 +38,10 @@ public class ScoreboardManager : MonoBehaviour
             index++;
             positions.Add(index, data);
         }
-    }
+    }*/
 
     private Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
+
     /// <summary>
     /// Update the Positions based on the time players finished in.
     /// </summary>
@@ -50,6 +51,7 @@ public class ScoreboardManager : MonoBehaviour
         positions.Clear(); // Clean the Positions in the Canvas
 
         finalPositions = CalculateRacePositions(newPositions);
+/*        finalPositions.OrderBy(x => x.Value).ToList();*/
     }
     
     /// <summary>
@@ -73,11 +75,11 @@ public class ScoreboardManager : MonoBehaviour
         Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
 
         var sorted = incomingPositions.OrderBy(x => x.Key).ToList();
-        Debug.Log("====== SORTED ======");
+        //Debug.Log("====== SORTED ======");
         int index2 = 0;
         foreach (var sortID in sorted)
         {
-            Debug.Log(index2 + "# with time " + sortID.Key + " is Player #" + sortID.Value.id);
+            //Debug.Log(index2 + "# with time " + sortID.Key + " is Player #" + sortID.Value.id);
             finalPositions.Add(sortID.Value, index2);
             index2++;
         }
@@ -162,12 +164,17 @@ public class ScoreboardManager : MonoBehaviour
         List<UICameraView> views = new List<UICameraView>();
         views = GetCharacterImages();
 
-        Debug.Log(finalPositions.Count + " Values");
+        //Debug.Log(finalPositions.Count + " Values");
+
+       // Debug.Log("====== FINAL POSITIONS ======");
 
         int index = 0;
         foreach (PlayerData player in finalPositions.Keys) {
+            //Debug.Log(index + "# is Player #" + player.id);
+
             GameObject card = Instantiate(CardPrefab);
             Scoreboard board = card.GetComponent<Scoreboard>();
+            card.gameObject.name = "Player #" +  index + "card";
 
             if(index % 2 == 1)
             {
@@ -192,7 +199,7 @@ public class ScoreboardManager : MonoBehaviour
     {
         List<UICameraView> uiCamViews = new List<UICameraView>();
 
-        foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
+        foreach(PlayerData player in finalPositions.Keys)
         {
             uiCamViews.Add(player.playerInScene.GetComponentInChildren<UICameraView>());
         }
