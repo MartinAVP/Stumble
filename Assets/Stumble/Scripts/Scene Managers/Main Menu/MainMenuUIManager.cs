@@ -211,11 +211,6 @@ public class MainMenuUIManager : MonoBehaviour
         Debug.Log("Open Controls");
     }
 
-    public void OpenCredits()
-    {
-        Debug.Log("Open Credits");
-    }
-
     public void OpenAchievements()
     {
         Debug.Log("Open Achievements");

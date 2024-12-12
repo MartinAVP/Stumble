@@ -97,7 +97,9 @@ public class SpectatorManager : MonoBehaviour
         spectating.Add(data.GetID(), -1);
 
         // Check if its the last player
-        spectating[data.GetID()] = GetNextAvailableIndex(spectating[data.GetID()]);
+        int index = GetNextAvailableIndex(spectating[data.GetID()], 0);
+        if(index == -1) { return; }
+        spectating[data.GetID()] = index;
 
         // Add a subscription to the selection
         data.GetPlayerInScene().GetComponent<PlayerSelectAddon>().OnSelectInput.AddListener(SwitchSpectatingPlayer);
@@ -115,14 +117,16 @@ public class SpectatorManager : MonoBehaviour
         data.GetPlayerInScene().GetComponent<CharacterController>().center = Vector3.up * 300;
     }
 
-    private int GetNextAvailableIndex(int currentlyAt)
+    private int GetNextAvailableIndex(int currentlyAt, int iteration)
     {
         int index = (currentlyAt + 1) % playerCount; // Wrap around using modulo
 
         // Check if the index is busy
         if (IsSpectator(index))
         {
-            index = GetNextAvailableIndex(index); // Be cautious of potential infinite recursion
+            iteration++;
+            if(iteration > 20f) { return  -1; }
+            index = GetNextAvailableIndex(index, iteration); // Be cautious of potential infinite recursion
         }
 
         return index;
@@ -164,15 +168,16 @@ public class SpectatorManager : MonoBehaviour
         // 
         return index;
     }*/
-
-    private int GetPreviousAvailableIndex(int currentlyAt)
+    private int GetPreviousAvailableIndex(int currentlyAt, int iteration)
     {
         int index = (currentlyAt - 1 + playerCount) % playerCount; // Wrap around
 
         // Check if the index is busy
         if (IsSpectator(index))
         {
-            index = GetPreviousAvailableIndex(index); // Be cautious of potential infinite recursion
+            iteration++;
+            if(iteration > 20f) { return  -1; }
+            index = GetPreviousAvailableIndex(index, iteration); // Be cautious of potential infinite recursion
         }
 
         return index;
@@ -190,7 +195,10 @@ public class SpectatorManager : MonoBehaviour
         // Right Selection
         if (value.x > .5f)
         {
-            spectating[data.GetID()] = GetNextAvailableIndex(spectating[data.GetID()]);
+            int index = GetNextAvailableIndex(spectating[data.GetID()], 0);
+            if (index == -1) { return; }
+            spectating[data.GetID()] = index;
+
             int id = spectating[data.GetID()];
 
             Debug.Log(data.GetPlayerInScene().name);
@@ -201,7 +209,10 @@ public class SpectatorManager : MonoBehaviour
         // Left Selection
         if(value.x < -.5f)
         {
-            spectating[data.GetID()] = GetPreviousAvailableIndex(spectating[data.GetID()]);
+            int index = GetPreviousAvailableIndex(spectating[data.GetID()], 0);
+            if (index == -1) { return; }
+            spectating[data.GetID()] = index;
+
             int id = spectating[data.GetID()];
             data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().LookAt = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
             data.GetPlayerInScene().transform.parent.GetComponentInChildren<CinemachineFreeLook>().Follow = PlayerDataHolder.Instance.GetPlayerData(id).input.transform;
