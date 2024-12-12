@@ -20,6 +20,7 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _startGameButton;
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
     [SerializeField] private UnityEngine.UI.Button _controlsButton;
+    [SerializeField] private UnityEngine.UI.Button _returnToGamemode;
     //[SerializeField] private UnityEngine.UI.Button _creditsButton;
     //[SerializeField] private UnityEngine.UI.Button _achievementsButton;
     //[SerializeField] private UnityEngine.UI.Button _ExitButton;
@@ -95,6 +96,11 @@ public class PauseMenuManager : MonoBehaviour
     {
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(false);
+
+        _startGameButton.onClick.AddListener(TogglePauseMenuFromMenu);
+        _returnToGamemode.onClick.AddListener(StopGame);
+        
+        
     }
 
     private void InitializeManager()
@@ -154,9 +160,12 @@ public class PauseMenuManager : MonoBehaviour
 
     public void StopGame()
     {
+        Debug.Log("Stop Game Out");
         if (transitioning) { return; }
         transitioning = true;
         //StartCoroutine(delayTransition());
+
+        Debug.Log("Stop Game In");
 
         canChange = false;
         StartCoroutine(returnToMenuCooldown());
@@ -194,7 +203,9 @@ public class PauseMenuManager : MonoBehaviour
 
     public void TogglePauseMenuFromMenu()
     {
+        return;
         if (!canChange) { return; }
+
         if (isDisplayed)
         {
             isDisplayed = false;
@@ -215,21 +226,6 @@ public class PauseMenuManager : MonoBehaviour
             Time.timeScale = 0f;
             currentMenu = pauseLocation.Pause;
         }
-    }
-
-    public void StartGameCoroutine()
-    {
-        MainMenuManager.Instance.StartGame(PlayerDataHolder.Instance.GetPlayerData(0).input);
-        /*        Debug.Log("Clicked");             // MOVED TO THE MAIN MENU MANAGER
-                if(transfering) { return; }
-                StartCoroutine(StartGame());*/
-    }
-
-    private IEnumerator StartGame()
-    {
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("Lobby");
     }
 
     public void OpenOptions()
