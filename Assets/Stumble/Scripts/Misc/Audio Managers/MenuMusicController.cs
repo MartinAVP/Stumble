@@ -34,9 +34,17 @@ public class MenuMusicController : MonoBehaviour
         }
     }
 
+    public void StartMusic()
+    {
+        source.volume = .1f;
+        source.Stop();
+        source.Play();
+    }
+
     private IEnumerator StartMenuMusic()
     {
         yield return new WaitForSeconds(delay);
+        source.volume = .1f;
         source.Play();
     }
 

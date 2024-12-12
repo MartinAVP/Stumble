@@ -13,4 +13,12 @@ public class ButtonHoverEvent : MonoBehaviour, IPointerEnterHandler
     {
         onHover.Invoke();
     }
+
+    private void FixedUpdate()
+    {
+        if(EventSystem.current.currentSelectedGameObject == this.gameObject)
+        {
+            onHover.Invoke();
+        }
+    }
 }

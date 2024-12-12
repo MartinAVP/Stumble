@@ -448,7 +448,7 @@ public class RacemodeManager : MonoBehaviour
     private GUIStyle panelStyle;
     private Rect panelRect = new Rect(10, 10, 300, 550);
 
-    private void Start()
+/*    private void Start()
     {
         panelStyle = new GUIStyle();
         panelStyle.normal.background = MakeTexture(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.75f));
@@ -484,5 +484,5 @@ public class RacemodeManager : MonoBehaviour
         }
         texture.Apply();
         return texture;
-    }
+    }*/
 }

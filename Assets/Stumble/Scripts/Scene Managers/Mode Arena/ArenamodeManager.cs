@@ -468,6 +468,11 @@ public class ArenamodeManager : MonoBehaviour
             // Add players to the final position
             positions.Add(playersDead.Count, data);
 
+            // Remove Player from Inputting
+            //input.gameObject.GetComponent<CharacterController>().enabled = false;
+            input.gameObject.transform.position += new Vector3(0, 300, 0);
+            input.gameObject.GetComponent<ThirdPersonMovement>().lockVeritcalMovement = true;
+
             // If there is only one player left, end the game
             if (IsLastPlayerStanding()) {             
                 if (!gameEnding)
@@ -476,6 +481,7 @@ public class ArenamodeManager : MonoBehaviour
                     positions.Add(playersDead.Count + 1, GetLastPlayer());
 
                     //scoreboardManager.UpdatePositions(positions);
+                    positions.OrderBy(x => x.Key).ToList();
                     scoreboardManager.UpdatePositionsFromArena(positions);
 
                     StartCoroutine(EndGameDelay());
@@ -492,86 +498,130 @@ public class ArenamodeManager : MonoBehaviour
         }
     }
 
-/*    public void PlayerOnKillZone(GameObject playerObj)
+/*    private GUIStyle panelStyle;
+    private Rect panelRect = new Rect(10, 10, 300, 550);
+
+    private void Start()
     {
+        panelStyle = new GUIStyle();
+        panelStyle.normal.background = MakeTexture(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.75f));
+        panelStyle.padding = new RectOffset(10, 10, 10, 10);
+        panelStyle.normal.textColor = Color.white;
+        panelStyle.fontSize = 38;
+    }
 
-        // Remove a Life;
-        if (PlayerDataHolder.Instance == null) { UnityEngine.Debug.LogError("Arena completely relies on player data holder"); return; }
-        Debug.Log(playerLives.Count + "Dictionary Size #2");
-
-        PlayerInput input = playerObj.GetComponent<PlayerInput>();
-        PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
-        int id = input.playerIndex;
-        //Debug.Log(id);
-        // Remove a Life
-
-        if (playerLives.ContainsKey(data))
+    void OnGUI()
+    {
+        if (PlayerDataHolder.Instance != null)
         {
-            Debug.LogWarning("The key is in the dictionary");
-        }
-        else
-        {
-            Debug.LogWarning("The key is not in the dictionary");
 
-            foreach (var item in playerLives.Keys)
+            GUI.BeginGroup(panelRect, panelStyle);
+            foreach (var player in PlayerDataHolder.Instance.GetPlayers())
             {
-                Debug.Log("LOGGER: " + item.id + " is in the dictionary");
+                GUILayout.Label("Player #" + player.id, GUILayout.Height(30));
+                GUILayout.Label("Score: " + player.points);
+                GUILayout.Label("Color: " + player.cosmeticData.colorPicked.name);
+                GUILayout.Label("");
+            }
+            GUI.EndGroup();
+        }
+
+    }
+
+    private Texture2D MakeTexture(int width, int height, Color color)
+    {
+        Texture2D texture = new Texture2D(width, height);
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                texture.SetPixel(x, y, color);
             }
         }
+        texture.Apply();
+        return texture;
+    }*/
 
-        playerLives[data] = playerLives[data] - 1;
-        int currentLives = playerLives[data];
-
-        Debug.Log("Player #" + id + " now has " + playerLives[data] + " lives");
-
-        // End Game Check
-        if (GetPlayersAlive() == 1)
+    /*    public void PlayerOnKillZone(GameObject playerObj)
         {
-            Debug.Log("There is 1 player left");
-            if (!gameEnding)
+
+            // Remove a Life;
+            if (PlayerDataHolder.Instance == null) { UnityEngine.Debug.LogError("Arena completely relies on player data holder"); return; }
+            Debug.Log(playerLives.Count + "Dictionary Size #2");
+
+            PlayerInput input = playerObj.GetComponent<PlayerInput>();
+            PlayerData data = PlayerDataHolder.Instance.GetPlayerData(input);
+            int id = input.playerIndex;
+            //Debug.Log(id);
+            // Remove a Life
+
+            if (playerLives.ContainsKey(data))
             {
-                gameEnding = true;
-                positions.Add(0, GetLastPlayer());
-
-                //scoreboardManager.UpdatePositions(positions);
-                scoreboardManager.UpdatePositionsFromArena(positions);
-
-                StartCoroutine(EndGameDelay());
-                Respawn(playerObj);
-
-                onLastManStanding?.Invoke();
-            }
-        }
-
-        if (IsLastPlayerStanding())
-        {
-            Debug.Log("This player is the last one standing");
-            Respawn(playerObj);
-            return;
-        }
-
-        // Player's Last Life.
-        if (playerLives[data] <= 0)
-        {
-            Debug.Log("Making Player #" + id + "a spectator");
-            //PlayerData data = PlayerDataHolder.Instance.GetPlayerData(playerObj.GetComponent<PlayerInput>());
-
-            Debug.Log(data.GetPlayerInScene().name);
-            positions.Add(GetPlayersAlive() + 1, data);
-            if (SpectatorManager.Instance != null)
-            {
-                SpectatorManager.Instance.AddToSpectator(data);
+                Debug.LogWarning("The key is in the dictionary");
             }
             else
             {
-                Debug.LogError("No Spectator Manager");
+                Debug.LogWarning("The key is not in the dictionary");
+
+                foreach (var item in playerLives.Keys)
+                {
+                    Debug.Log("LOGGER: " + item.id + " is in the dictionary");
+                }
             }
-        }
-        else
-        {
-            Respawn(playerObj);
-        }
-    }*/
+
+            playerLives[data] = playerLives[data] - 1;
+            int currentLives = playerLives[data];
+
+            Debug.Log("Player #" + id + " now has " + playerLives[data] + " lives");
+
+            // End Game Check
+            if (GetPlayersAlive() == 1)
+            {
+                Debug.Log("There is 1 player left");
+                if (!gameEnding)
+                {
+                    gameEnding = true;
+                    positions.Add(0, GetLastPlayer());
+
+                    //scoreboardManager.UpdatePositions(positions);
+                    scoreboardManager.UpdatePositionsFromArena(positions);
+
+                    StartCoroutine(EndGameDelay());
+                    Respawn(playerObj);
+
+                    onLastManStanding?.Invoke();
+                }
+            }
+
+            if (IsLastPlayerStanding())
+            {
+                Debug.Log("This player is the last one standing");
+                Respawn(playerObj);
+                return;
+            }
+
+            // Player's Last Life.
+            if (playerLives[data] <= 0)
+            {
+                Debug.Log("Making Player #" + id + "a spectator");
+                //PlayerData data = PlayerDataHolder.Instance.GetPlayerData(playerObj.GetComponent<PlayerInput>());
+
+                Debug.Log(data.GetPlayerInScene().name);
+                positions.Add(GetPlayersAlive() + 1, data);
+                if (SpectatorManager.Instance != null)
+                {
+                    SpectatorManager.Instance.AddToSpectator(data);
+                }
+                else
+                {
+                    Debug.LogError("No Spectator Manager");
+                }
+            }
+            else
+            {
+                Respawn(playerObj);
+            }
+        }*/
 
     public void Respawn(GameObject playerObject)
     {
