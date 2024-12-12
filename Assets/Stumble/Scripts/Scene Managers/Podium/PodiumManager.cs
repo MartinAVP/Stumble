@@ -184,6 +184,7 @@ public class PodiumManager : MonoBehaviour
     private IEnumerator returnToMenuCooldown()
     {
         yield return new WaitForSeconds(20f);
+        MenuMusicController.Instance.StartMusic();
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
 
@@ -200,7 +201,6 @@ public class PodiumManager : MonoBehaviour
 
         // Destroy the Object
         Destroy(ModularController.Instance.gameObject);
-
         SceneManager.LoadScene("GamemodeSelect");
     }
 
