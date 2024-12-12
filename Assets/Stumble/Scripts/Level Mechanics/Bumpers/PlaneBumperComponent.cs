@@ -19,12 +19,6 @@ public class PlaneBumperComponent : MonoBehaviour
         {
             planeBumper.AddSphereOverlap(other.gameObject);
         }
-
-        // Sounds
-        if (SFXManager.Instance != null)
-        {
-            SFXManager.Instance.PlaySound(soundFXId, other.transform);
-        }
     }
 
     private void OnTriggerExit(Collider other)

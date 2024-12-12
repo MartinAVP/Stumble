@@ -39,12 +39,21 @@ public class PlaneBumper : Bumper
         if (!sphereOverlaps.Contains(other)) return;
 
         Debug.Log("Bumped");
+
+        if (SFXManager.Instance != null)
+        {
+            if (soundType == BumperSoundType.Bounce)
+                SFXManager.Instance.PlaySound("BumperBounce", other.gameObject.transform);
+            else if (soundType == BumperSoundType.Plastic)
+                SFXManager.Instance.PlaySound("FurnitureHit", other.gameObject.transform);
+        }
+
         bounceEvent?.Invoke(other.transform);
         IBumper bumpedObject = other.GetComponent<IBumper>();
         if (bumpedObject == null) return;
         bumpedObject.Bump(transform.up, bounceForce, sourceType);
 
-        Debug.DrawRay(other.transform.position, transform.up, Color.magenta, 100f);
+        //Debug.DrawRay(other.transform.position, transform.up, Color.magenta, 100f);
     }
 
     /// <summary>
