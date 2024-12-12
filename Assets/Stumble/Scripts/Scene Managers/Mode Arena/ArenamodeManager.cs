@@ -195,12 +195,31 @@ public class ArenamodeManager : MonoBehaviour
         if (cinematicController != null)
         {
             Debug.Log("Initializing Cinematic");
+            //GameMusicController.Instance?.InitializeCinematicMusic();
+            if (gameMusicController != null)
+            {
+                gameMusicController?.InitializeCinematicMusic();
+            }
+            yield return new WaitForSeconds(.2f);
             cinematicController.StartTimeline();
+            yield return new WaitForSeconds(.1f);
+            if (LoadingScreenManager.Instance != null)
+            {
+                LoadingScreenManager.Instance.StartTransition(false);
+            }
             yield return new WaitForSeconds(cinematicController.GetTimelineLenght.ConvertTo<int>());
             //await Task.Delay(cinematicController.GetTimelineLenght.ConvertTo<int>() * 1000);
 
             // On Cinematic End
         }
+        else
+        {
+            if (LoadingScreenManager.Instance != null)
+            {
+                LoadingScreenManager.Instance.StartTransition(false);
+            }
+        }
+
         onCountdownStart?.Invoke();
 
         if (arenamodeUIManager != null)

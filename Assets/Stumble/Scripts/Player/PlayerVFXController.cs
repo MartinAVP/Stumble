@@ -48,26 +48,33 @@ public class PlayerVFXController : MonoBehaviour
     private bool isRunningState = false;
     private void FixedUpdate()
     {
-        if(thirdPersonMovement.isFloored) { return;}
-        if(thirdPersonMovement.horizontalVelocity > .5f)
+        // Check if the player is floored (on the ground)
+        if (thirdPersonMovement.isFloored)
         {
-            if(isRunningState)
+            if (thirdPersonMovement.horizontalVelocity > .5f)
             {
-                return;
+                if (!isRunningState)
+                {
+                    isRunningState = true;
+                    runningVFX.GetComponent<ParticleSystem>().Play();
+                }
             }
-            isRunningState = true;
-
-            runningVFX.GetComponent<ParticleSystem>().Play();
+            else
+            {
+                if (isRunningState)
+                {
+                    isRunningState = false;
+                    runningVFX.GetComponent<ParticleSystem>().Stop();
+                }
+            }
         }
         else
         {
-            if(!isRunningState)
+            if (isRunningState)
             {
-                return;
+                isRunningState = false;
+                runningVFX.GetComponent<ParticleSystem>().Stop();
             }
-
-            isRunningState = false;
-            runningVFX.GetComponent<ParticleSystem>().Stop();
         }
     }
 
