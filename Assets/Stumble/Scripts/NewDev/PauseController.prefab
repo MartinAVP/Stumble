@@ -2163,6 +2163,8 @@ GameObject:
   - component: {fileID: 4524674682132800150}
   - component: {fileID: 4031438851694851994}
   - component: {fileID: 6351546398312140364}
+  - component: {fileID: 4068602682079003776}
+  - component: {fileID: 6727456298304747475}
   m_Layer: 0
   m_Name: PauseController
   m_TagString: Untagged
@@ -2238,6 +2240,36 @@ MonoBehaviour:
     name: Keyboard
   - panel: {fileID: 3058403108115872726}
     name: Controller
+--- !u!114 &4068602682079003776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051234686303826640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c31765ca56fd1d41ab5843a68315eb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transitionDuration: 1
+--- !u!114 &6727456298304747475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051234686303826640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540bd5164c12151459c7dd70aa53cad0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FirstSelectedItem: {fileID: 299055180746538417}
+  eventSystem: {fileID: 0}
+  currentItem: {fileID: 0}
+  hostUsingController: 0
+  giveHostCursorAccess: 1
 --- !u!1 &2232550633657203334
 GameObject:
   m_ObjectHideFlags: 0

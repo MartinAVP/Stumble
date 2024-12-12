@@ -43,6 +43,7 @@ public class ControllerForMenus : MonoBehaviour
     void Start()
     {
         Task Setup = setup();
+        eventSystem = MultiplayerEventSystem.current as MultiplayerEventSystem;
     }
 
     private async Task setup()
