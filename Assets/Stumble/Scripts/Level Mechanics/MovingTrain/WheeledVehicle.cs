@@ -7,6 +7,7 @@ public class WheeledVehicle : MonoBehaviour
     [SerializeField] private GameObject vehicle;
     [SerializeField] private List<GameObject> wheels;
     [SerializeField] private float speed = 5;
+    [SerializeField] private float delayTime = 1;
     [SerializeField] public RotationAxis wheelRotationAxis;
     [SerializeField] public bool faceMovementDirection;
     [SerializeField] public List<Transform> patrolPoints;
@@ -20,6 +21,7 @@ public class WheeledVehicle : MonoBehaviour
     {
         patrolMovement = vehicle.AddComponent<PatrolMovement>();
         patrolMovement.speed = speed;
+        patrolMovement.delayTime = delayTime;
         patrolMovement.faceTowardNextNode = faceMovementDirection;
 
         patrolMovement.startMoving.AddListener(StartWheels);
