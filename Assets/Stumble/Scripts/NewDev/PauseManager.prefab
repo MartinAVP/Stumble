@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7396903472115792987
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1149243350387381852}
+  - component: {fileID: 2489644411605888008}
+  - component: {fileID: 5355272416698332099}
+  m_Layer: 0
+  m_Name: PauseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1149243350387381852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396903472115792987}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1085, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2489644411605888008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396903472115792987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c16b96f2689d25e49b848870ce7d10ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenuPanel: {fileID: 0}
+  optionsPanel: {fileID: 0}
+  transitionPanel: {fileID: 0}
+  controlsPanel: {fileID: 0}
+  _startGameButton: {fileID: 0}
+  _optionsButton: {fileID: 0}
+  _controlsButton: {fileID: 0}
+  _generalVolume: {fileID: 0}
+  _MusicVolume: {fileID: 0}
+  _SFXVolume: {fileID: 0}
+  _TargetFPS: {fileID: 0}
+  _TargetFPSText: {fileID: 0}
+  _generalVolumeText: {fileID: 0}
+  _musicVolumeText: {fileID: 0}
+  _SFXVolumeText: {fileID: 0}
+  _ReturnToMenuFromOptions: {fileID: 0}
+  _leftArrowControls: {fileID: 0}
+  _rightArrowControls: {fileID: 0}
+  _controlScheme: {fileID: 0}
+  initialized: 0
+--- !u!114 &5355272416698332099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7396903472115792987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bf454c3acbae194c885ade61635b089, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlScheme: {fileID: 0}
+  leftArrow: {fileID: 0}
+  rightArrow: {fileID: 0}
+  schemes:
+  - panel: {fileID: 0}
+    name: Keyboard
+  - panel: {fileID: 0}
+    name: Controller
