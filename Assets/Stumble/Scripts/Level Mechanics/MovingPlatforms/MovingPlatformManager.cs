@@ -24,6 +24,10 @@ public class MovingPlatformManager : MonoBehaviour
 
     private void Update()
     {
+        if(Time.timeScale == 0)
+        {
+            return;
+        }
         MovingPlatformEventBus.Publish(MovingPlatformEvent.PreMove);
         MovingPlatformEventBus.Publish(MovingPlatformEvent.Move);
         MovingPlatformEventBus.Publish(MovingPlatformEvent.PostMove);
