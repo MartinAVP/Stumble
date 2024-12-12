@@ -154,6 +154,10 @@ public class PauseMenuManager : MonoBehaviour
 
     public void StopGame()
     {
+        if (transitioning) { return; }
+        transitioning = true;
+        //StartCoroutine(delayTransition());
+
         canChange = false;
         StartCoroutine(returnToMenuCooldown());
     }
@@ -161,7 +165,16 @@ public class PauseMenuManager : MonoBehaviour
     private IEnumerator returnToMenuCooldown()
     {
         yield return new WaitForSeconds(20f);
-        MenuMusicController.Instance.StartMusic();
+
+        if(MenuMusicController.Instance != null )
+        {
+            MenuMusicController.Instance.StartMusic();
+        }
+        if(GameMusicController.Instance != null)
+        {
+            GameMusicController.Instance.EndMusic(1.2f);
+        }
+
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
 
@@ -221,21 +234,38 @@ public class PauseMenuManager : MonoBehaviour
 
     public void OpenOptions()
     {
+        if(transitioning) { return; }
+        transitioning = true;
+        StartCoroutine(delayTransition());
+
+        Debug.Log("OPTIONS OPENING");
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
         ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
         currentMenu = pauseLocation.Options;
-        Debug.Log("Open Options");
+        //Debug.Log("Open Options");
     }
 
     public void OpenControls()
     {
+        if (transitioning) { return; }
+        transitioning = true;
+        StartCoroutine(delayTransition());
+
+        Debug.Log("OPTIONS CONTROL");
         GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, controlsPanel, GamemodeSelectScreenManager.Direction.Left);
         //ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(null, .5f);
         ControllerForMenus.Instance.ChangeSelectedObject(null);
 
         ControlScheme.Instance.OpenControls();
         currentMenu = pauseLocation.Controls;
-        Debug.Log("Open Controls");
+        //Debug.Log("Open Controls");
+    }
+
+    private IEnumerator delayTransition()
+    {
+
+        yield return new WaitForSeconds(1);
+        transitioning = false;
     }
 
     public void OpenAchievements()

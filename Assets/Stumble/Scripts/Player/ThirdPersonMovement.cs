@@ -372,6 +372,10 @@ public class ThirdPersonMovement : MonoBehaviour
     /// </summary>
     private void Movement()
     {
+        if(Time.timeScale == 0)
+        {
+            return;
+        }
         _bumpHorizontalVelocity.y = 0;
 
 /*        print("Bump velocity: " + _bumpHorizontalVelocity +
