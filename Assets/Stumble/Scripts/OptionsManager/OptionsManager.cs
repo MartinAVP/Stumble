@@ -29,16 +29,31 @@ public class OptionsManager : MonoBehaviour
 
     public void SetGeneralVolume(float value)
     {
+        if (value < 0)
+        {
+            value *= 5;
+        }
+        value = Mathf.Clamp(value, -80, 0);
         ChangeAudio("MainVolume", value);
     }
 
     public void SetMusicVolume(float value)
     {
+        if (value < 0)
+        {
+            value *= 5;
+        }
+        value = Mathf.Clamp(value, -80, 0);
         ChangeAudio("MusicVolume", value);
     }
 
     public void SetSFXVolume(float value)
     {
+        if(value < 0)
+        {
+            value *= 5;
+        }
+        value = Mathf.Clamp(value, -80, 0);
         ChangeAudio("SFXVolume", value);
     }
 

@@ -49,9 +49,15 @@ public class LobbyManager : MonoBehaviour
 
         // Once it finds it initialize the scene
         Debug.Log("Initializing Lobby Manager...         [Lobby Manager]");
+
         initialized = true;
 
         return;
+    }
+
+    private void Start()
+    {
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
     }
 
     private void InitializeLobby()
@@ -111,16 +117,23 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
+        if(PlayerDataHolder.Instance.GetPlayers().Count < 2) { return; }
+
         if(transitioning) return;
         transitioning = true;
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        playerInputManager.DisableJoining();
+
         StartCoroutine(delayStart());
     }
 
     private IEnumerator delayStart()
     {
-        yield return new WaitForSeconds(2f);
+        if (LoadingScreenManager.Instance != null) {
+            Debug.Log("LOADING SCREEN FOUND!!");
+            LoadingScreenManager.Instance.StartTransition(false); 
+        }
+        yield return new WaitForSeconds(3f);
         SceneManager.LoadScene("GamemodeSelect");
     }
 
@@ -134,7 +147,9 @@ public class LobbyManager : MonoBehaviour
         if(transitioning) return;
         transitioning = true;
 
-        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        if (LoadingScreenManager.Instance != null) {
+            LoadingScreenManager.Instance.StartTransition(true); 
+        }
         StartCoroutine(delayReturn("Menu"));
     }
 

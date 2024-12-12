@@ -38,6 +38,10 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
     [SerializeField] private TextMeshProUGUI _TargetFPSText;
     [Space]
+    [SerializeField] private TextMeshProUGUI _generalVolumeText;
+    [SerializeField] private TextMeshProUGUI _musicVolumeText;
+    [SerializeField] private TextMeshProUGUI _SFXVolumeText;
+    [Space]
     [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
 
     [Header("Controls")]
@@ -290,6 +294,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if(OptionsManager.Instance != null)
         {
+            _generalVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetGeneralVolume(value);
         }
     }
@@ -297,6 +302,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (OptionsManager.Instance != null)
         {
+            _musicVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetMusicVolume(value);
         }
     }
@@ -304,6 +310,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (OptionsManager.Instance != null)
         {
+            _SFXVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetSFXVolume(value);
         }
     }
