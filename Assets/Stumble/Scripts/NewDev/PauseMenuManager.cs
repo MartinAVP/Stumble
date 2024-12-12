@@ -5,16 +5,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    [SerializeField] private GameObject pausePanel;
+    [Header("Panels")]
+    [Tooltip("Panel For Fading")]
+    [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject optionsPanel;
-    [SerializeField] private GameObject emptyPanel;
+    [SerializeField] private GameObject transitionPanel;
+    [SerializeField] private GameObject controlsPanel;
 
     [Header("Main Buttons")]
-    [SerializeField] private UnityEngine.UI.Button _continueGameButton;
+    [SerializeField] private UnityEngine.UI.Button _startGameButton;
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
+    [SerializeField] private UnityEngine.UI.Button _controlsButton;
     //[SerializeField] private UnityEngine.UI.Button _creditsButton;
     //[SerializeField] private UnityEngine.UI.Button _achievementsButton;
     //[SerializeField] private UnityEngine.UI.Button _ExitButton;
@@ -23,15 +28,26 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Slider _generalVolume;
     [SerializeField] private UnityEngine.UI.Slider _MusicVolume;
     [SerializeField] private UnityEngine.UI.Slider _SFXVolume;
-/*    [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
-    [SerializeField] private TextMeshProUGUI _TargetFPSText;*/
+    [SerializeField] private UnityEngine.UI.Slider _TargetFPS;
+    [SerializeField] private TextMeshProUGUI _TargetFPSText;
     [Space]
-    public UnityEngine.UI.Button _ReturnToMenuFromOptions;
+    [SerializeField] private TextMeshProUGUI _generalVolumeText;
+    [SerializeField] private TextMeshProUGUI _musicVolumeText;
+    [SerializeField] private TextMeshProUGUI _SFXVolumeText;
+    [Space]
+    [SerializeField] private UnityEngine.UI.Button _ReturnToMenuFromOptions;
+
+    [Header("Controls")]
+    [SerializeField] private Button _leftArrowControls;
+    [SerializeField] private Button _rightArrowControls;
+    [SerializeField] private TextMeshProUGUI _controlScheme;
+    [Space]
 
     private bool isDisplayed = false;
     private bool transitioning = false;
+    private bool canChange = true;
 
-    private pauseLocation loc = pauseLocation.None;
+    private pauseLocation currentMenu = pauseLocation.None;
 
     public static PauseMenuManager Instance { get; private set; }
     [HideInInspector] public bool initialized = false;
@@ -77,7 +93,7 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Start()
     {
-        pausePanel.SetActive(false);
+        mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(false);
     }
 
@@ -109,54 +125,82 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         // Prevent Exit Pause Menu from Options Menu
-        if (loc == pauseLocation.Options) return;
+        if (currentMenu == pauseLocation.Options) return;
 
         if(isDisplayed)
         {
             isDisplayed = false;
             // Turn Off
-            pausePanel.SetActive(false);
+            mainMenuPanel.SetActive(false);
             optionsPanel.SetActive(false);
             if(hostIsController) { ControllerForMenus.Instance.ChangeSelectedObject(null); }
 
             Time.timeScale = 1f;
-            loc = pauseLocation.None;
+            currentMenu = pauseLocation.None;
         }
         else
         {
             isDisplayed = true;
             // Turn On
-            pausePanel.SetActive(true);
+            mainMenuPanel.SetActive(true);
             optionsPanel.SetActive(true);
 
-            if(hostIsController) { ControllerForMenus.Instance?.ChangeObjectSelectedWithDelay(_continueGameButton.gameObject, .5f); }
+            if(hostIsController) { ControllerForMenus.Instance?.ChangeObjectSelectedWithDelay(_startGameButton.gameObject, .5f); }
             
             Time.timeScale = 0f;
-            loc = pauseLocation.Pause;
+            currentMenu = pauseLocation.Pause;
         }
+    }
+
+    public void StopGame()
+    {
+        canChange = false;
+        StartCoroutine(returnToMenuCooldown());
+    }
+
+    private IEnumerator returnToMenuCooldown()
+    {
+        yield return new WaitForSeconds(20f);
+        MenuMusicController.Instance.StartMusic();
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
+        yield return new WaitForSeconds(2f);
+
+        if (ModularController.Instance != null)
+        {
+            // Reset all player Points
+            foreach (PlayerData data in PlayerDataHolder.Instance.GetPlayers())
+            {
+                data.points = 0;
+            }
+        }
+
+        // Destroy the Object
+        Destroy(ModularController.Instance.gameObject);
+        SceneManager.LoadScene("GamemodeSelect");
     }
 
     public void TogglePauseMenuFromMenu()
     {
+        if (!canChange) { return; }
         if (isDisplayed)
         {
             isDisplayed = false;
             // Turn Off
-            pausePanel.SetActive(false);
+            mainMenuPanel.SetActive(false);
             optionsPanel.SetActive(false);
 
             Time.timeScale = 1f;
-            loc = pauseLocation.None;
+            currentMenu = pauseLocation.None;
         }
         else
         {
             isDisplayed = true;
             // Turn On
-            pausePanel.SetActive(true);
+            mainMenuPanel.SetActive(true);
             optionsPanel.SetActive(true);
 
             Time.timeScale = 0f;
-            loc = pauseLocation.Pause;
+            currentMenu = pauseLocation.Pause;
         }
     }
 
@@ -177,15 +221,21 @@ public class PauseMenuManager : MonoBehaviour
 
     public void OpenOptions()
     {
-        GamemodeSelectScreenManager.Instance.InterpolateScreens(pausePanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, optionsPanel, GamemodeSelectScreenManager.Direction.Left);
         ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_ReturnToMenuFromOptions.gameObject, .5f);
-        loc = pauseLocation.Options;
+        currentMenu = pauseLocation.Options;
         Debug.Log("Open Options");
     }
 
-    public void OpenCredits()
+    public void OpenControls()
     {
-        Debug.Log("Open Credits");
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(mainMenuPanel, controlsPanel, GamemodeSelectScreenManager.Direction.Left);
+        //ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(null, .5f);
+        ControllerForMenus.Instance.ChangeSelectedObject(null);
+
+        ControlScheme.Instance.OpenControls();
+        currentMenu = pauseLocation.Controls;
+        Debug.Log("Open Controls");
     }
 
     public void OpenAchievements()
@@ -193,58 +243,53 @@ public class PauseMenuManager : MonoBehaviour
         Debug.Log("Open Achievements");
     }
 
+    private bool navLock = false;
+    public void Nav(Vector2 v2)
+    {
+        if (currentMenu == pauseLocation.Controls)
+        {
+            if (v2.x > .5f)
+            {
+                ControlScheme.Instance.NavRight();
+            }
+            else if (v2.x < -.5f)
+            {
+                ControlScheme.Instance.NavLeft();
+            }
+        }
+    }
+
+    public void returnToMainMenuFromOptions()
+    {
+        currentMenu = pauseLocation.Pause;
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
+
+        ControlScheme.Instance.CloseControls();
+    }
+
+    public void returnToMainMenuFromControls()
+    {
+        currentMenu = pauseLocation.Pause;
+        GamemodeSelectScreenManager.Instance.InterpolateScreens(controlsPanel, mainMenuPanel, GamemodeSelectScreenManager.Direction.Right);
+        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_controlsButton.gameObject, .4f);
+    }
+
+    // IMoveHandler Implementation
+    #region OptionsMethods
     public void ExitGame()
     {
         //Debug.Log("Exit Game");
         Application.Quit();
     }
-
-    public void GoToGamemodeSelect()
-    {
-        if (transitioning) return;
-        transitioning = true;
-
-        Time.timeScale = 1f;
-
-        Destroy(ModularController.Instance.gameObject);
-
-        StartCoroutine(sceneLoadDelay("GamemodeSelect"));
-    }
-
-    public void GoToMainMenu()
-    {
-        if (transitioning) return;
-        transitioning = true;
-
-        Time.timeScale = 1f;
-        PlayerDataHolder.Instance.ClearAllButHost(true);
-
-        Destroy(ModularController.Instance.gameObject);
-
-        StartCoroutine(sceneLoadDelay("Menu"));
-    }
-
-    //====================================
-    // Add a Roll for When going back to the Main Menu.
-    // Remove the Library from DontDestroyOnLoad
-
-    private IEnumerator sceneLoadDelay(string name)
-    {
-        yield return new WaitForSeconds(1f);
-        if(Time.timeScale != 1) { Time.timeScale = 1; } // Prevent Freeze Across Scenes
-        SceneManager.LoadScene(name);
-    }
-
     public void FullScreen()
     {
         Screen.fullScreen = true;
     }
-
     public void Windowed()
     {
         Screen.fullScreen = false;
     }
-
     public void ChangeTargetFPS(int index)
     {
         switch (index)
@@ -268,119 +313,55 @@ public class PauseMenuManager : MonoBehaviour
 
     }
 
-    public void returnToPauseMenuFromOptions()
-    {
-        GamemodeSelectScreenManager.Instance.InterpolateScreens(optionsPanel, pausePanel, GamemodeSelectScreenManager.Direction.Right);
-        ControllerForMenus.Instance.ChangeObjectSelectedWithDelay(_optionsButton.gameObject, .4f);
-        loc = pauseLocation.Pause;
-    }
-
-    // IMoveHandler Implementation
-    /*    public GameObject currentSelected;
-        [HideInInspector] public UnityEvent<GameObject> OnChangedSelectedObject;
-        private bool subToSlider = false;
-        public Slider activeSlide;*/
-
-    /*    private async Task ChangeCurrentSelected()
-        {
-            currentSelected = this.gameObject;
-            while (true)
-            {
-                if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
-                {
-                    currentSelected = multiplayerEventSystem.currentSelectedGameObject;
-                    OnChangedSelectedObject.Invoke(currentSelected);
-                    CheckSlider();
-                    Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
-                    await Task.Delay(100);
-                }
-
-                Debug.Log("Loopin");
-                await Task.Delay(200);
-            }
-
-        }*/
-
-    /*    private void FixedUpdate()
-        {
-            //if(currentSelected == null) { currentSelected = gameObject; }
-            if (currentSelected == null) { currentSelected = multiplayerEventSystem.currentSelectedGameObject; return; }
-            if (currentSelected != multiplayerEventSystem.currentSelectedGameObject)
-            {
-                currentSelected = multiplayerEventSystem.currentSelectedGameObject;
-                OnChangedSelectedObject.Invoke(currentSelected);
-                CheckSlider();
-                //Debug.Log($"Selected GameObject changed to: {currentSelected.name}");
-            }
-        }
-
-        private void CheckSlider()
-        {
-            // Prevent this Method from running if the player is not using a controller.
-            PlayerInput input = PlayerDataHolder.Instance.GetPlayerData(0).input;
-            if (input.currentControlScheme != "Controller") { return; }
-            Debug.Log("Check #1");
-            GameObject obj = multiplayerEventSystem.currentSelectedGameObject;
-        }
-
-        public void SliderSubscribe()
-        {
-
-        }
-
-        public void Slider(Vector2 raw, PlayerInput data)
-        {
-            Debug.Log("Slider Performed");
-            if(activeSlide == null) { return; }
-            if (raw.x > .5f)
-            {
-                Debug.Log("Slider++");
-                if (multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>() != null)
-                {
-                    multiplayerEventSystem.currentSelectedGameObject.GetComponent<UnityEngine.UI.Slider>().value += raw.x * Time.deltaTime;
-                }
-            }
-        }*/
-
-
     private void changeGeneralVolume(float value)
     {
         if (OptionsManager.Instance != null)
         {
+            _generalVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetGeneralVolume(value);
         }
     }
-
     private void changeMusicVolume(float value)
     {
         if (OptionsManager.Instance != null)
         {
+            _musicVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetMusicVolume(value);
         }
     }
-
     private void changeSFXVolume(float value)
     {
         if (OptionsManager.Instance != null)
         {
+            _SFXVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetSFXVolume(value);
         }
     }
-
     private void changeTargetFPS(float value)
     {
-/*        int newValue = (int)value;
+        int newValue = (int)value;
         _TargetFPSText.text = "Limit FPS:               " + newValue;
         if (OptionsManager.Instance != null)
         {
             OptionsManager.Instance.SetTargetFPS(newValue);
-        }*/
+        }
+    }
+    #endregion
+
+    public enum Menu
+    {
+        Main,
+        Options,
+        Controls,
+        Achievements,
+        Credits
     }
 
     private enum pauseLocation
     {
         Pause,
         Options,
+        Controls,
         None
     }
 }
