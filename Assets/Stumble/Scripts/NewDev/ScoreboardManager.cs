@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -71,12 +72,22 @@ public class ScoreboardManager : MonoBehaviour
     {
         Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
 
-        int index = 0;
+        var sorted = incomingPositions.OrderBy(x => x.Key).ToList();
+        Debug.Log("====== SORTED ======");
+        int index2 = 0;
+        foreach (var sortID in sorted)
+        {
+            Debug.Log(index2 + "# with time " + sortID.Key + " is Player #" + sortID.Value.id);
+            finalPositions.Add(sortID.Value, index2);
+            index2++;
+        }
+
+/*        int index = 0;
         foreach (PlayerData data in incomingPositions.Values)
         {
             finalPositions.Add(data, index);
             index++;
-        }
+        }*/
 
         return finalPositions;
     }
