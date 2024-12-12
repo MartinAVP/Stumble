@@ -49,9 +49,15 @@ public class LobbyManager : MonoBehaviour
 
         // Once it finds it initialize the scene
         Debug.Log("Initializing Lobby Manager...         [Lobby Manager]");
+
         initialized = true;
 
         return;
+    }
+
+    private void Start()
+    {
+        if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(false); }
     }
 
     private void InitializeLobby()
@@ -111,8 +117,12 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
+        if(PlayerDataHolder.Instance.GetPlayers().Count < 2) { return; }
+
         if(transitioning) return;
         transitioning = true;
+
+        playerInputManager.DisableJoining();
 
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         StartCoroutine(delayStart());
