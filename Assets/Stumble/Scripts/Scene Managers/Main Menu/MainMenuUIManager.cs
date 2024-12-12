@@ -294,7 +294,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if(OptionsManager.Instance != null)
         {
-            _generalVolumeText.text = (value + 2).ToString();
+            _generalVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetGeneralVolume(value);
         }
     }
@@ -302,7 +302,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (OptionsManager.Instance != null)
         {
-            _musicVolumeText.text = (value + 2).ToString();
+            _musicVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetMusicVolume(value);
         }
     }
@@ -310,7 +310,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (OptionsManager.Instance != null)
         {
-            _SFXVolumeText.text = (value + 2).ToString();
+            _SFXVolumeText.text = (value + 10).ToString();
             OptionsManager.Instance.SetSFXVolume(value);
         }
     }

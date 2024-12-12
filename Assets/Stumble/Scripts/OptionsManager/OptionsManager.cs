@@ -31,8 +31,9 @@ public class OptionsManager : MonoBehaviour
     {
         if (value < 0)
         {
-            value *= 15;
+            value *= 5;
         }
+        value = Mathf.Clamp(value, -80, 0);
         ChangeAudio("MainVolume", value);
     }
 
@@ -40,8 +41,9 @@ public class OptionsManager : MonoBehaviour
     {
         if (value < 0)
         {
-            value *= 15;
+            value *= 5;
         }
+        value = Mathf.Clamp(value, -80, 0);
         ChangeAudio("MusicVolume", value);
     }
 
@@ -49,8 +51,9 @@ public class OptionsManager : MonoBehaviour
     {
         if(value < 0)
         {
-            value *= 15;
+            value *= 5;
         }
+        value = Mathf.Clamp(value, -80, 0);
         ChangeAudio("SFXVolume", value);
     }
 
