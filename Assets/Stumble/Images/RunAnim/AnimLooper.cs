@@ -6,8 +6,11 @@ using UnityEngine.UI;
 public class AnimLooper : MonoBehaviour
 {
     public List<Sprite> sprites;
-    private Image image;
+    public Image image;
+    public float frameTime;
+
     private int currentID = 0;
+    private float elapsedTime = 0;
 
     private void Start()
     {
@@ -18,7 +21,18 @@ public class AnimLooper : MonoBehaviour
     {
         if(sprites.Count == 0) { return; }
 
+        elapsedTime += Time.deltaTime;
+
+        if(elapsedTime >= frameTime)
+        {
+            currentID++;
+            if (currentID >= sprites.Count)
+            {
+                currentID = 0;
+            }
+
+            image.sprite = sprites[currentID];
+            elapsedTime = 0;
+        }
     }
-
-
 }
