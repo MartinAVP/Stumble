@@ -104,12 +104,14 @@ public class ScoreboardManager : MonoBehaviour
     {
         Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
 
+        var sorted = incomingPositions.OrderBy(x => x.Key).Reverse().ToList();
         // Inverted loop allowing the correct position assignation
-        int index = incomingPositions.Count - 1;
-        foreach (PlayerData data in incomingPositions.Values)
+        //int index = incomingPositions.Count - 1;
+        int index = 0;
+        foreach (var sortID in sorted)
         {
-            finalPositions.Add(data, index);
-            index--;
+            finalPositions.Add(sortID.Value, index);
+            index++;
         }
 
         return finalPositions;
