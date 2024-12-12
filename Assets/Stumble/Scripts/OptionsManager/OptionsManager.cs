@@ -29,16 +29,28 @@ public class OptionsManager : MonoBehaviour
 
     public void SetGeneralVolume(float value)
     {
+        if (value < 0)
+        {
+            value *= 15;
+        }
         ChangeAudio("MainVolume", value);
     }
 
     public void SetMusicVolume(float value)
     {
+        if (value < 0)
+        {
+            value *= 15;
+        }
         ChangeAudio("MusicVolume", value);
     }
 
     public void SetSFXVolume(float value)
     {
+        if(value < 0)
+        {
+            value *= 15;
+        }
         ChangeAudio("SFXVolume", value);
     }
 
