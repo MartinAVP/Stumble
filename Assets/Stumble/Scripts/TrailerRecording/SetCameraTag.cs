@@ -1,21 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SetCameraTag : MonoBehaviour
 {
     public int cameraNum = 0;
-    public GameObject player;
+    public PlayerInput playerInput;
 
     private void Start()
     {
-        if(player.layer == LayerMask.NameToLayer("Player1"))
-            gameObject.tag = "Camera1-"+cameraNum;
-        if (player.layer == LayerMask.NameToLayer("Player2"))
-            gameObject.tag = "Camera2-" + cameraNum;
-        if (player.layer == LayerMask.NameToLayer("Player3"))
-            gameObject.tag = "Camera3-" + cameraNum;
-        if (player.layer == LayerMask.NameToLayer("Player4"))
-            gameObject.tag = "Camera4-" + cameraNum;
+        int index = -1;
+        if(playerInput != null)
+        {
+            PlayerDataHolder playerDataHolder = PlayerDataHolder.Instance;
+
+            index = playerDataHolder.GetPlayerData(playerInput).id + 1;
+        }
+        else
+        {
+            Debug.LogError("Cannot set camera " + gameObject.name + " name correctly. Invalid player input.");
+        }
+
+        gameObject.tag = "Camera"+index+"-"+cameraNum;
     }
+
 }
