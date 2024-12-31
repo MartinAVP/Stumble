@@ -372,6 +372,10 @@ public class ThirdPersonMovement : MonoBehaviour
     /// </summary>
     private void Movement()
     {
+        if(Time.timeScale == 0)
+        {
+            return;
+        }
         _bumpHorizontalVelocity.y = 0;
 
 /*        print("Bump velocity: " + _bumpHorizontalVelocity +
@@ -934,6 +938,9 @@ public class ThirdPersonMovement : MonoBehaviour
                     singleHit.GetComponent<ThirdPersonMovement>().Bump(this.transform.forward + new Vector3(0, slapUpWardForce, 0), slapForce);
 
                     OnSlapPlayer?.Invoke();
+
+                    if(SFXManager.Instance != null) 
+                        SFXManager.Instance.PlaySound("Punch", transform);
                 } // Prevent Auto Bumping
             }
             else
@@ -1031,6 +1038,8 @@ public class ThirdPersonMovement : MonoBehaviour
                     float bumpMagnitude = bumpForce;
 
                     targetPlayer.Bump(bumpDirection, bumpMagnitude);
+
+                    SFXManager.Instance.PlaySound("Punch", transform);
                 }
             }
         }

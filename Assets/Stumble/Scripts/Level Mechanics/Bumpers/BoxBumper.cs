@@ -34,7 +34,10 @@ public class BoxBumper : Bumper
 
             if(SFXManager.Instance != null)
             {
-                SFXManager.Instance.PlaySound("BumperBounce", collision.gameObject.transform);
+                if(soundType == BumperSoundType.Bounce)
+                    SFXManager.Instance.PlaySound("BumperBounce", collision.gameObject.transform);
+                else if(soundType == BumperSoundType.Plastic)
+                    SFXManager.Instance.PlaySound("FurnitureHit", collision.gameObject.transform);
             }
 
         }

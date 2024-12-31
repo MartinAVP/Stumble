@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 
@@ -443,4 +444,45 @@ public class RacemodeManager : MonoBehaviour
             SpectatorManager.Instance.AddToSpectator(data);
         }
     }
+
+    private GUIStyle panelStyle;
+    private Rect panelRect = new Rect(10, 10, 300, 550);
+
+/*    private void Start()
+    {
+        panelStyle = new GUIStyle();
+        panelStyle.normal.background = MakeTexture(2, 2, new Color(0.2f, 0.2f, 0.2f, 0.75f));
+        panelStyle.padding = new RectOffset(10, 10, 10, 10); 
+        panelStyle.normal.textColor = Color.white; 
+        panelStyle.fontSize = 38; 
+    }
+
+    void OnGUI()
+    {
+        if (PlayerDataHolder.Instance != null) { 
+        
+            GUI.BeginGroup(panelRect, panelStyle);
+            foreach (var player in PlayerDataHolder.Instance.GetPlayers()) { 
+                GUILayout.Label("Player #" + player.id, GUILayout.Height(30));
+                GUILayout.Label("Score: " +player.points);
+                GUILayout.Label("");
+            }
+            GUI.EndGroup();
+        }
+
+    }
+
+    private Texture2D MakeTexture(int width, int height, Color color)
+    {
+        Texture2D texture = new Texture2D(width, height);
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                texture.SetPixel(x, y, color);
+            }
+        }
+        texture.Apply();
+        return texture;
+    }*/
 }

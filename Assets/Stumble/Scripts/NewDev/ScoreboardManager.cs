@@ -2,6 +2,7 @@ using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -23,7 +24,7 @@ public class ScoreboardManager : MonoBehaviour
         if(Instance == null) { Instance = this; }
         scoreboardPanel.SetActive(false);
     }
-
+/*
     public void UpdatePositions(SortedDictionary<int, PlayerData> newPositions)
     {
         positions.Clear();
@@ -37,9 +38,10 @@ public class ScoreboardManager : MonoBehaviour
             index++;
             positions.Add(index, data);
         }
-    }
+    }*/
 
     private Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
+
     /// <summary>
     /// Update the Positions based on the time players finished in.
     /// </summary>
@@ -49,6 +51,7 @@ public class ScoreboardManager : MonoBehaviour
         positions.Clear(); // Clean the Positions in the Canvas
 
         finalPositions = CalculateRacePositions(newPositions);
+/*        finalPositions.OrderBy(x => x.Value).ToList();*/
     }
     
     /// <summary>
@@ -71,12 +74,22 @@ public class ScoreboardManager : MonoBehaviour
     {
         Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
 
-        int index = 0;
+        var sorted = incomingPositions.OrderBy(x => x.Key).ToList();
+        //Debug.Log("====== SORTED ======");
+        int index2 = 0;
+        foreach (var sortID in sorted)
+        {
+            //Debug.Log(index2 + "# with time " + sortID.Key + " is Player #" + sortID.Value.id);
+            finalPositions.Add(sortID.Value, index2);
+            index2++;
+        }
+
+/*        int index = 0;
         foreach (PlayerData data in incomingPositions.Values)
         {
             finalPositions.Add(data, index);
             index++;
-        }
+        }*/
 
         return finalPositions;
     }
@@ -91,12 +104,14 @@ public class ScoreboardManager : MonoBehaviour
     {
         Dictionary<PlayerData, int> finalPositions = new Dictionary<PlayerData, int>();
 
+        var sorted = incomingPositions.OrderBy(x => x.Key).Reverse().ToList();
         // Inverted loop allowing the correct position assignation
-        int index = incomingPositions.Count - 1;
-        foreach (PlayerData data in incomingPositions.Values)
+        //int index = incomingPositions.Count - 1;
+        int index = 0;
+        foreach (var sortID in sorted)
         {
-            finalPositions.Add(data, index);
-            index--;
+            finalPositions.Add(sortID.Value, index);
+            index++;
         }
 
         return finalPositions;
@@ -151,12 +166,17 @@ public class ScoreboardManager : MonoBehaviour
         List<UICameraView> views = new List<UICameraView>();
         views = GetCharacterImages();
 
-        Debug.Log(finalPositions.Count + " Values");
+        //Debug.Log(finalPositions.Count + " Values");
+
+       // Debug.Log("====== FINAL POSITIONS ======");
 
         int index = 0;
         foreach (PlayerData player in finalPositions.Keys) {
+            //Debug.Log(index + "# is Player #" + player.id);
+
             GameObject card = Instantiate(CardPrefab);
             Scoreboard board = card.GetComponent<Scoreboard>();
+            card.gameObject.name = "Player #" +  index + "card";
 
             if(index % 2 == 1)
             {
@@ -181,7 +201,7 @@ public class ScoreboardManager : MonoBehaviour
     {
         List<UICameraView> uiCamViews = new List<UICameraView>();
 
-        foreach (PlayerData player in PlayerDataHolder.Instance.GetPlayers())
+        foreach(PlayerData player in finalPositions.Keys)
         {
             uiCamViews.Add(player.playerInScene.GetComponentInChildren<UICameraView>());
         }

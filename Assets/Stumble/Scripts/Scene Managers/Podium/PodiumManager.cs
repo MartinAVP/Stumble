@@ -184,23 +184,21 @@ public class PodiumManager : MonoBehaviour
     private IEnumerator returnToMenuCooldown()
     {
         yield return new WaitForSeconds(20f);
+        MenuMusicController.Instance.StartMusic();
         if (LoadingScreenManager.Instance != null) { LoadingScreenManager.Instance.StartTransition(true); }
         yield return new WaitForSeconds(2f);
 
-        if(ModularController.Instance != null)
+        if (ModularController.Instance != null)
         {
             // Reset all player Points
-            foreach(PlayerData data in PlayerDataHolder.Instance.GetPlayers())
+            foreach (PlayerData data in PlayerDataHolder.Instance.GetPlayers())
             {
                 data.points = 0;
             }
-
-
         }
 
         // Destroy the Object
         Destroy(ModularController.Instance.gameObject);
-
         SceneManager.LoadScene("GamemodeSelect");
     }
 
