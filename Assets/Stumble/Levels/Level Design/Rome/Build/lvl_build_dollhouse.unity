@@ -155,7 +155,6 @@ Transform:
   - {fileID: 144252120}
   - {fileID: 166396744}
   - {fileID: 1907921603}
-  - {fileID: 1211245640}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!1 &144252118
@@ -191,7 +190,7 @@ MonoBehaviour:
   m_Path: {fileID: 166396743}
   m_UpdateMethod: 0
   m_PositionUnits: 2
-  m_Speed: 0.05
+  m_Speed: 0.075
   m_Position: 0
 --- !u!4 &144252120
 Transform:
@@ -201,8 +200,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 144252118}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.08034742, y: -0.0000022069685, z: 0.00000021857142, w: 0.9967669}
-  m_LocalPosition: {x: 5.2, y: -2.9238968, z: -67.09236}
+  m_LocalRotation: {x: 0.08252106, y: -0.000002297768, z: 0.00000019026314, w: 0.99658936}
+  m_LocalPosition: {x: 9.500001, y: -3.904274, z: -61.57944}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -219,7 +218,7 @@ LookAtConstraint:
   m_GameObject: {fileID: 144252118}
   m_Enabled: 1
   serializedVersion: 2
-  m_Weight: 1
+  m_Weight: 0.838
   m_RotationAtRest: {x: 0, y: 0, z: 0}
   m_RotationOffset: {x: 0, y: 0, z: 0}
   m_Roll: 0
@@ -266,13 +265,13 @@ MonoBehaviour:
     width: 0.2
   m_Looped: 0
   m_Waypoints:
-  - position: {x: 0, y: 0, z: -5}
+  - position: {x: 0.00000072519583, y: 0.49572754, z: -0.37943956}
     roll: 0
-  - position: {x: -0.0006318004, y: -12.44215, z: 145.49142}
+  - position: {x: -0.0006311711, y: -19.254673, z: 147.75655}
     roll: 0
-  - position: {x: -0.00063939195, y: 45.905834, z: 190.09108}
+  - position: {x: -0.0006412755, y: 28.251064, z: 213.46892}
     roll: 0
-  - position: {x: -0.00028270003, y: 296.38025, z: 172.9078}
+  - position: {x: -0.00028691452, y: 221.5223, z: 243.27509}
     roll: 0
 --- !u!4 &166396744
 Transform:
@@ -282,13 +281,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 166396742}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.027621038, y: 3.6379784e-12, z: 0.00000016298772, w: 0.9996185}
-  m_LocalPosition: {x: 5.2, y: -3.2, z: -62.1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.5, y: -4.4, z: -61.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 49476166}
-  m_LocalEulerAnglesHint: {x: 3.166, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &577943343
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,6 +539,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1128818907}
+  - component: {fileID: 1128818908}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -556,71 +556,33 @@ Transform:
   m_GameObject: {fileID: 1128818906}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.42, z: 1.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1907921603}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1211245639
-GameObject:
+--- !u!95 &1128818908
+Animator:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1211245640}
-  - component: {fileID: 1211245641}
-  m_Layer: 0
-  m_Name: Dolly Track (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1211245640
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1211245639}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.027621038, y: 3.6379784e-12, z: 0.00000016298772, w: 0.9996185}
-  m_LocalPosition: {x: 5.2, y: -8, z: -53.6}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 49476166}
-  m_LocalEulerAnglesHint: {x: 3.166, y: 0, z: 0}
---- !u!114 &1211245641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1211245639}
+  m_GameObject: {fileID: 1128818906}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a200b19ca1a9685429ed7e043c28e904, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Resolution: 20
-  m_Appearance:
-    pathColor: {r: 0, g: 1, b: 0, a: 1}
-    inactivePathColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    width: 0.2
-  m_Looped: 0
-  m_Waypoints:
-  - position: {x: 0.000015407777, y: -2.5991278, z: -7.740828}
-    roll: 0
-  - position: {x: -0.0005529146, y: -13.2654295, z: 132.20715}
-    roll: 0
-  - position: {x: -0.00063930533, y: 49.009544, z: 190.11633}
-    roll: 0
-  - position: {x: -0.0003132718, y: 301.8974, z: 178.22183}
-    roll: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1511268a93a7ca440a442134437b9778, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1907921600
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,10 +612,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99a9c787e5d1bbf48a389834c4a9641c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Path: {fileID: 1211245641}
+  m_Path: {fileID: 166396743}
   m_UpdateMethod: 0
   m_PositionUnits: 2
-  m_Speed: 0.05
+  m_Speed: 0.075
   m_Position: 0
 --- !u!4 &1907921603
 Transform:
@@ -663,8 +625,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907921600}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.08268984, y: -0.0000021195424, z: 0.00000022136415, w: 0.99657536}
-  m_LocalPosition: {x: 5.2000165, y: -10.167706, z: -61.47255}
+  m_LocalRotation: {x: 0.08252106, y: -0.000002297768, z: 0.00000019026314, w: 0.99658936}
+  m_LocalPosition: {x: 9.500001, y: -3.904274, z: -61.57944}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -830,7 +792,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2133756806
 Transform:
   m_ObjectHideFlags: 0
