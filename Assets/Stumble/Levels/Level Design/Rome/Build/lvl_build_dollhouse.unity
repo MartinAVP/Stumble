@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Path: {fileID: 166396743}
   m_UpdateMethod: 0
   m_PositionUnits: 2
-  m_Speed: 0.075
+  m_Speed: 0
   m_Position: 0
 --- !u!4 &144252120
 Transform:
@@ -306,7 +306,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &577943344
 Transform:
   m_ObjectHideFlags: 0
@@ -393,6 +393,77 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577943343}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &848126866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 848126869}
+  - component: {fileID: 848126868}
+  - component: {fileID: 848126867}
+  m_Layer: 0
+  m_Name: ActivateCameraPan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &848126867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848126866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e13a159e0e0cb024bae434f0afbec5e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnOnObjects: []
+  dollyCarts:
+  - {fileID: 1907921602}
+  - {fileID: 144252119}
+  dollySpeed: 0.075
+--- !u!65 &848126868
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848126866}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &848126869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 848126866}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -21.2, y: -18.9, z: 81.1}
+  m_LocalScale: {x: 39.87906, y: 27.074633, z: 15.08}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &980339822
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,7 +478,7 @@ GameObject:
   - component: {fileID: 980339824}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: MainCamera
+  m_TagString: Camera Pan
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -615,7 +686,7 @@ MonoBehaviour:
   m_Path: {fileID: 166396743}
   m_UpdateMethod: 0
   m_PositionUnits: 2
-  m_Speed: 0.075
+  m_Speed: 0
   m_Position: 0
 --- !u!4 &1907921603
 Transform:
@@ -660,7 +731,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2433360165461525727, guid: c4e6e4eeb7ec0c64c8fb2e4e3893ae9f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2860959187583253512, guid: c4e6e4eeb7ec0c64c8fb2e4e3893ae9f, type: 3}
       propertyPath: m_Enabled
@@ -885,3 +956,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 2104472848}
   - {fileID: 49476166}
+  - {fileID: 848126869}
