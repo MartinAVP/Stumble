@@ -14,9 +14,6 @@ public class CosmeticUI : MonoBehaviour
     public Image currentImage; // Reference to the current displayed image
 
     // Solve
-    private int playerID;
-    private CosmeticManager.SelectedCosmetic cosmetic;
-
     public static CosmeticUI Instance;
 
     private void Awake()
@@ -37,6 +34,13 @@ public class CosmeticUI : MonoBehaviour
     private void Start()
     {
         transitionDuration = CosmeticManager.Instance.inputDelay / 1.2f;
+
+        for (int i = 0; i < visuals.Length; i++)
+        {
+            var visual = visuals[i];
+            visual.hatArrows.gameObject.SetActive(false);
+            visual.colorArrows.gameObject.SetActive(false);
+        }
     }
 
     public void SetDefaultImage(Sprite sprite, int playerID, int cosmeticCategoryID)
@@ -68,7 +72,7 @@ public class CosmeticUI : MonoBehaviour
         /*        if (isMoving) { return; }
                 isMoving = true;*/
         Debug.Log("Called" + index++);
-        this.playerID = playerID;
+        CosmeticManager.SelectedCosmetic cosmetic = CosmeticManager.SelectedCosmetic.Colors;
         switch (cosmeticCategoryID)
         {
             case 0:
@@ -128,11 +132,11 @@ public class CosmeticUI : MonoBehaviour
             newImage.rectTransform.localPosition = incomingStartPosition;
 
             // Start the coroutine for transition
-            StartCoroutine(TransitionImages(outgoingTargetPosition, newImage));
+            StartCoroutine(TransitionImages(outgoingTargetPosition, newImage, playerID, cosmetic));
         }
     }
 
-    private IEnumerator TransitionImages(Vector3 outgoingTargetPosition, Image incomingImage)
+    private IEnumerator TransitionImages(Vector3 outgoingTargetPosition, Image incomingImage, int playerID, CosmeticManager.SelectedCosmetic cosmetic)
     {
         Image outgoingImage = currentImage;
 
@@ -175,6 +179,20 @@ public class CosmeticUI : MonoBehaviour
         }
 
         Destroy(outgoingImage.gameObject); // Clean up the outgoing image
+    }
+
+    public void SetArrowsVisible(int playerID, CosmeticManager.SelectedCosmetic selectedCosmetic)
+    {
+        if (selectedCosmetic == CosmeticManager.SelectedCosmetic.Hats)
+        {
+            visuals[playerID].hatArrows.gameObject.SetActive(true);
+            visuals[playerID].colorArrows.gameObject.SetActive(false);
+        }
+        else if(selectedCosmetic == CosmeticManager.SelectedCosmetic.Colors)
+        {
+            visuals[playerID].colorArrows.gameObject.SetActive(true);
+            visuals[playerID].hatArrows.gameObject.SetActive(false);
+        }
     }
 
 

@@ -102,13 +102,13 @@ public class CosmeticManager : MonoBehaviour
         //Debug.Log("Player #" + player.playerIndex + " has selected category " + selectedCosmetic[player.playerIndex].ToString());
 
 
-/*        // Add Cosmetic Selection
-        // Get the action map and action
-        var actionMap = player.actions.FindActionMap("Player"); // Replace with your action map name
-        var moveCosmeticAction = actionMap.FindAction("Select"); // Replace with your action name
+        /*        // Add Cosmetic Selection
+                // Get the action map and action
+                var actionMap = player.actions.FindActionMap("Player"); // Replace with your action map name
+                var moveCosmeticAction = actionMap.FindAction("Select"); // Replace with your action name
 
-        // Subscribe to the action
-        moveCosmeticAction.performed += MoveCosmetic;*/
+                // Subscribe to the action
+                moveCosmeticAction.performed += MoveCosmetic;*/
     }
 
     public void ChangeColor(Vector2 input, PlayerData data)
@@ -372,6 +372,7 @@ public class CosmeticManager : MonoBehaviour
         {
             CosmeticUI.Instance.SetDefaultImage(hats[0].iconTexture, data.GetInput().playerIndex, 0);
             CosmeticUI.Instance.SetDefaultImage(boots[0].iconTexture, data.GetInput().playerIndex, 2);
+            CosmeticUI.Instance.SetArrowsVisible(data.id, selectedCosmetic[data.id]);
         }
 
         // Default Color 0
@@ -613,6 +614,7 @@ public class CosmeticManager : MonoBehaviour
             int playerID = data.GetInput().playerIndex;
             int id = GetPreviousCategory(GetSelectedCosmeticID(selectedCosmetic[playerID]));
             selectedCosmetic[playerID] = GetSelectedCosmetic(id);
+            CosmeticUI.Instance.SetArrowsVisible(playerID, selectedCosmetic[playerID]);
             Debug.Log(" UP | Player #" + playerID + " now has selected:" + GetSelectedCosmetic(id).ToString() + "| with id " + id);
         }
         if (inputValue.y < -0.5) {
@@ -620,6 +622,7 @@ public class CosmeticManager : MonoBehaviour
             int playerID = data.GetInput().playerIndex;
             int id = GetNextCategory(GetSelectedCosmeticID(selectedCosmetic[playerID]));
             selectedCosmetic[playerID] = GetSelectedCosmetic(id);
+            CosmeticUI.Instance.SetArrowsVisible(playerID, selectedCosmetic[playerID]);
             Debug.Log("DOWN | Player #" + playerID + " now has selected:" + GetSelectedCosmetic(id).ToString() + "| with id " + id);
         }
     }
